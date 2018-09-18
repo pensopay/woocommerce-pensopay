@@ -1,0 +1,241 @@
+.woocommerce-pensopay-capture {
+	color:#85ad74 !important;
+}
+.woocommerce-pensopay-subscribe {
+	color:#85ad74 !important;
+}
+
+.woocommerce-pensopay-cancel {
+	color:#ad74a2 !important;
+}
+
+.woocommerce-pensopay-authorize,
+.woocommerce-pensopay-recurring,
+.woocommerce-pensopay-refund {
+	color:#7499ad !important;
+}
+
+.woocommerce-pensopay-order-transaction-data table.meta tr td {
+	font-size: 11px;
+	color: #555;
+	padding: 0 !important;
+	line-height: 1.7em !important;
+}
+.woocommerce-pensopay-order-transaction-data table.meta tr td:first-child {
+	font-weight: 500;
+}
+
+.woocommerce-pensopay-order-transaction-data .transaction-brand img {
+	max-height: 16px;
+}
+
+.woocommerce-pensopay-order-transaction-data .tags {
+	margin-top: 5px;
+}
+
+.woocommerce-pensopay-order-transaction-data .tags:before,
+.woocommerce-pensopay-order-transaction-data .tags:after {
+	content: "";
+	display: table;
+}
+
+.woocommerce-pensopay-order-transaction-data .tag {
+	float: left;
+	display: inline-block;
+	padding: 7px 10px;
+	background-color: #e5e5e5;
+	color: #777;
+	font-size: 9px;
+	border-radius: 3px;
+	text-transform: uppercase;
+	line-height: 100%;
+}
+
+.woocommerce-pensopay-order-transaction-data .tag:not(:last-child) {
+	margin: 0 5px 5px 0;
+}
+
+.woocommerce-pensopay-order-transaction-data .tag.is-test {
+	background: #ebe9a3;
+	color: #78790b;
+	font-weight: bold;
+}
+
+.woocommerce-pensopay-order-transaction-data .tag.is-cancel {
+	background: #eba3a3;
+	color: #761919;
+	font-weight: bold;
+}
+
+.woocommerce-pensopay-order-transaction-data .tag.is-authorize,
+.woocommerce-pensopay-order-transaction-data .tag.is-recurring,
+.woocommerce-pensopay-order-transaction-data .tag.is-refund {
+	background: #c8d7e1;
+	color: #2e4453;
+}
+
+.woocommerce-pensopay-order-transaction-data .tag.is-capture,
+.woocommerce-pensopay-order-transaction-data .tag.is-subscribe {
+	background: #c6e1c6;
+	color: #5b841b;
+}
+
+.woocommerce-pensopay-order-transaction-data .meta:not(:last-child) {
+	margin-bottom: 3px;
+}
+
+.woocommerce-pensopay-order-transaction-data .transaction-brand img,
+.pp-meta-card img {
+	top: 4px;
+	position: relative;
+}
+
+.pp-meta-card img {
+	max-height: 20px;
+}
+
+.woocommerce-pensopay-order-transaction-data .transaction-brand img {
+	margin: -1px 3px 0 0 !important;
+	border-radius: 3px;
+}
+
+#pensopay-payment-actions {
+	position:relative;
+}
+
+#pensopay-payment-actions .left {
+	float:left;
+}
+#pensopay-payment-actions .right {
+	float:right;
+}
+
+#pensopay-payment-actions .loader {
+	position:absolute;
+	top:0;
+	left:0;
+	height:100%;
+	width:100%;
+	background: rgba( 255, 255, 255, 0.7 ) url('../images/loader.gif') no-repeat center center;
+	background-size: 50% ;
+}
+
+.pensopay-loader {
+    min-height:20px;
+	width:50px;
+	background: url('../images/loader.gif') no-repeat center center;
+	background-size: 100%;   
+}
+
+#pensopay-payment-actions h4 .inline_total {
+	float: right;
+	color: #999;
+}
+
+#pensopay-payment-actions b, #pensopay-payment-actions strong {
+	font-weight:700;
+}
+
+#pensopay-payment-actions .pensopay-split-container {
+	border-top: 1px solid #ddd;
+	margin: 0 -12px;
+	padding: 10px 10px 0;
+}
+
+#pensopay-payment-actions .warning {
+	color:#a00;
+}
+
+
+.pp-full-width, .pp-full-width .button {
+	width: 100%;
+	display: block;
+	text-align: center;
+	clear: both;
+}
+
+.pp-balance {
+	margin-bottom: 0;
+}
+
+.pp-balance.last {
+	margin-bottom: 5px;
+}
+
+.pp-balance:after {
+	clear: both;
+	content: "";
+	display: table;
+}
+
+.pp-balance__label,
+.pp-balance__amount {
+	background-color: #f9f9f9;
+	box-sizing: border-box;
+	float: left;
+	padding: 7px 10px;
+	text-transform: uppercase;
+	font-size: 10px;
+	color: #8a8a8a;
+}
+
+.pp-balance__label {
+	font-weight: bold;
+	width: 60%;
+	border-right: 2.5px solid #FFF;
+}
+.pp-balance__amount {
+	border-right: 0;
+	width: 40%;
+	border-left: 2.5px solid #FFF;
+	display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+	display: -ms-flexbox;  /* TWEENER - IE 10 */
+	display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+	display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+}
+
+.pp-balance__currency {
+	margin-right: 10px;
+}
+
+.pp-balance.last .pp-balance__currency {
+	margin-right: 0;
+}
+
+#pp-balance__amount-field {
+	width: 100%;
+	font-size: 10px;
+	margin-top: -5px;
+	top: 3px;
+	position: relative;
+	margin-left: 5px;
+}
+
+#wcpp_wiki, #wcpp_logs {
+	margin-right: 5px;
+}
+
+.wcpp_api_indicator {
+	position: absolute;
+	display: inline-block;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	margin-left: 10px;
+	top: -5px;
+	-webkit-background-size: contain;
+	-moz-background-size: contain;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+.wcpp_api_indicator.error {
+	background-image: url(../images/icons/error.png);
+}
+.wcpp_api_indicator.ok {
+	background-image: url(../images/icons/ok.png);
+}
+
+.woocommerce table.form-table fieldset:first-child {
+	position: relative;
+}

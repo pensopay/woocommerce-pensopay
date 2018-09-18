@@ -1,0 +1,152 @@
+( function( $ ) {
+	"use strict";
+
+	PensoPay.prototype.init = function() {
+		// Add event handlers
+		this.actionBox.on( 'click', '[data-action]', $.proxy( this.callAction, this ) );
+	};
+
+	PensoPay.prototype.callAction = function( e ) {
+		e.preventDefault();
+		var target = $( e.target );
+		var action = target.attr( 'data-action' );
+
+		if( typeof this[action] !== 'undefined' ) {
+			var message = target.attr('data-confirm') || 'Are you sure you want to continue?';
+			if( confirm( message ) ) {
+				this[action]();	
+			}
+		}	
+	};
+
+	PensoPay.prototype.capture = function() {
+		var request = this.request( {
+			pensopay_action : 'capture'
+		} );
+	};
+
+	PensoPay.prototype.captureAmount = function () {
+		var request = this.request({
+			pensopay_action: 'capture',
+			pensopay_amount: $('#pp-balance__amount-field').val()
+		} );
+	};
+
+	PensoPay.prototype.cancel = function() {
+		var request = this.request( {
+			pensopay_action : 'cancel'
+		} );
+	};
+
+	PensoPay.prototype.refund = function() {
+		var request = this.request( {
+			pensopay_action : 'refund'
+		} );
+	};
+
+	PensoPay.prototype.split_capture = function() {
+		var request = this.request( {
+			pensopay_action : 'splitcapture',
+			amount : parseFloat( $('#pensopay_split_amount').val() ),
+			finalize : 0
+		} );
+	};
+
+	PensoPay.prototype.split_finalize = function() {
+		var request = this.request( {
+			pensopay_action : 'splitcapture',
+			amount : parseFloat( $('#pensopay_split_amount').val() ),
+			finalize : 1
+		} );
+	};
+
+	PensoPay.prototype.request = function( dataObject ) {
+		var that = this;
+		var request = $.ajax( {
+			type : 'POST',
+			url : ajaxurl,
+			dataType: 'json',
+			data : $.extend( {}, { action : 'pensopay_manual_transaction_actions', post : this.postID.val() }, dataObject ),
+			beforeSend : $.proxy( this.showLoader, this, true ),
+			success : function() {
+				$.get( window.location.href, function( data ) {
+					var newData = $(data).find( '#' + that.actionBox.attr( 'id' ) + ' .inside' ).html();
+					that.actionBox.find( '.inside' ).html( newData );
+					that.showLoader( false );
+				} );
+			}
+		} );
+
+		return request;
+	};
+
+	PensoPay.prototype.showLoader = function( e, show ) {
+		if( show ) {
+			this.actionBox.append( this.loaderBox );
+		} else {
+			this.actionBox.find( this.loaderBox ).remove();
+		}
+	};
+
+    
+
+
+    PensoPayCheckAPIStatus.prototype.init = function () {
+    	if (this.apiSettingsField.length) {
+			$(window).on('load', $.proxy(this.pingAPI, this));
+			this.apiSettingsField.on('blur', $.proxy(this.pingAPI, this));
+			this.insertIndicator();
+		}
+	};
+
+	PensoPayCheckAPIStatus.prototype.insertIndicator = function () {
+		this.indicator.insertAfter(this.apiSettingsField);
+	};
+
+	PensoPayCheckAPIStatus.prototype.pingAPI = function () {
+		$.post(ajaxurl, { action: 'pensopay_ping_api', apiKey: this.apiSettingsField.val() }, $.proxy(function (response) {
+			if (response.status === 'success') {
+				this.indicator.addClass('ok').removeClass('error');
+			} else {
+				this.indicator.addClass('error').removeClass('ok');
+			}
+		}, this), "json");
+	};
+    
+	// DOM ready
+	$(function() {
+		new PensoPay().init();
+		new PensoPayCheckAPIStatus().init();
+
+        var emptyLogsButton = $('#wcpp_logs_clear');
+        emptyLogsButton.on('click', function(e) {
+        	e.preventDefault();
+        	$.getJSON(ajaxurl, { action: 'pensopay_empty_logs' }, function (response) {
+        		if (response.hasOwnProperty('status') && response.status == 'success') {
+        			var message = $('<div id="message" class="updated"><p>' + response.message + '</p></div>');
+        			message.hide();
+        			message.insertBefore($('#wcpp_wiki'));
+        			message.fadeIn('fast', function () {
+        				setTimeout(function () {
+        					message.fadeOut('fast', function () {
+        						message.remove();
+        					});
+        				},5000);
+        			});
+        		} 
+        	});
+        });
+	});
+
+	function PensoPay() {
+		this.actionBox 	= $( '#pensopay-payment-actions' );
+		this.postID		= $( '#post_ID' );
+		this.loaderBox 	= $( '<div class="loader"></div>');
+	}
+
+    function PensoPayCheckAPIStatus() {
+    	this.apiSettingsField = $('#woocommerce_pensopay_pensopay_apikey');
+		this.indicator = $('<span class="wcpp_api_indicator"></span>');
+	}
+
+})(jQuery);

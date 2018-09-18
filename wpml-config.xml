@@ -1,0 +1,9 @@
+<wpml-config>
+    <admin-texts>
+        <key name="woocommerce_pensopay_settings">
+            <key name="title"/>
+            <key name="description"/>
+            <key name="checkout_button_text"/>
+        </key>
+    </admin-texts>
+</wpml-config>
