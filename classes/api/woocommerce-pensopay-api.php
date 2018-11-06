@@ -77,12 +77,12 @@ class WC_PensoPay_API
 	 */
     public function is_authorized_callback( $response_body )
     {
-        if( ! isset( $_SERVER["HTTP_PENSOPAY_CHECKSUM_SHA256"] ) )
+        if( ! isset( $_SERVER["HTTP_QUICKPAY_CHECKSUM_SHA256"] ) )
         {
             return FALSE;
         }
 
-        return hash_hmac( 'sha256', $response_body, WC_PP()->s( 'pensopay_privatekey' ) ) == $_SERVER["HTTP_PENSOPAY_CHECKSUM_SHA256"];
+        return hash_hmac( 'sha256', $response_body, WC_PP()->s( 'pensopay_privatekey' ) ) == $_SERVER["HTTP_QUICKPAY_CHECKSUM_SHA256"];
     }
 
 
