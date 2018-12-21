@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce PensoPay\n"
-"POT-Creation-Date: 2018-03-01 15:41+0100\n"
-"PO-Revision-Date: 2018-09-11 10:55+0200\n"
+"POT-Creation-Date: 2018-11-08 15:17+0100\n"
+"PO-Revision-Date: 2018-11-08 15:18+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: da_DK\n"
@@ -10,41 +10,71 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-WPHeader: woocommerce-pensopay.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
-#: classes/api/woocommerce-pensopay-api-transaction.php:70
+#: classes/api/woocommerce-pensopay-api-transaction.php:67
 msgid "Pending - check your PensoPay manager"
 msgstr "Afventer - kontrollér din PensoPay Manager for mere information"
 
-#: classes/api/woocommerce-pensopay-api-transaction.php:349
+#: classes/api/woocommerce-pensopay-api-transaction.php:346
 msgid "Transaction ID cannot be empty"
 msgstr "Transaktions ID’et må ikke være tomt"
 
-#: classes/base/woocommerce-pensopay-base-order.php:174
-msgid "Payment Fee"
-msgstr "Betalingsgebyr"
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:13
+msgid "Payment link created"
+msgstr "Betalingslink oprettet"
 
-#: classes/base/woocommerce-pensopay-base-order.php:578
-msgid "Customer Email"
-msgstr "Kunde Email"
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:14
+msgid "This e-mail is sent upon manual payment link creation by a shop admin."
+msgstr ""
+"Denne email sendes, når en shop-administrator manuelt opretter et "
+"betalingslink."
 
-#: classes/base/woocommerce-pensopay-base-order.php:583
-msgid "Customer Phone"
-msgstr "Kunde Telefon"
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:93
+msgid "Enable/Disable"
+msgstr "Aktiver/Deaktiver"
 
-#: classes/base/woocommerce-pensopay-base-order.php:588
-msgid "User Agent"
-msgstr "User Agent"
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:95
+msgid "Enable this email notification"
+msgstr "Aktiver denne email-notifikation"
 
-#: classes/base/woocommerce-pensopay-base-order.php:593
-msgid "Shipping Method"
-msgstr "Leveringsmetode"
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:99
+msgid "Subject"
+msgstr "Emne"
+
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:103
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:112
+#, php-format
+msgid "Available placeholders: %s"
+msgstr "Tilgængelige placeholders: %s"
+
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:108
+msgid "Email heading"
+msgstr "Email overskrift"
+
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:117
+msgid "Email type"
+msgstr "Email-type"
+
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:119
+msgid "Choose which format of email to send."
+msgstr "Vælg ville format mailen skal sendes i."
+
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:135
+msgid "Payment link for your order ({order_number})"
+msgstr "Link til betaling af din ordre ({order_number})"
+
+#: classes/emails/woocommerce-pensopay-payment-link-email.php:145
+msgid "This is your payment link"
+msgstr "Dette er dit betalingslink"
 
 #: classes/instances/instance.php:57
 #, php-format
@@ -94,7 +124,9 @@ msgstr "Titel"
 #: classes/instances/sofort.php:48 classes/instances/viabill.php:48
 #: classes/woocommerce-pensopay-settings.php:179
 msgid "This controls the title which the user sees during checkout."
-msgstr "Tekst der vises som navn på betalingsmetoden, når dine kunder vælger PensoPay i checkout-processen."
+msgstr ""
+"Tekst der vises som navn på betalingsmetoden, når dine kunder vælger "
+"PensoPay i checkout-processen."
 
 #: classes/instances/klarna.php:49
 msgid "Klarna"
@@ -110,7 +142,9 @@ msgstr "Besked til kunde"
 #: classes/instances/sofort.php:54 classes/instances/viabill.php:54
 #: classes/woocommerce-pensopay-settings.php:186
 msgid "This controls the description which the user sees during checkout."
-msgstr "Dette styrer hvilken betalingsmetodebeskrivelse, der skal vises til dine kunder under checkout-processen."
+msgstr ""
+"Dette styrer hvilken betalingsmetodebeskrivelse, der skal vises til dine "
+"kunder under checkout-processen."
 
 #: classes/instances/klarna.php:55
 msgid "Pay with Klarna"
@@ -148,14 +182,77 @@ msgstr "ViaBill"
 msgid "Pay with ViaBill"
 msgstr "Betal med ViaBill"
 
+#: classes/modules/woocommerce-pensopay-admin-orders.php:46
+#, php-format
+msgid "Payment links created for %d orders."
+msgstr "Betalingslinks blev oprettet for %d ordrer."
+
+#: classes/modules/woocommerce-pensopay-admin-orders.php:78
+#, php-format
+msgid "Payment links created for %d subscriptions."
+msgstr "Betalingslinks blev oprettet for %d abonnementer."
+
+#: classes/modules/woocommerce-pensopay-admin-orders.php:103
+#, php-format
+msgid "Payment link creation skipped for order #%s"
+msgstr "Oprettelse af betalingslink blev ikke udført for ordre #%s"
+
+#: classes/modules/woocommerce-pensopay-admin-orders.php:118
+msgid "A parent order must be mapped to the subscription."
+msgstr "En parent ordre skal være tilknyttet abonnementet."
+
+#: classes/modules/woocommerce-pensopay-admin-orders.php:139
+#, php-format
+msgid "Invalid payment link received from API for order #%s"
+msgstr "Ugyldig callback body vedr. ordre #%s"
+
+#: classes/modules/woocommerce-pensopay-admin-orders.php:153
+#, php-format
+msgid "Payment link manually created from backend: %s"
+msgstr "Et betalingslink blev manuelt oprettet fra backenden: %s"
+
+#: classes/modules/woocommerce-pensopay-admin-orders.php:159
+#, php-format
+msgid "Payment link could not be created for order #%s. Error: %s"
+msgstr "Betalingslink kunne ikke oprettes for ordre #%s. Fejl: %s"
+
+#: classes/modules/woocommerce-pensopay-admin-orders.php:171
+#: classes/modules/woocommerce-pensopay-admin-orders.php:184
+msgid "Create payment link"
+msgstr "Opret betalingslink"
+
 #: classes/woocommerce-pensopay-exceptions.php:81
 #, php-format
-msgid "An error occured. For more information check out the <strong>%s</strong> logs inside <strong>WooCommerce -> System Status -> Logs</strong>."
-msgstr "Der opstod en fejl. For mere information, gå til logfilen <strong>%s</strong> i <strong>WooCommerce -> System status -> Logs</strong>"
+msgid ""
+"An error occured. For more information check out the <strong>%s</strong> "
+"logs inside <strong>WooCommerce -> System Status -> Logs</strong>."
+msgstr ""
+"Der opstod en fejl. For mere information, gå til logfilen <strong>%s</"
+"strong> i <strong>WooCommerce -> System status -> Logs</strong>."
 
 #: classes/woocommerce-pensopay-install.php:156
 msgid "You are not authorized to perform this action"
 msgstr "Du har ikke rettigeder til at udføre denne handling"
+
+#: classes/woocommerce-pensopay-order.php:193
+msgid "Payment Fee"
+msgstr "Betalingsgebyr"
+
+#: classes/woocommerce-pensopay-order.php:664
+msgid "Customer Email"
+msgstr "Kunde Email"
+
+#: classes/woocommerce-pensopay-order.php:669
+msgid "Customer Phone"
+msgstr "Kunde Telefon"
+
+#: classes/woocommerce-pensopay-order.php:674
+msgid "User Agent"
+msgstr "User Agent"
+
+#: classes/woocommerce-pensopay-order.php:679
+msgid "Shipping Method"
+msgstr "Leveringsmetode"
 
 #: classes/woocommerce-pensopay-settings.php:28
 msgid "Enable PensoPay Payment"
@@ -171,8 +268,11 @@ msgid "Private key"
 msgstr "Privat nøgle"
 
 #: classes/woocommerce-pensopay-settings.php:40
-msgid "Your agreement private key. Found in the \"Integration\" tab inside the PensoPay manager."
-msgstr "Din private nøgle. Kan findes i \"Integration\"-fanen i din PensoPay manager."
+msgid ""
+"Your agreement private key. Found in the \"Integration\" tab inside the "
+"PensoPay manager."
+msgstr ""
+"Din private nøgle. Kan findes i \"Integration\"-fanen i din PensoPay manager."
 
 #: classes/woocommerce-pensopay-settings.php:44
 #: classes/woocommerce-pensopay-settings.php:372
@@ -180,8 +280,12 @@ msgid "Api User key"
 msgstr "API Key til din API bruger"
 
 #: classes/woocommerce-pensopay-settings.php:46
-msgid "Your API User's key. Create a separate API user in the \"Users\" tab inside the PensoPay manager."
-msgstr "Din API-brugers api-key. Opret en separat bruger med tilstrækkelige API-rettigheder under fanden \"Users\" i din PensoPay manager."
+msgid ""
+"Your API User's key. Create a separate API user in the \"Users\" tab inside "
+"the PensoPay manager."
+msgstr ""
+"Din API-brugers api-key. Opret en separat bruger med tilstrækkelige API-"
+"rettigheder under fanden \"Users\" i din PensoPay manager."
 
 #: classes/woocommerce-pensopay-settings.php:51
 msgid "Autocapture settings"
@@ -200,8 +304,14 @@ msgid "Virtual products"
 msgstr "Virtuelle produkter"
 
 #: classes/woocommerce-pensopay-settings.php:65
-msgid "Automatically capture payments on virtual products. If the order contains both physical and virtual products, this setting will be overwritten by the default setting above."
-msgstr "Trækker automatisk betalinger for virtuelle produkter. Hvis ordren indeholder både fysiske og virtuelle produkter, vil denne indstilling blive overskrevet af standard-indstillingen ovenfor."
+msgid ""
+"Automatically capture payments on virtual products. If the order contains "
+"both physical and virtual products, this setting will be overwritten by the "
+"default setting above."
+msgstr ""
+"Trækker automatisk betalinger for virtuelle produkter. Hvis ordren "
+"indeholder både fysiske og virtuelle produkter, vil denne indstilling blive "
+"overskrevet af standard-indstillingen ovenfor."
 
 #: classes/woocommerce-pensopay-settings.php:71
 msgid "Currency settings"
@@ -212,16 +322,24 @@ msgid "Fixed Currency"
 msgstr "Fast valuta"
 
 #: classes/woocommerce-pensopay-settings.php:75
-msgid "Choose a fixed currency. Please make sure to use the same currency as in your WooCommerce currency settings."
-msgstr "Vælg en fast valuta. Benyt samme valuta, som der er angivet i jeres WooCommerce Valuta-indstillinger."
+msgid ""
+"Choose a fixed currency. Please make sure to use the same currency as in "
+"your WooCommerce currency settings."
+msgstr ""
+"Vælg en fast valuta. Benyt samme valuta, som der er angivet i jeres "
+"WooCommerce Valuta-indstillinger."
 
 #: classes/woocommerce-pensopay-settings.php:88
 msgid "Auto Currency"
 msgstr "Automatisk valuta"
 
 #: classes/woocommerce-pensopay-settings.php:91
-msgid "Automatically checks out with the order currency. This setting overwrites the \"Fixed Currency\" setting."
-msgstr "Vælger automatisk den valuta, der er tilknyttet ordren. Denne indstilling overskriver \"Fast valuta\"-indstillingen."
+msgid ""
+"Automatically checks out with the order currency. This setting overwrites "
+"the \"Fixed Currency\" setting."
+msgstr ""
+"Vælger automatisk den valuta, der er tilknyttet ordren. Denne indstilling "
+"overskriver \"Fast valuta\"-indstillingen."
 
 #: classes/woocommerce-pensopay-settings.php:97
 msgid "Extra gateway settings"
@@ -240,16 +358,26 @@ msgid "Currency"
 msgstr "Valuta"
 
 #: classes/woocommerce-pensopay-settings.php:118
-msgid "Choose your currency. Please make sure to use the same currency as in your WooCommerce currency settings."
-msgstr "Vælg en valuta. Bemærk, at der skal bruges samme valuta som du benytter i WooCommerce."
+msgid ""
+"Choose your currency. Please make sure to use the same currency as in your "
+"WooCommerce currency settings."
+msgstr ""
+"Vælg en valuta. Bemærk, at der skal bruges samme valuta som du benytter i "
+"WooCommerce."
 
 #: classes/woocommerce-pensopay-settings.php:131
 msgid "Payment methods"
 msgstr "Betalingsmetoder"
 
 #: classes/woocommerce-pensopay-settings.php:133
-msgid "Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://tech.pensopay.net/appendixes/payment-methods/</b>"
-msgstr "Standard: creditcard. Indtast de korttyper, du ønsker at aktivere (kommasepareret). Se en liste med de mulige betalingstyper her: <b>http://tech.pensopay.net/appendixes/payment-methods/</b>"
+msgid ""
+"Default: creditcard. Type in the cards you wish to accept (comma separated). "
+"See the valid payment types here: <b>http://tech.pensopay.net/appendixes/"
+"payment-methods/</b>"
+msgstr ""
+"Standard: creditcard. Indtast de korttyper, du ønsker at aktivere "
+"(kommasepareret). Se en liste med de mulige betalingstyper her: <b>http://"
+"tech.pensopay.net/appendixes/payment-methods/</b>"
 
 #: classes/woocommerce-pensopay-settings.php:137
 msgid "Branding ID"
@@ -264,7 +392,9 @@ msgid "Enable autofee"
 msgstr "Aktiver automatiske gebyrer (autofee)"
 
 #: classes/woocommerce-pensopay-settings.php:148
-msgid "If enabled, the fee charged by the acquirer will be calculated and added to the transaction amount."
+msgid ""
+"If enabled, the fee charged by the acquirer will be calculated and added to "
+"the transaction amount."
 msgstr "Hvis aktiveret vil indløserens transaktionsgebyr blive pålagt kunden."
 
 #: classes/woocommerce-pensopay-settings.php:153
@@ -272,16 +402,24 @@ msgid "Capture on complete"
 msgstr "Træk betaling når ordren er completed"
 
 #: classes/woocommerce-pensopay-settings.php:156
-msgid "When enabled pensopay payments will automatically be captured when order state is set to \"Complete\"."
-msgstr "Når det er aktiveret, vil pensopay-betalinger automatisk blive trukket, når ordrestatus bliver sat til \"Complete\"."
+msgid ""
+"When enabled pensopay payments will automatically be captured when order "
+"state is set to \"Complete\"."
+msgstr ""
+"Når det er aktiveret, vil pensopay-betalinger automatisk blive trukket, når "
+"ordrestatus bliver sat til \"Complete\"."
 
 #: classes/woocommerce-pensopay-settings.php:161
 msgid "Text on statement"
 msgstr "Text on statement"
 
 #: classes/woocommerce-pensopay-settings.php:163
-msgid "Text that will be placed on cardholder’s bank statement (currently only supported by Clearhaus)."
-msgstr "Tekst der vises på kortholders bankudskrift. (I øjeblikket kun supporteret af Clearhaus)."
+msgid ""
+"Text that will be placed on cardholder’s bank statement (currently only "
+"supported by Clearhaus)."
+msgstr ""
+"Tekst der vises på kortholders bankudskrift. (I øjeblikket kun supporteret "
+"af Clearhaus)."
 
 #: classes/woocommerce-pensopay-settings.php:180
 msgid "PensoPay"
@@ -316,8 +454,11 @@ msgid "Credit card icons"
 msgstr "Kreditkort-ikoner"
 
 #: classes/woocommerce-pensopay-settings.php:207
-msgid "Choose the card icons you wish to show next to the PensoPay payment option in your shop."
-msgstr "Markér de kortikoner du vil vise ud for PensoPay betalingsmetoden i din shop."
+msgid ""
+"Choose the card icons you wish to show next to the PensoPay payment option "
+"in your shop."
+msgstr ""
+"Markér de kortikoner du vil vise ud for PensoPay betalingsmetoden i din shop."
 
 #: classes/woocommerce-pensopay-settings.php:212
 msgid "Select icons"
@@ -328,8 +469,10 @@ msgid "Credit card icons maximum height"
 msgstr "Maximumhøjde på kreditkortikonerne"
 
 #: classes/woocommerce-pensopay-settings.php:246
-msgid "Set the maximum pixel height of the credit card icons shown on the frontend."
-msgstr "Sæt den maximale pixelhøjde på kreditkortikonerne der vises i din shop."
+msgid ""
+"Set the maximum pixel height of the credit card icons shown on the frontend."
+msgstr ""
+"Sæt den maximale pixelhøjde på kreditkortikonerne der vises i din shop."
 
 #: classes/woocommerce-pensopay-settings.php:252
 msgid "Google Analytics"
@@ -364,8 +507,12 @@ msgid "Select Information"
 msgstr "Vælg information"
 
 #: classes/woocommerce-pensopay-settings.php:285
-msgid "Selected options will store the specific data on your transaction inside your PensoPay Manager."
-msgstr "De valgte punkter vil gemme den specifikke data på transaktionen i din PensoPay Manager."
+msgid ""
+"Selected options will store the specific data on your transaction inside "
+"your PensoPay Manager."
+msgstr ""
+"De valgte punkter vil gemme den specifikke data på transaktionen i din "
+"PensoPay Manager."
 
 #: classes/woocommerce-pensopay-settings.php:289
 msgid "Select order data"
@@ -376,8 +523,12 @@ msgid "Complete renewal orders"
 msgstr "Gennemfør fornyelsesordrer"
 
 #: classes/woocommerce-pensopay-settings.php:305
-msgid "Automatically mark a renewal order as complete on successful recurring payments."
-msgstr "Markér automatisk en fornyelsesordrer som gennemført ved succesfuld abonnementsbetaling."
+msgid ""
+"Automatically mark a renewal order as complete on successful recurring "
+"payments."
+msgstr ""
+"Markér automatisk en fornyelsesordrer som gennemført ved succesfuld "
+"abonnementsbetaling."
 
 #: classes/woocommerce-pensopay-settings.php:326
 msgid "Billing: Complete Customer Details"
@@ -426,8 +577,12 @@ msgstr "WooCommerce PensoPay"
 
 #: classes/woocommerce-pensopay-settings.php:383
 #, php-format
-msgid "You have missing or incorrect settings. Go to the <a href=\"%s\">settings page</a>."
-msgstr "Du har enten manglende eller forkerte indstillinger. Gå til <a href=\"%s\">indstillings-siden.</a>."
+msgid ""
+"You have missing or incorrect settings. Go to the <a href=\"%s\">settings "
+"page</a>."
+msgstr ""
+"Du har enten manglende eller forkerte indstillinger. Gå til <a href=\"%s"
+"\">indstillings-siden.</a>."
 
 #: classes/woocommerce-pensopay-settings.php:386
 #, php-format
@@ -435,8 +590,32 @@ msgid "<strong>%s</strong> is mandatory."
 msgstr "<strong>%s</strong> er påkrævet."
 
 #: classes/woocommerce-pensopay-subscription.php:68
-msgid "Automatically completing order status due to succesful recurring payment"
-msgstr "Markér automatisk ordren som ‘Gennemført’ ved succesfuld abonnementsfornyelse"
+msgid ""
+"Automatically completing order status due to succesful recurring payment"
+msgstr ""
+"Markér automatisk ordren som ‘Gennemført’ ved succesfuld abonnementsfornyelse"
+
+#: templates/woocommerce/emails/customer-pensopay-payment-link.php:27
+#: templates/woocommerce/emails/plain/customer-pensopay-payment-link.php:25
+#, php-format
+msgid "Hi %s,"
+msgstr "Hej %s,"
+
+#: templates/woocommerce/emails/customer-pensopay-payment-link.php:29
+#: templates/woocommerce/emails/plain/customer-pensopay-payment-link.php:27
+msgid "Thank you for your order."
+msgstr "Tak for din bestilling."
+
+#: templates/woocommerce/emails/customer-pensopay-payment-link.php:32
+#: templates/woocommerce/emails/plain/customer-pensopay-payment-link.php:29
+#, php-format
+msgid "Use the following link to pay and complete your order: %s"
+msgstr "Benyt følgende link for at betale og fuldføre din ordre: %s"
+
+#: templates/woocommerce/emails/customer-pensopay-payment-link.php:56
+#: templates/woocommerce/emails/plain/customer-pensopay-payment-link.php:54
+msgid "Thanks for shopping with us."
+msgstr "Tak fordi du handler hos os."
 
 #: views/bulk-actions.php:3
 msgid "Capture payment and activate subscription"
@@ -447,20 +626,32 @@ msgid "WooCommerce PensoPay - Data Update"
 msgstr "WooCommerce PensoPay - Data opdatering"
 
 #: views/html-notice-update.php:13
-msgid "To ensure you get the best experience at all times, we need to update your store's database to the latest version."
-msgstr "For at sikre den bedste oplevelse, bedes du opdatere din butiks database til seneste version."
+msgid ""
+"To ensure you get the best experience at all times, we need to update your "
+"store's database to the latest version."
+msgstr ""
+"For at sikre den bedste oplevelse, bedes du opdatere din butiks database til "
+"seneste version."
 
 #: views/html-notice-update.php:14
 msgid "Run the updater"
 msgstr "Kør opdatering"
 
 #: views/html-notice-update.php:19
-msgid "It is strongly recommended that you backup your database before proceeding. Are you sure you wish to run the updater now?"
-msgstr "Vi anbefaler på det kraftigste at du gemmer en backup af din database, før du fortsætter. Er du sikker på, du vil køre opdateringen nu?"
+msgid ""
+"It is strongly recommended that you backup your database before proceeding. "
+"Are you sure you wish to run the updater now?"
+msgstr ""
+"Vi anbefaler på det kraftigste at du gemmer en backup af din database, før "
+"du fortsætter. Er du sikker på, du vil køre opdateringen nu?"
 
 #: views/html-notice-update.php:30 views/html-notice-upgrading.php:13
-msgid "The upgrader is now running. This might take a while. The notice will disappear once the upgrade is complete."
-msgstr "Opdateringen er i gang. Det kan tage lidt tid. Denne besked vil forsvinde når opdateringen er fuldført."
+msgid ""
+"The upgrader is now running. This might take a while. The notice will "
+"disappear once the upgrade is complete."
+msgstr ""
+"Opdateringen er i gang. Det kan tage lidt tid. Denne besked vil forsvinde "
+"når opdateringen er fuldført."
 
 #: views/html-order-table-transaction-data.php:4
 msgid "ID"
@@ -483,200 +674,214 @@ msgid "Test"
 msgstr "Test"
 
 #: views/html-order-table-transaction-data.php:27
-msgid "NB: The transaction data is served from cached results. Click to view the order and update the cached data."
-msgstr "NB: Transaktions-dataen vises fra et cache resultat. Klik på ordren for at opdatere den cachede data."
+msgid ""
+"NB: The transaction data is served from cached results. Click to view the "
+"order and update the cached data."
+msgstr ""
+"NB: Transaktions-dataen vises fra et cache resultat. Klik på ordren for at "
+"opdatere den cachede data."
 
 #: views/html-order-table-transaction-data.php:28
 msgid "Cached"
 msgstr "Cachet"
 
-#: woocommerce-pensopay.php:29
+#: woocommerce-pensopay.php:31
 msgid "WooCommerce PensoPay requires WooCommerce to be active."
 msgstr "WooCommerce PensoPay kræver at WooCommerce er aktiv."
 
-#: woocommerce-pensopay.php:30
+#: woocommerce-pensopay.php:32
 msgid "Go to the plugins page to activate WooCommerce"
 msgstr "Gå til plugin-siden for at aktivere WooCommerce"
 
-#: woocommerce-pensopay.php:286
+#: woocommerce-pensopay.php:294
 msgid "Settings"
 msgstr "Indstillinger"
 
-#: woocommerce-pensopay.php:593
+#: woocommerce-pensopay.php:601
 #, php-format
 msgid "No transaction ID for order: %s"
 msgstr "Intet transaktions-id for ordre nr: %s"
 
-#: woocommerce-pensopay.php:603
+#: woocommerce-pensopay.php:611
 msgid "A non-captured payment cannot be refunded."
 msgstr "En betaling der ikke er trukket, kan ikke refunderes."
 
-#: woocommerce-pensopay.php:605
+#: woocommerce-pensopay.php:613
 msgid "Transaction state does not allow refunds."
 msgstr "Ordrens transaktionsstatus tillader ikke refunderinger."
 
-#: woocommerce-pensopay.php:762
+#: woocommerce-pensopay.php:770
 msgid "PensoPay Transaction ID"
 msgstr "PensoPay Transaktions-ID"
 
-#: woocommerce-pensopay.php:791
+#: woocommerce-pensopay.php:799
 #, php-format
 msgid "PensoPay Transaction ID updated from #%d to #%d"
 msgstr "PensoPay Transaktions-ID blev opdateret fra #%d til #%d"
 
-#: woocommerce-pensopay.php:857
-msgid "<p><strong>Payment failure</strong> A problem with your payment on order <strong>#%i</strong> occured. Please try again to complete your order.</p>"
-msgstr "<p><strong>Betalingen fejlede</strong> Der opstod et problem med din ordre <strong>#%i</strong>. Prøv venligst igen for at færddiggøre din bestilling.</p>"
+#: woocommerce-pensopay.php:865
+msgid ""
+"<p><strong>Payment failure</strong> A problem with your payment on order "
+"<strong>#%i</strong> occured. Please try again to complete your order.</p>"
+msgstr ""
+"<p><strong>Betalingen fejlede</strong> Der opstod et problem med din ordre "
+"<strong>#%i</strong>. Prøv venligst igen for at færddiggøre din bestilling.</"
+"p>"
 
-#: woocommerce-pensopay.php:864 woocommerce-pensopay.php:1114
+#: woocommerce-pensopay.php:872 woocommerce-pensopay.php:1122
 msgid "PensoPay Payment"
 msgstr "PensoPay betaling"
 
-#: woocommerce-pensopay.php:864
+#: woocommerce-pensopay.php:872
 msgid "Cancelled during process"
 msgstr "Annulleret under betalingsprocessen"
 
-#: woocommerce-pensopay.php:866
+#: woocommerce-pensopay.php:874
 msgid "Payment cancelled"
 msgstr "Betaling annulleret"
 
-#: woocommerce-pensopay.php:866
-msgid "Due to cancellation of your payment, the order process was not completed. Please fulfill the payment to complete your order."
-msgstr "Da du har annulleret betalingen, er din ordre ikke gennemført. Fortsæt betalingsprocessen for at gennemføre din bestilling."
+#: woocommerce-pensopay.php:874
+msgid ""
+"Due to cancellation of your payment, the order process was not completed. "
+"Please fulfill the payment to complete your order."
+msgstr ""
+"Da du har annulleret betalingen, er din ordre ikke gennemført. Fortsæt "
+"betalingsprocessen for at gennemføre din bestilling."
 
-#: woocommerce-pensopay.php:866
+#: woocommerce-pensopay.php:874
 #, php-format
 msgid "<p><strong>%s</strong>: %s</p>"
 msgstr "<p><strong>%s</strong>: %s</p>"
 
-#: woocommerce-pensopay.php:921
+#: woocommerce-pensopay.php:929
 msgid "Payment cancelled."
 msgstr "Betaling annulleret."
 
-#: woocommerce-pensopay.php:926
+#: woocommerce-pensopay.php:934
 msgid "Payment captured."
 msgstr "Betaling hævet."
 
-#: woocommerce-pensopay.php:930
+#: woocommerce-pensopay.php:938
 #, php-format
 msgid "Refunded %s %s"
 msgstr "Refunderet %s %s"
 
-#: woocommerce-pensopay.php:946
+#: woocommerce-pensopay.php:954
 #, php-format
 msgid "Subscription authorized. Transaction ID: %s"
 msgstr "Abonnement autoriseret. Transaktions-ID: %s"
 
-#: woocommerce-pensopay.php:992
+#: woocommerce-pensopay.php:1000
 #, php-format
 msgid "An error occured while setting transaction id: %d on order %s. %s"
-msgstr "Der opstod en fejl ifbm. indsættelse af transactions id: %d på ordre %s. %s"
+msgstr ""
+"Der opstod en fejl ifbm. indsættelse af transactions id: %d på ordre %s. %s"
 
-#: woocommerce-pensopay.php:1002
+#: woocommerce-pensopay.php:1010
 #, php-format
 msgid "Payment authorized. Transaction ID: %s"
 msgstr "Betaling autoriseret. Transaktions ID: %s"
 
-#: woocommerce-pensopay.php:1020
+#: woocommerce-pensopay.php:1028
 #, php-format
 msgid "Transaction failed for #%s."
 msgstr "Transaktionen for #%s fejlede."
 
-#: woocommerce-pensopay.php:1021
+#: woocommerce-pensopay.php:1029
 #, php-format
 msgid "PensoPay status code: %s."
 msgstr "PensoPay statuskode: %s."
 
-#: woocommerce-pensopay.php:1022
+#: woocommerce-pensopay.php:1030
 #, php-format
 msgid "PensoPay status message: %s."
 msgstr "PensoPay statusbesked: %s."
 
-#: woocommerce-pensopay.php:1023
+#: woocommerce-pensopay.php:1031
 #, php-format
 msgid "Acquirer status code: %s"
 msgstr "Statuskode fra indløser: %s"
 
-#: woocommerce-pensopay.php:1024
+#: woocommerce-pensopay.php:1032
 #, php-format
 msgid "Acquirer status message: %s"
 msgstr "Statusbesked fra indløser: %s"
 
-#: woocommerce-pensopay.php:1041
+#: woocommerce-pensopay.php:1049
 #, php-format
 msgid "Invalid callback body for order #%s."
 msgstr "Ugyldig callback body vedr. ordre #%s."
 
-#: woocommerce-pensopay.php:1083
+#: woocommerce-pensopay.php:1091
 msgid "Allows you to receive payments via PensoPay."
 msgstr "Modtag betalinger via PensoPay."
 
-#: woocommerce-pensopay.php:1118
+#: woocommerce-pensopay.php:1126
 msgid "PensoPay Subscription"
 msgstr "PensoPay Abonnement"
 
-#: woocommerce-pensopay.php:1146 woocommerce-pensopay.php:1217
+#: woocommerce-pensopay.php:1167 woocommerce-pensopay.php:1255
 msgid "Current payment state"
 msgstr "Nuværende transaktionsstatus"
 
-#: woocommerce-pensopay.php:1149
+#: woocommerce-pensopay.php:1170
 msgid "Actions"
 msgstr "Handlinger"
 
-#: woocommerce-pensopay.php:1153 woocommerce-pensopay.php:1160
+#: woocommerce-pensopay.php:1174 woocommerce-pensopay.php:1181
 msgid "You are about to CAPTURE this payment"
 msgstr "Du er ved at TRÆKKE denne betaling"
 
-#: woocommerce-pensopay.php:1153
+#: woocommerce-pensopay.php:1174
 #, php-format
 msgid "Capture Full Amount (%s)"
 msgstr "Træk hele beløbet (%s)"
 
-#: woocommerce-pensopay.php:1156
+#: woocommerce-pensopay.php:1177
 msgid "Remaining balance"
 msgstr "Resterende balance"
 
-#: woocommerce-pensopay.php:1157
+#: woocommerce-pensopay.php:1178
 msgid "Capture amount"
 msgstr "Træk beløb"
 
-#: woocommerce-pensopay.php:1160
+#: woocommerce-pensopay.php:1181
 msgid "Capture Specified Amount"
 msgstr "Træk specificeret beløb"
 
-#: woocommerce-pensopay.php:1165
+#: woocommerce-pensopay.php:1186
 msgid "You are about to CANCEL this payment"
 msgstr "Du er ved at ANNULLERE denne betaling"
 
-#: woocommerce-pensopay.php:1165
+#: woocommerce-pensopay.php:1186
 msgid "Cancel"
 msgstr "Annuller"
 
-#: woocommerce-pensopay.php:1171 woocommerce-pensopay.php:1219
+#: woocommerce-pensopay.php:1192 woocommerce-pensopay.php:1257
 msgid "Transaction ID"
 msgstr "Transaktions-ID"
 
-#: woocommerce-pensopay.php:1175 woocommerce-pensopay.php:1223
+#: woocommerce-pensopay.php:1196 woocommerce-pensopay.php:1261
 msgid "Transaction Order ID"
 msgstr "Transaktions Ordre ID"
 
-#: woocommerce-pensopay.php:1187
+#: woocommerce-pensopay.php:1215
 msgid "Payment ID"
 msgstr "Betalings-ID"
 
-#: woocommerce-pensopay.php:1192
+#: woocommerce-pensopay.php:1220
 msgid "Payment Link"
 msgstr "Betalingslink"
 
-#: woocommerce-pensopay.php:1215
+#: woocommerce-pensopay.php:1247
 msgid "subscription"
 msgstr "abonnement"
 
-#: woocommerce-pensopay.php:1266
+#: woocommerce-pensopay.php:1306
 msgid "Payment"
 msgstr "Betaling"
 
-#: woocommerce-pensopay.php:1302
+#: woocommerce-pensopay.php:1342
 msgid "Failed renewal"
 msgstr "Fornyelse fejlede"
 
@@ -685,12 +890,17 @@ msgid "http://wordpress.org/plugins/woocommerce-pensopay/"
 msgstr "http://wordpress.org/plugins/woocommerce-pensopay/"
 
 #. Description of the plugin/theme
-msgid "Integrates your PensoPay payment gateway into your WooCommerce installation."
+msgid ""
+"Integrates your PensoPay payment gateway into your WooCommerce installation."
 msgstr "Integrerer din PensoPay betalingsgateway med WooCommerce."
 
+#. Author of the plugin/theme
+msgid "Perfect Solution"
+msgstr "Perfect Solution"
+
 #. Author URI of the plugin/theme
-msgid "https://pensopay.com/"
-msgstr "https://pensopay.com/"
+msgid "http://perfect-solution.dk"
+msgstr "http://perfect-solution.dk"
 
 #, fuzzy
 #~| msgid "Payment Fee"
@@ -712,17 +922,14 @@ msgstr "https://pensopay.com/"
 #~ msgid "Recurring payment failed"
 #~ msgstr "Tilbagevendende betaling blev registreret."
 
-#~ msgid "Enable/Disable"
-#~ msgstr "Aktiver/Deaktiver"
-
 #, fuzzy
 #~| msgid "Enable PensoPay Payment"
-#~ msgid "Enable Pensopay Payment"
+#~ msgid "Enable PensoPay Payment"
 #~ msgstr "Aktiver PensoPay Payment"
 
 #, fuzzy
 #~| msgid "PensoPay Payment"
-#~ msgid "Pensopay account"
+#~ msgid "PensoPay account"
 #~ msgstr "PensoPay betaling"
 
 #, fuzzy
@@ -737,18 +944,27 @@ msgstr "https://pensopay.com/"
 
 #, fuzzy
 #~| msgid "PensoPay"
-#~ msgid "PensopayId"
+#~ msgid "PensoPayId"
 #~ msgstr "PensoPay"
 
 #, fuzzy
 #~| msgid "PensoPay Payment"
-#~ msgid "Pensopay API key"
+#~ msgid "PensoPay API key"
 #~ msgstr "PensoPay betaling"
 
 #, fuzzy
-#~| msgid "Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://tech.pensopay.net/appendixes/payment-methods/</b>"
-#~ msgid "Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://pensopay.dk/features/cardtypelock/</b>"
-#~ msgstr "Standard: creditcard. Indtast de korttyper, du ønsker at aktivere (kommasepareret). Se en liste med de mulige betalingstyper her: <b>http://tech.pensopay.net/appendixes/payment-methods/</b>"
+#~| msgid ""
+#~| "Default: creditcard. Type in the cards you wish to accept (comma "
+#~| "separated). See the valid payment types here: <b>http://tech.pensopay."
+#~| "net/appendixes/payment-methods/</b>"
+#~ msgid ""
+#~ "Default: creditcard. Type in the cards you wish to accept (comma "
+#~ "separated). See the valid payment types here: <b>http://pensopay.dk/"
+#~ "features/cardtypelock/</b>"
+#~ msgstr ""
+#~ "Standard: creditcard. Indtast de korttyper, du ønsker at aktivere "
+#~ "(kommasepareret). Se en liste med de mulige betalingstyper her: <b>http://"
+#~ "tech.pensopay.net/appendixes/payment-methods/</b>"
 
 #, fuzzy
 #~| msgid "Enable Swipp payment"
@@ -766,13 +982,19 @@ msgstr "https://pensopay.com/"
 #~ msgstr "Træk automatisk betalinger for fysiske produkter."
 
 #, fuzzy
-#~| msgid "When enabled pensopay payments will automatically be captured when order state is set to \"Complete\"."
-#~ msgid "When enabled pensopay payments will automatically be refunded when order state is set to \"Refunded\"."
-#~ msgstr "Når det er aktiveret, vil pensopay-betalinger automatisk blive trukket, når ordrestatus bliver sat til \"Complete\"."
+#~| msgid ""
+#~| "When enabled pensopay payments will automatically be captured when order "
+#~| "state is set to \"Complete\"."
+#~ msgid ""
+#~ "When enabled pensopay payments will automatically be refunded when order "
+#~ "state is set to \"Refunded\"."
+#~ msgstr ""
+#~ "Når det er aktiveret, vil pensopay-betalinger automatisk blive trukket, "
+#~ "når ordrestatus bliver sat til \"Complete\"."
 
 #, fuzzy
 #~| msgid "PensoPay"
-#~ msgid "Pensopay"
+#~ msgid "PensoPay"
 #~ msgstr "PensoPay"
 
 #, fuzzy
@@ -801,29 +1023,43 @@ msgstr "https://pensopay.com/"
 #~ msgstr "ViaBill"
 
 #, fuzzy
-#~| msgid "Choose the card icons you wish to show next to the PensoPay payment option in your shop."
-#~ msgid "Choose the card icons you wish to show next to the Pensopay payment option in your shop."
-#~ msgstr "Markér de kortikoner du vil vise ud for PensoPay betalingsmetoden i din shop."
+#~| msgid ""
+#~| "Choose the card icons you wish to show next to the PensoPay payment "
+#~| "option in your shop."
+#~ msgid ""
+#~ "Choose the card icons you wish to show next to the PensoPay payment "
+#~ "option in your shop."
+#~ msgstr ""
+#~ "Markér de kortikoner du vil vise ud for PensoPay betalingsmetoden i din "
+#~ "shop."
 
 #, fuzzy
-#~| msgid "Automatically capture the first payment of a subscription when order is complete."
+#~| msgid ""
+#~| "Automatically capture the first payment of a subscription when order is "
+#~| "complete."
 #~ msgid "Automatically capture the first payment of a subscription."
-#~ msgstr "Træk første betaling for et abonnement automatisk når en ordre er afsluttet."
+#~ msgstr ""
+#~ "Træk første betaling for et abonnement automatisk når en ordre er "
+#~ "afsluttet."
 
-#~ msgid "Automatically capture the first payment of a subscription when order is complete."
-#~ msgstr "Træk første betaling for et abonnement automatisk når en ordre er afsluttet."
+#~ msgid ""
+#~ "Automatically capture the first payment of a subscription when order is "
+#~ "complete."
+#~ msgstr ""
+#~ "Træk første betaling for et abonnement automatisk når en ordre er "
+#~ "afsluttet."
 
 #~ msgid "Payment failure"
 #~ msgstr "Betaling fejlede"
 
 #, fuzzy
 #~| msgid "PensoPay Payment"
-#~ msgid "Pensopay Payment"
+#~ msgid "PensoPay Payment"
 #~ msgstr "PensoPay betaling"
 
 #, fuzzy
 #~| msgid "Allows you to receive payments via PensoPay."
-#~ msgid "Allows you to receive payments via Pensopay."
+#~ msgid "Allows you to receive payments via PensoPay."
 #~ msgstr "Modtag betalinger via PensoPay."
 
 #~ msgid "Standard actions"
@@ -854,21 +1090,33 @@ msgstr "https://pensopay.com/"
 #~ msgid "Amount to capture"
 #~ msgstr "Træk beløb"
 
-#~ msgid "You are about to SPLIT CAPTURE this payment. This means that you will capture the amount stated in the input field. The payment state will remain open."
-#~ msgstr "Du er nu ved at SPLIT-trække denne betaling. Det betyder at du vil trække det beløb, der er skrevet i feltet. Transaktionen vil forblive åben for yderligere hævninger."
+#~ msgid ""
+#~ "You are about to SPLIT CAPTURE this payment. This means that you will "
+#~ "capture the amount stated in the input field. The payment state will "
+#~ "remain open."
+#~ msgstr ""
+#~ "Du er nu ved at SPLIT-trække denne betaling. Det betyder at du vil trække "
+#~ "det beløb, der er skrevet i feltet. Transaktionen vil forblive åben for "
+#~ "yderligere hævninger."
 
 #~ msgid "Split Capture"
 #~ msgstr "Del-betaling"
 
-#~ msgid "You are about to SPLIT CAPTURE and FINALIZE this payment. This means that you will capture the amount stated in the input field and that you can no longer capture money from this transaction."
-#~ msgstr "Du er ved at SPLIT-trække og FÆRDIGGØRE denne betaling. Det betyder at beløbet i feltet vil blive trukket, og at transaktionen vil være lukket for yderligere hævninger."
+#~ msgid ""
+#~ "You are about to SPLIT CAPTURE and FINALIZE this payment. This means that "
+#~ "you will capture the amount stated in the input field and that you can no "
+#~ "longer capture money from this transaction."
+#~ msgstr ""
+#~ "Du er ved at SPLIT-trække og FÆRDIGGØRE denne betaling. Det betyder at "
+#~ "beløbet i feltet vil blive trukket, og at transaktionen vil være lukket "
+#~ "for yderligere hævninger."
 
 #~ msgid "Split and finalize"
 #~ msgstr "Del-betal og afslut"
 
 #, fuzzy
 #~| msgid "Pending - check your PensoPay manager"
-#~ msgid "Pending - check your Pensopay manager"
+#~ msgid "Pending - check your PensoPay manager"
 #~ msgstr "Afventer - kontrollér din PensoPay Manager for mere information"
 
 #~ msgid "Payment Window - Integration"
@@ -878,35 +1126,65 @@ msgstr "https://pensopay.com/"
 #~ msgstr "Merchant ID"
 
 #, fuzzy
-#~| msgid "Your Payment Window agreement merchant id. Found in the \"Integration\" tab inside the PensoPay manager."
-#~ msgid "Your Payment Window agreement merchant id. Found in the \"Integration\" tab inside the Pensopay manager."
-#~ msgstr "Dit \"Payment Window\" agreement merchant ID. ID'et kan findes under fanen \"Integration\" i din PensoPay manager."
+#~| msgid ""
+#~| "Your Payment Window agreement merchant id. Found in the \"Integration\" "
+#~| "tab inside the PensoPay manager."
+#~ msgid ""
+#~ "Your Payment Window agreement merchant id. Found in the \"Integration\" "
+#~ "tab inside the PensoPay manager."
+#~ msgstr ""
+#~ "Dit \"Payment Window\" agreement merchant ID. ID'et kan findes under "
+#~ "fanen \"Integration\" i din PensoPay manager."
 
 #~ msgid "Agreement id"
 #~ msgstr "Agreement ID"
 
 #, fuzzy
-#~| msgid "Your Payment Window agreement id. Found in the \"Integration\" tab inside the PensoPay manager."
-#~ msgid "Your Payment Window agreement id. Found in the \"Integration\" tab inside the Pensopay manager."
-#~ msgstr "Dit \"Payment Window\" agreement  ID. ID'et kan findes under fanen \"Integration\" i din PensoPay manager."
+#~| msgid ""
+#~| "Your Payment Window agreement id. Found in the \"Integration\" tab "
+#~| "inside the PensoPay manager."
+#~ msgid ""
+#~ "Your Payment Window agreement id. Found in the \"Integration\" tab inside "
+#~ "the PensoPay manager."
+#~ msgstr ""
+#~ "Dit \"Payment Window\" agreement  ID. ID'et kan findes under fanen "
+#~ "\"Integration\" i din PensoPay manager."
 
 #~ msgid "Api key"
 #~ msgstr "API nøgle"
 
 #, fuzzy
-#~| msgid "Your Payment Window agreement API key. Found in the \"Integration\" tab inside the PensoPay manager."
-#~ msgid "Your Payment Window agreement API key. Found in the \"Integration\" tab inside the Pensopay manager."
-#~ msgstr "Din \"Payment Window\" agreement API key. Nøglen kan findes under fanen \"Integration\" i din PensoPay manager."
+#~| msgid ""
+#~| "Your Payment Window agreement API key. Found in the \"Integration\" tab "
+#~| "inside the PensoPay manager."
+#~ msgid ""
+#~ "Your Payment Window agreement API key. Found in the \"Integration\" tab "
+#~ "inside the PensoPay manager."
+#~ msgstr ""
+#~ "Din \"Payment Window\" agreement API key. Nøglen kan findes under fanen "
+#~ "\"Integration\" i din PensoPay manager."
 
 #, fuzzy
-#~| msgid "Your Payment Window agreement private key. Found in the \"Integration\" tab inside the PensoPay manager."
-#~ msgid "Your Payment Window agreement private key. Found in the \"Integration\" tab inside the Pensopay manager."
-#~ msgstr "Din \"Payment Window\" agreement private key. Nøglen kan findes under fanen \"Integration\" i din PensoPay manager."
+#~| msgid ""
+#~| "Your Payment Window agreement private key. Found in the \"Integration\" "
+#~| "tab inside the PensoPay manager."
+#~ msgid ""
+#~ "Your Payment Window agreement private key. Found in the \"Integration\" "
+#~ "tab inside the PensoPay manager."
+#~ msgstr ""
+#~ "Din \"Payment Window\" agreement private key. Nøglen kan findes under "
+#~ "fanen \"Integration\" i din PensoPay manager."
 
 #, fuzzy
-#~| msgid "Your API User's key. Create a separate API user in the \"Users\" tab inside the PensoPay manager."
-#~ msgid "Your API User's key. Create a separate API user in the \"Users\" tab inside the Pensopay manager."
-#~ msgstr "Din API-brugers api-key. Opret en separat bruger med tilstrækkelige API-rettigheder under fanden \"Users\" i din PensoPay manager."
+#~| msgid ""
+#~| "Your API User's key. Create a separate API user in the \"Users\" tab "
+#~| "inside the PensoPay manager."
+#~ msgid ""
+#~ "Your API User's key. Create a separate API user in the \"Users\" tab "
+#~ "inside the PensoPay manager."
+#~ msgstr ""
+#~ "Din API-brugers api-key. Opret en separat bruger med tilstrækkelige API-"
+#~ "rettigheder under fanden \"Users\" i din PensoPay manager."
 
 #, fuzzy
 #~| msgid "Subscription authorized. Transaction ID: %s"
@@ -915,12 +1193,12 @@ msgstr "https://pensopay.com/"
 
 #, fuzzy
 #~| msgid "PensoPay status code: %s."
-#~ msgid "Pensopay status code: %s."
+#~ msgid "PensoPay status code: %s."
 #~ msgstr "PensoPay statuskode: %s."
 
 #, fuzzy
 #~| msgid "PensoPay status message: %s."
-#~ msgid "Pensopay status message: %s."
+#~ msgid "PensoPay status message: %s."
 #~ msgstr "PensoPay statusbesked: %s."
 
 #~ msgid "initial order transaction ID"
@@ -931,12 +1209,12 @@ msgstr "https://pensopay.com/"
 
 #, fuzzy
 #~| msgid "Allows you to receive payments via PensoPay %s."
-#~ msgid "Allows you to receive payments via Pensopay %s."
+#~ msgid "Allows you to receive payments via PensoPay %s."
 #~ msgstr "Modtag betalinger via PensoPay %s."
 
 #, fuzzy
 #~| msgid "This module has it's main configuration inside the 'PensoPay' tab."
-#~ msgid "This module has it's main configuration inside the 'Pensopay' tab."
+#~ msgid "This module has it's main configuration inside the 'PensoPay' tab."
 #~ msgstr "Dette moduls primære konfiguration ligger under fanen 'PensoPay'."
 
 #, fuzzy
@@ -998,20 +1276,33 @@ msgstr "https://pensopay.com/"
 #~ msgid "Phone"
 #~ msgstr "Telefon"
 
-#~ msgid "Email"
-#~ msgstr "E-mail"
+#~ msgid ""
+#~ "Your Payment Window agreement merchant id. Found in the \"Integration\" "
+#~ "tab inside the PensoPay manager."
+#~ msgstr ""
+#~ "Dit \"Payment Window\" agreement merchant ID. ID'et kan findes under "
+#~ "fanen \"Integration\" i din PensoPay manager."
 
-#~ msgid "Your Payment Window agreement merchant id. Found in the \"Integration\" tab inside the PensoPay manager."
-#~ msgstr "Dit \"Payment Window\" agreement merchant ID. ID'et kan findes under fanen \"Integration\" i din PensoPay manager."
+#~ msgid ""
+#~ "Your Payment Window agreement id. Found in the \"Integration\" tab inside "
+#~ "the PensoPay manager."
+#~ msgstr ""
+#~ "Dit \"Payment Window\" agreement  ID. ID'et kan findes under fanen "
+#~ "\"Integration\" i din PensoPay manager."
 
-#~ msgid "Your Payment Window agreement id. Found in the \"Integration\" tab inside the PensoPay manager."
-#~ msgstr "Dit \"Payment Window\" agreement  ID. ID'et kan findes under fanen \"Integration\" i din PensoPay manager."
+#~ msgid ""
+#~ "Your Payment Window agreement API key. Found in the \"Integration\" tab "
+#~ "inside the PensoPay manager."
+#~ msgstr ""
+#~ "Din \"Payment Window\" agreement API key. Nøglen kan findes under fanen "
+#~ "\"Integration\" i din PensoPay manager."
 
-#~ msgid "Your Payment Window agreement API key. Found in the \"Integration\" tab inside the PensoPay manager."
-#~ msgstr "Din \"Payment Window\" agreement API key. Nøglen kan findes under fanen \"Integration\" i din PensoPay manager."
-
-#~ msgid "Your Payment Window agreement private key. Found in the \"Integration\" tab inside the PensoPay manager."
-#~ msgstr "Din \"Payment Window\" agreement private key. Nøglen kan findes under fanen \"Integration\" i din PensoPay manager."
+#~ msgid ""
+#~ "Your Payment Window agreement private key. Found in the \"Integration\" "
+#~ "tab inside the PensoPay manager."
+#~ msgstr ""
+#~ "Din \"Payment Window\" agreement private key. Nøglen kan findes under "
+#~ "fanen \"Integration\" i din PensoPay manager."
 
 #~ msgid "Your Google Analytics client ID. Digits only."
 #~ msgstr "Dit Google Analytics Client ID. Kun tal."

@@ -108,14 +108,18 @@ class WC_PensoPay_API_Subscription extends WC_PensoPay_API_Transaction
     }
 
 
-    /**
-    * is_action_allowed function.
-    *
-    * Check if the action we are about to perform is allowed according to the current transaction state.
-    *
-    * @access public
-    * @return boolean
-    */
+	/**
+	 * is_action_allowed function.
+	 *
+	 * Check if the action we are about to perform is allowed according to the current transaction state.
+	 *
+	 * @access public
+	 *
+	 * @param $action
+	 *
+	 * @return boolean
+	 * @throws PensoPay_API_Exception
+	 */
     public function is_action_allowed( $action )
     {
         $state = $this->get_current_type();

@@ -27,6 +27,15 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 4.10.0 =
+* Add public admin notices infrastructure
+* Add possibility to manually create payment links for orders and subscriptions as WooCommerce admin.
+* Removes legacy WC_PensoPay_Order. Now only supports WC 3.x
+* Removes WC_PensoPay_Order_Base
+* Add filter: woocommerce_pensopay_order_action_create_payment_link_for_order
+* Add action: woocommerce_pensopay_order_action_payment_link_created
+* Introduce customer email sent on manual payment link creation.
+
 = 4.9.4 =
 * Tested up to WC 3.4.2
 * Add arg (bool) $recurring to filter 'woocommerce_pensopay_order_number_for_api'

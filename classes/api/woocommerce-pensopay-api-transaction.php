@@ -66,7 +66,11 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 
 		$last_operation = end( $successful_operations );
 
-		if ( $last_operation->pending == true ) {
+		if ( ! is_object( $last_operation ) ) {
+			throw new PensoPay_API_Exception( 'Malformed operation object' );
+		}
+
+		if ( $last_operation->pending === true ) {
 			$last_operation->type = __( 'Pending - check your PensoPay manager', 'woo-pensopay' );
 		}
 

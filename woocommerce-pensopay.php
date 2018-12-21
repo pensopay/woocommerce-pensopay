@@ -4,21 +4,20 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 4.9.4
+ * Version: 4.10.0
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Author URI: https://pensopay.com/
  * Wiki: https://pensopay.zendesk.com/hc/da
-
  * WC requires at least: 3.0
- * WC tested up to: 3.4.2
+ * WC tested up to: 3.5.1
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '4.9.4' );
+define( 'WCPP_VERSION', '4.10.0' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -54,11 +53,15 @@ function init_pensopay_gateway() {
 	}
 
 	// Import helper classes
+	require_once WCPP_PATH . 'helpers/notices.php';
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-install.php';
 	require_once WCPP_PATH . 'classes/api/woocommerce-pensopay-api.php';
 	require_once WCPP_PATH . 'classes/api/woocommerce-pensopay-api-transaction.php';
 	require_once WCPP_PATH . 'classes/api/woocommerce-pensopay-api-payment.php';
 	require_once WCPP_PATH . 'classes/api/woocommerce-pensopay-api-subscription.php';
+	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-module.php';
+	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-emails.php';
+	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-admin-orders.php';
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-exceptions.php';
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-log.php';
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-helper.php';
@@ -182,6 +185,9 @@ function init_pensopay_gateway() {
 		 * @return string
 		 */
 		public function hooks_and_filters() {
+			WC_PensoPay_Admin_Orders::get_instance();
+			WC_PensoPay_Emails::get_instance();
+
 			add_action( 'woocommerce_api_wc_' . $this->id, array( $this, 'callback_handler' ) );
 			add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
 			add_action( 'woocommerce_order_status_completed', array( $this, 'woocommerce_order_status_completed' ) );
@@ -239,8 +245,6 @@ function init_pensopay_gateway() {
 			}
 
 			add_action( 'init', 'WC_PensoPay_Helper::load_i18n' );
-
-
 			add_filter( 'woocommerce_gateway_icon', array( $this, 'apply_gateway_icons' ), 2, 3 );
 
 			// Third party plugins
@@ -1142,12 +1146,23 @@ function init_pensopay_gateway() {
 
 			$transaction_id = $order->get_transaction_id();
 			if ( $transaction_id && $order->has_pensopay_payment() ) {
+				$state = null;
 				try {
 					$transaction = new WC_PensoPay_API_Payment();
 					$transaction->get( $transaction_id );
 					$transaction->cache_transaction();
 
-					$status = $transaction->get_current_type();
+					$state = $transaction->get_state();
+
+					try {
+						$status = $transaction->get_current_type();
+					} catch ( PensoPay_API_Exception $e ) {
+						if ( $state !== 'initial' ) {
+							throw new PensoPay_API_Exception( $e->getMessage() );
+						}
+
+						$status = $state;
+					}
 
 					echo "<p class=\"woocommerce-pensopay-{$status}\"><strong>" . __( 'Current payment state', 'woo-pensopay' ) . ": " . $status . "</strong></p>";
 
@@ -1182,10 +1197,14 @@ function init_pensopay_gateway() {
 					}
 				} catch ( PensoPay_API_Exception $e ) {
 					$e->write_to_logs();
-					$e->write_standard_warning();
+					if ( $state !== 'initial' ) {
+						$e->write_standard_warning();
+					}
 				} catch ( PensoPay_Exception $e ) {
 					$e->write_to_logs();
-					$e->write_standard_warning();
+					if ( $state !== 'initial' ) {
+						$e->write_standard_warning();
+					}
 				}
 			}
 
@@ -1216,12 +1235,22 @@ function init_pensopay_gateway() {
 			$order = new WC_PensoPay_Order( $post->ID );
 
 			$transaction_id = $order->get_transaction_id();
+			$state          = null;
 			if ( $transaction_id && $order->has_pensopay_payment() ) {
 				try {
 
 					$transaction = new WC_PensoPay_API_Subscription();
 					$transaction->get( $transaction_id );
-					$status = $transaction->get_current_type() . ' (' . __( 'subscription', 'woo-pensopay' ) . ')';
+					$status = null;
+					$state  = $transaction->get_state();
+					try {
+						$status = $transaction->get_current_type() . ' (' . __( 'subscription', 'woo-pensopay' ) . ')';
+					} catch ( PensoPay_API_Exception $e ) {
+						if ( 'initial' !== $state ) {
+							throw new PensoPay_API_Exception( $e->getMessage() );
+						}
+						$status = $state;
+					}
 
 					echo "<p class=\"woocommerce-pensopay-{$status}\"><strong>" . __( 'Current payment state', 'woo-pensopay' ) . ": " . $status . "</strong></p>";
 
@@ -1233,7 +1262,9 @@ function init_pensopay_gateway() {
 					}
 				} catch ( PensoPay_API_Exception $e ) {
 					$e->write_to_logs();
-					$e->write_standard_warning();
+					if ( 'initial' !== $state ) {
+						$e->write_standard_warning();
+					}
 				}
 			}
 		}
