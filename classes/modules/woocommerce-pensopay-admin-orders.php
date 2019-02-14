@@ -76,8 +76,8 @@ class WC_PensoPay_Admin_Orders extends WC_PensoPay_Module {
 
 		try {
 
-			$order->set_payment_method( WC_QP()->id );
-			$order->set_payment_method_title( WC_QP()->get_method_title() );
+			$order->set_payment_method( WC_PP()->id );
+			$order->set_payment_method_title( WC_PP()->get_method_title() );
 			$transaction_id = $order->get_transaction_id();
 
 			if ( $is_subscription ) {
@@ -89,8 +89,8 @@ class WC_PensoPay_Admin_Orders extends WC_PensoPay_Module {
 				$resource_order = new WC_PensoPay_Order( $order_parent_id );
 
 				// Set the appropriate payment method id and title on the parent order as well
-				$resource_order->set_payment_method( WC_QP()->id );
-				$resource_order->set_payment_method_title( WC_QP()->get_method_title() );
+				$resource_order->set_payment_method( WC_PP()->id );
+				$resource_order->set_payment_method_title( WC_PP()->get_method_title() );
 				$resource_order->save();
 			} else {
 				$resource = new WC_PensoPay_API_Payment();

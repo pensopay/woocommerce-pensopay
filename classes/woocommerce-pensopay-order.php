@@ -649,7 +649,7 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @return array
 	 */
 	public function get_custom_variables() {
-		$custom_vars_settings = (array) WC_QP()->s( 'pensopay_custom_variables' );
+		$custom_vars_settings = (array) WC_PP()->s( 'pensopay_custom_variables' );
 		$custom_vars          = array();
 
 		// Single: Order Email
@@ -783,8 +783,8 @@ class WC_PensoPay_Order extends WC_Order {
 	 */
 	public function get_autocapture_setting() {
 		// Get the autocapture settings
-		$autocapture_default = WC_QP()->s( 'pensopay_autocapture' );
-		$autocapture_virtual = WC_QP()->s( 'pensopay_autocapture_virtual' );
+		$autocapture_default = WC_PP()->s( 'pensopay_autocapture' );
+		$autocapture_virtual = WC_PP()->s( 'pensopay_autocapture_virtual' );
 
 		$has_virtual_products    = false;
 		$has_nonvirtual_products = false;
