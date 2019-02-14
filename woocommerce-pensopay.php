@@ -1463,6 +1463,33 @@ function init_pensopay_gateway() {
 		public function get_gateway_language() {
 			$language = apply_filters( 'woocommerce_pensopay_language', $this->s( 'pensopay_language' ) );
 
+			if ($language === 'automatic') {
+				$language = $this->detect_gateway_language($language);
+			}
+
+			return $language;
+		}
+
+		/**
+		 *
+		 * detect_gateway_language
+		 *
+		 * Attempts to detect the gateway language
+		 *
+		 * @access public
+		 * @return string
+		 */
+		public function detect_gateway_language($language) {
+			//WPML uses ICL_LANGUAGE_CODE to specify language
+			if( defined('ICL_LANGUAGE_CODE') ) {
+				return ICL_LANGUAGE_CODE;
+			}
+
+			//Polylang
+			if( function_exists('pll_current_language') ) {
+				return pll_current_language('slug');
+			}
+
 			return $language;
 		}
 

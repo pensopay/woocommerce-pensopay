@@ -106,11 +106,13 @@ class WC_PensoPay_Settings {
                             'de' =>'German', 
                             'en' =>'English', 
                             'fr' =>'French', 
-                            'it' =>'Italian', 
+                            'it' =>'Italian',
+                            'es' => 'Spanish', 
                             'no' =>'Norwegian', 
                             'nl' =>'Dutch', 
                             'pl' =>'Polish', 
-                            'se' =>'Swedish'
+                            'se' =>'Swedish',
+                            'automatic' => 'Detect Automatically'
                         )
 					),
 					'pensopay_currency' => array(
