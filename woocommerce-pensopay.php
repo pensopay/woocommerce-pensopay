@@ -4,7 +4,7 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 4.10.0
+ * Version: 4.10.1
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Author URI: https://pensopay.com/
