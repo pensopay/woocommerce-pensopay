@@ -7,7 +7,7 @@
  */
 function woocommerce_pensopay_add_admin_notice( $message, $notice_type = 'success' ) {
 
-	$notices = get_transient( '_wcqp_admin_notices' );
+	$notices = get_transient( '_wcpp_admin_notices' );
 
 	if ( false === $notices ) {
 		$notices = array();
@@ -15,7 +15,7 @@ function woocommerce_pensopay_add_admin_notice( $message, $notice_type = 'succes
 
 	$notices[ $notice_type ][] = $message;
 
-	set_transient( '_wcqp_admin_notices', $notices, 60 * 60 );
+	set_transient( '_wcpp_admin_notices', $notices, 60 * 60 );
 }
 
 /**
@@ -24,7 +24,7 @@ function woocommerce_pensopay_add_admin_notice( $message, $notice_type = 'succes
  * @since 2.0
  */
 function woocommere_pensopay_clear_admin_notices() {
-	delete_transient( '_wcqp_admin_notices' );
+	delete_transient( '_wcpp_admin_notices' );
 }
 
 /**
@@ -36,7 +36,7 @@ function woocommere_pensopay_clear_admin_notices() {
  */
 function woocommere_pensopay_display_admin_notices( $clear = true ) {
 
-	$notices = get_transient( '_wcqp_admin_notices' );
+	$notices = get_transient( '_wcpp_admin_notices' );
 
 	if ( false !== $notices && ! empty( $notices ) ) {
 

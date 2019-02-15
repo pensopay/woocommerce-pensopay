@@ -26,7 +26,7 @@ class WC_PensoPay_Emails extends WC_PensoPay_Module {
 	 * @return mixed
 	 */
 	public function emails( $emails ) {
-		require_once WCQP_PATH . 'classes/emails/woocommerce-pensopay-payment-link-email.php';
+		require_once WCPP_PATH . 'classes/emails/woocommerce-pensopay-payment-link-email.php';
 
 		$emails['WC_PensoPay_Payment_Link_Email'] = new WC_PensoPay_Payment_Link_Email();
 

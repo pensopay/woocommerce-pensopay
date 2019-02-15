@@ -2,7 +2,7 @@
 
 class WC_PensoPay_Payment_Link_Email extends WC_Email {
 
-	private $wcqp_template_path;
+	private $wcpp_template_path;
 
 	/**
 	 * Constructor.
@@ -21,7 +21,7 @@ class WC_PensoPay_Payment_Link_Email extends WC_Email {
 			'{payment_link}' => '',
 		);
 
-		$this->wcqp_template_path = WCQP_PATH . 'templates/woocommerce/';
+		$this->wcpp_template_path = WCPP_PATH . 'templates/woocommerce/';
 		// Triggers for this email.
 
 		// Call parent constructor.
@@ -64,7 +64,7 @@ class WC_PensoPay_Payment_Link_Email extends WC_Email {
 			'plain_text'    => false,
 			'email'         => $this,
 			'payment_link'  => $this->placeholders['{payment_link}'],
-		), '', $this->wcqp_template_path );
+		), '', $this->wcpp_template_path );
 	}
 
 	/**
@@ -81,7 +81,7 @@ class WC_PensoPay_Payment_Link_Email extends WC_Email {
 			'plain_text'    => true,
 			'email'         => $this,
 			'payment_link'  => $this->placeholders['{payment_link}'],
-		), '', $this->wcqp_template_path );
+		), '', $this->wcpp_template_path );
 	}
 
 	/**

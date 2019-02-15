@@ -27,6 +27,10 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 4.10.1 =
+* Fix bug causing white screen of death
+* Add option to automatically detect language
+
 = 4.10.0 =
 * Add public admin notices infrastructure
 * Add possibility to manually create payment links for orders and subscriptions as WooCommerce admin.

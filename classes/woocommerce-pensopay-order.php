@@ -633,7 +633,7 @@ class WC_PensoPay_Order extends WC_Order {
 	public function get_transaction_shopsystem_params() {
 		$params = array(
 			'name'    => 'WooCommerce',
-			'version' => WCQP_VERSION,
+			'version' => WCPP_VERSION,
 		);
 
 		return apply_filters( 'woocommerce_pensopay_transaction_params_shopsystem', $params, $this );
