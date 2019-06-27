@@ -457,44 +457,22 @@ class WC_PensoPay_Order extends WC_Order {
 	 */
 	private function get_transaction_basket_params_line_helper( $line_item ) {
 		// Before WC 3.0
-		if ( version_compare( WC_VERSION, '3.0', '<' ) ) {
-			// Get expanded meta data for the item
-			$item_meta = $this->expand_item_meta( $line_item );
-			// Get tax rate
-			$product = wc_get_product( $line_item['variation_id'] ? $line_item['variation_id'] : $line_item['product_id'] );
-			// Get tax rates
-			$taxes = WC_Tax::get_rates( $product->get_tax_class() );
-			//Get rates of the product
-			$rates = array_shift( $taxes );
-			//Take only the item rate and round it.
-			$vat_rate = round( array_shift( $rates ) );
+		/**
+		 * @var WC_Order_Item_Product $line_item
+		 */
+		$taxes = WC_Tax::get_rates( $line_item->get_tax_class() );
+		//Get rates of the product
+		$rates = array_shift( $taxes );
+		//Take only the item rate and round it.
+		$vat_rate = ! empty( $rates ) ? round( array_shift( $rates ) ) : 0;
 
-			$data = array(
-				'qty'        => $item_meta['qty'],
-				'item_no'    => $item_meta['product_id'],
-				'item_name'  => $item_meta['name'],
-				'item_price' => $product->get_price_including_tax(),
-				'vat_rate'   => $vat_rate,
-			);
-		} // After WC 3.0
-		else {
-			/**
-			 * @var WC_Order_Item_Product $line_item
-			 */
-			$taxes = WC_Tax::get_rates( $line_item->get_tax_class() );
-			//Get rates of the product
-			$rates = array_shift( $taxes );
-			//Take only the item rate and round it.
-			$vat_rate = ! empty( $rates ) ? round( array_shift( $rates ) ) : 0;
-
-			$data = array(
-				'qty'        => $line_item->get_quantity(),
-				'item_no'    => $line_item->get_product_id(),
-				'item_name'  => $line_item->get_name(),
-				'item_price' => wc_get_price_including_tax( $line_item->get_product() ),
-				'vat_rate'   => $vat_rate,
-			);
-		}
+		$data = array(
+			'qty'        => $line_item->get_quantity(),
+			'item_no'    => $line_item->get_product_id(),
+			'item_name'  => $line_item->get_name(),
+			'item_price' => wc_get_price_including_tax( $line_item->get_product() ),
+			'vat_rate'   => $vat_rate,
+		);
 
 		return array(
 			'qty'        => $data['qty'],
@@ -506,21 +484,21 @@ class WC_PensoPay_Order extends WC_Order {
 	}
 
 	public function get_transaction_shipping_address_params() {
-		$shipping_first_name = version_compare( WC_VERSION, '3.0', '<' ) ? $this->shipping_first_name : $this->get_shipping_first_name();
-		$shipping_last_name  = version_compare( WC_VERSION, '3.0', '<' ) ? $this->shipping_last_name : $this->get_shipping_last_name();
+		$shipping_first_name = $this->get_shipping_first_name();
+		$shipping_last_name  = $this->get_shipping_last_name();
 
 		$params = array(
 			'name'            => $shipping_first_name . ' ' . $shipping_last_name,
 			'street'          => $this->get_shipping_street_name(),
 			'house_number'    => $this->get_shipping_house_number(),
 			'house_extension' => $this->get_shipping_house_extension(),
-			'city'            => version_compare( WC_VERSION, '3.0', '<' ) ? $this->shipping_city : $this->get_shipping_city(),
-			'region'          => version_compare( WC_VERSION, '3.0', '<' ) ? $this->shipping_state : $this->get_shipping_state(),
-			'zip_code'        => version_compare( WC_VERSION, '3.0', '<' ) ? $this->shipping_postcode : $this->get_shipping_postcode(),
-			'country_code'    => WC_PensoPay_Countries::getAlpha3FromAlpha2( version_compare( WC_VERSION, '3.0', '<' ) ? $this->shipping_country : $this->get_shipping_country() ),
-			'phone_number'    => version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_phone : $this->get_billing_phone(),
-			'mobile_number'   => version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_phone : $this->get_billing_phone(),
-			'email'           => version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_email : $this->get_billing_email(),
+			'city'            => $this->get_shipping_city(),
+			'region'          => $this->get_shipping_state(),
+			'zip_code'        => $this->get_shipping_postcode(),
+			'country_code'    => WC_PensoPay_Countries::getAlpha3FromAlpha2( $this->get_shipping_country() ),
+			'phone_number'    => $this->get_billing_phone(),
+			'mobile_number'   => $this->get_billing_phone(),
+			'email'           => $this->get_billing_email(),
 		);
 
 		return apply_filters( 'woocommerce_pensopay_transaction_params_shipping', $params );
@@ -530,45 +508,39 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @return mixed
 	 */
 	public function get_shipping_street_name() {
-		$address = version_compare( WC_VERSION, '3.0', '<' ) ? $this->shipping_address_1 : $this->get_shipping_address_1();
-
-		return WC_PensoPay_Address::get_street_name( $address );
+		return WC_PensoPay_Address::get_street_name( $this->get_shipping_address_1() );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_shipping_house_number() {
-		$address = version_compare( WC_VERSION, '3.0', '<' ) ? $this->shipping_address_1 : $this->get_shipping_address_1();
-
-		return WC_PensoPay_Address::get_house_number( $address );
+		return WC_PensoPay_Address::get_house_number( $this->get_shipping_address_1() );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_shipping_house_extension() {
-		$address = version_compare( WC_VERSION, '3.0', '<' ) ? $this->shipping_address_1 : $this->get_shipping_address_1();
-
-		return WC_PensoPay_Address::get_house_extension( $address );
+		return WC_PensoPay_Address::get_house_extension( $this->get_shipping_address_1() );
 	}
 
 	public function get_transaction_invoice_address_params() {
-		$billing_first_name = version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_first_name : $this->get_billing_first_name();
-		$billing_last_name  = version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_last_name : $this->get_billing_last_name();
+		$billing_first_name = $this->get_billing_first_name();
+		$billing_last_name  = $this->get_billing_last_name();
 
 		$params = array(
 			'name'            => $billing_first_name . ' ' . $billing_last_name,
 			'street'          => $this->get_billing_street_name(),
 			'house_number'    => $this->get_billing_house_number(),
 			'house_extension' => $this->get_billing_house_extension(),
-			'city'            => version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_city : $this->get_billing_city(),
-			'region'          => version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_state : $this->get_billing_state(),
-			'zip_code'        => version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_postcode : $this->get_billing_postcode(),
-			'country_code'    => WC_PensoPay_Countries::getAlpha3FromAlpha2( version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_country : $this->get_billing_country() ),
-			'phone_number'    => version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_phone : $this->get_billing_phone(),
-			'mobile_number'   => version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_phone : $this->get_billing_phone(),
-			'email'           => version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_email : $this->get_billing_email(),
+			'city'            => $this->get_billing_city(),
+			'region'          => $this->get_billing_state(),
+			'zip_code'        => $this->get_billing_postcode(),
+			'country_code'    => WC_PensoPay_Countries::getAlpha3FromAlpha2( $this->get_billing_country() ),
+			'phone_number'    => $this->get_billing_phone(),
+			'mobile_number'   => $this->get_billing_phone(),
+			'email'           => $this->get_billing_email(),
 		);
 
 		return apply_filters( 'woocommerce_pensopay_transaction_params_invoice', $params );
@@ -578,27 +550,22 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @return mixed
 	 */
 	public function get_billing_street_name() {
-		$address = version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_address_1 : $this->get_billing_address_1();
-
-		return WC_PensoPay_Address::get_street_name( $address );
+		return WC_PensoPay_Address::get_street_name( $this->get_billing_address_1() );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_billing_house_number() {
-		$address = version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_address_1 : $this->get_billing_address_1();
 
-		return WC_PensoPay_Address::get_house_number( $address );
+		return WC_PensoPay_Address::get_house_number( $this->get_billing_address_1() );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_billing_house_extension() {
-		$address = version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_address_1 : $this->get_billing_address_1();
-
-		return WC_PensoPay_Address::get_house_extension( $address );
+		return WC_PensoPay_Address::get_house_extension( $this->get_billing_address_1() );
 	}
 
 	/**
@@ -608,7 +575,7 @@ class WC_PensoPay_Order extends WC_Order {
 	 */
 	private function get_transaction_shipping_params() {
 		$shipping_tax      = $this->get_shipping_tax();
-		$shipping_total    = version_compare( WC_VERSION, '3.0', '<' ) ? $this->get_total_shipping() : $this->get_shipping_total();
+		$shipping_total    = $this->get_shipping_total();
 		$shipping_incl_vat = $shipping_total;
 		$shipping_vat_rate = 0;
 
@@ -654,17 +621,17 @@ class WC_PensoPay_Order extends WC_Order {
 
 		// Single: Order Email
 		if ( in_array( 'customer_email', $custom_vars_settings ) ) {
-			$custom_vars[ __( 'Customer Email', 'woo-pensopay' ) ] = version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_email : $this->get_billing_email();
+			$custom_vars[ __( 'Customer Email', 'woo-pensopay' ) ] = $this->get_billing_email();
 		}
 
 		// Single: Order Phone
 		if ( in_array( 'customer_phone', $custom_vars_settings ) ) {
-			$custom_vars[ __( 'Customer Phone', 'woo-pensopay' ) ] = version_compare( WC_VERSION, '3.0', '<' ) ? $this->billing_phone : $this->get_billing_phone();
+			$custom_vars[ __( 'Customer Phone', 'woo-pensopay' ) ] = $this->get_billing_phone();
 		}
 
 		// Single: Browser User Agent
 		if ( in_array( 'browser_useragent', $custom_vars_settings ) ) {
-			$custom_vars[ __( 'User Agent', 'woo-pensopay' ) ] = version_compare( WC_VERSION, '3.0', '<' ) ? $this->customer_user_agent : $this->get_customer_user_agent();
+			$custom_vars[ __( 'User Agent', 'woo-pensopay' ) ] = $this->get_customer_user_agent();
 		}
 
 		// Single: Shipping Method
@@ -688,6 +655,8 @@ class WC_PensoPay_Order extends WC_Order {
 		if ( $this->is_request_to_change_payment() ) {
 			$custom_vars['change_payment'] = true;
 		}
+
+		$custom_vars['payment_method'] = $this->get_payment_method();
 
 		$custom_vars = apply_filters( 'woocommerce_pensopay_transaction_params_variables', $custom_vars );
 
@@ -837,12 +806,15 @@ class WC_PensoPay_Order extends WC_Order {
 		$order_id = $this->get_id();
 
 		return in_array( get_post_meta( $order_id, '_payment_method', true ), array(
+			'bitcoin',
 			'pensopay',
 			'mobilepay',
+			'mobilepay_checkout',
 			'viabill',
 			'sofort',
-			'swipp',
 			'klarna',
+			'resurs',
+			'vipps',
 		) );
 	}
 

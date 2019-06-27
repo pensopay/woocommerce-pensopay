@@ -2,7 +2,7 @@
 Contributors: PensoPay
 Tags: gateway, woo commerce, pensopay, gateway, integration, woocommerce, woocommerce pensopay, payment, payment gateway, psp
 Requires at least: 4.0.0
-Tested up to: 4.9.6
+Tested up to: 5.2.1
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -25,6 +25,37 @@ General:
 1. PHP: >= 5.3
 2. WooCommerce >= 3.0
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
+
+== Changelog ==
+= 5.0.0 =
+* Feature: Add Mobilepay Checkout support
+* Feature: Add Vipps
+* Feature: Add replaceable template file through woocommerce-pensopay/checkout/mobilepay-checkout.php
+* Feature: Add Resurs
+* Feature: Add Bitcoin
+* Tweak: Add capture callback handler for Sofort to properly handle transactions not sending authorized callbacks.
+* Tweak: Add filter: woocommerce_pensopay_callback_url
+* Tweak: Add action: woocommerce_pensopay_after_checkout_validation
+* Tweak: Add filter: woocommerce_pensopay_get_setting_{setting}
+* Tweak: Add action: woocommerce_pensopay_accepted_callback_before_processing
+* Tweak: Add action: woocommerce_pensopay_accepted_callback_before_processing_{operation}
+* Tweak: Add action: woocommerce_pensopay_save_automatic_addresses_before
+* Tweak: Add action: woocommerce_pensopay_save_automatic_addresses_after
+* Tweak: Add filter: woocommerce_pensopay_automatic_billing_address
+* Tweak: Add filter: woocommerce_pensopay_automatic_shipping_address
+* Tweak: Add filter: woocommerce_pensopay_automatic_formatted_address
+* Tweak: Add filter: woocommerce_pensopay_mobilepay_checkout_checkout_headline
+* Tweak: Add filter: woocommerce_pensopay_mobilepay_checkout_checkout_text
+* Tweak: Add filter: woocommerce_pensopay_mobilepay_checkout_button_theme
+* Tweak: Add filter: woocommerce_pensopay_mobilepay_checkout_button_size
+* Tweak: Updates the MobilePay logo
+* Tweak: WC_PensoPay_Helper::get_callback_url now relies on home_url instead of site_url to ensure better compatibility with WPML.
+* Fix: WC_PensoPay_Address::get_street_name and WC_PensoPay_Address:get_house_extension throwning a warning if no house number is found on an address.
+* Remove: Remove non-CRUD data fetching for WC versions below 3.0.
+* Add: Bitcoin icon
+* Add: Swish icon
+* Add: Trustly icon
+* Add: Paysafecard icon
 
 == Changelog ==
 = 4.10.1 =
@@ -568,5 +599,5 @@ General:
 *  Bugfix: Corrected a few unchecked variables that caused php notices in error logs.
 
 == Upgrade Notice ==
-= 4.6.0 =
-4.6.0 is a major update and requires data migration. We strongly recommend saving a backup of your database before upgrading this plugin!
+= 5.0.0 =
+5.0.0 removes support for WC versions below 3.0. Make sure to perform tests of the plugin on a test/staging environment before upgrading.

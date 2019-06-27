@@ -53,7 +53,7 @@ class WC_PensoPay_Instance extends WC_PensoPay {
             'tab' => 'checkout',
             'section' => 'wc_pensopay'
         );
-        echo "<h3>PensoPay - {$this->id}, v" . WCPP_VERSION . "</h3>";
+        echo "<h3>PensoPay - {$this->method_title}, v" . WCPP_VERSION . "</h3>";
         echo "<p>" . sprintf(__('Allows you to receive payments via PensoPay %s.', 'woo-pensopay'), $this->id) . "</p>";
         echo "<p>" . sprintf(__('This module has it\'s main configuration inside the \'PensoPay\' tab.', 'woo-pensopay'), 's') . "</p>";
         echo "<p>" . sprintf(__('Click <a href="%s">here</a> to access the main configuration.', 'woo-pensopay'), add_query_arg( $main_settings_args, admin_url('admin.php'))) . "</p>";

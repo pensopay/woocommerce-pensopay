@@ -4,20 +4,21 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 4.10.1
+ * Version: 5.0.0
  * Author: PensoPay
  * Text Domain: woo-pensopay
+ * Domain Path: /languages/
  * Author URI: https://pensopay.com/
  * Wiki: https://pensopay.zendesk.com/hc/da
- * WC requires at least: 3.0
- * WC tested up to: 3.5.1
-*/
+ * WC requires at least: 3.0.0
+ * WC tested up to: 3.6.4
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '4.10.1' );
+define( 'WCPP_VERSION', '5.0.0' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -71,7 +72,8 @@ function init_pensopay_gateway() {
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-subscription.php';
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-countries.php';
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-views.php';
-
+	require_once WCPP_PATH . 'classes/woocommerce-pensopay-callbacks.php';
+	
 
 	// Main class
 	class WC_PensoPay extends WC_Payment_Gateway {
@@ -158,19 +160,30 @@ function init_pensopay_gateway() {
 		 * Loads in extra instances of as separate gateways
 		 *
 		 * @access public static
-		 * @return void
+		 * @return array
 		 */
 		public static function filter_load_instances( $methods ) {
 			require_once WCPP_PATH . 'classes/instances/instance.php';
-			require_once WCPP_PATH . 'classes/instances/mobilepay.php';
-			require_once WCPP_PATH . 'classes/instances/viabill.php';
-			require_once WCPP_PATH . 'classes/instances/klarna.php';
-			require_once WCPP_PATH . 'classes/instances/sofort.php';
 
-			$methods[] = 'WC_PensoPay_MobilePay';
-			$methods[] = 'WC_PensoPay_ViaBill';
-			$methods[] = 'WC_PensoPay_Klarna';
-			$methods[] = 'WC_PensoPay_Sofort';
+			$instances = array(
+				'bitcoin'             => 'WC_PensoPay_Bitcoin',
+				'klarna'              => 'WC_PensoPay_Klarna',
+				'mobilepay'           => 'WC_PensoPay_MobilePay',
+				'mobilepay-checkout'  => 'WC_PensoPay_MobilePay_Checkout',
+				'resurs'              => 'WC_PensoPay_Resurs',
+				'sofort'              => 'WC_PensoPay_Sofort',
+				'viabill'             => 'WC_PensoPay_ViaBill',
+				'vipps'               => 'WC_PensoPay_Vipps',
+			);
+
+			foreach ( $instances as $file_name => $class_name ) {
+				$file_path = WCPP_PATH . 'classes/instances/' . $file_name . '.php';
+
+				if ( file_exists( $file_path ) ) {
+					require_once $file_path;
+					$methods[] = $class_name;
+				}
+			}
 
 			return $methods;
 		}
@@ -191,18 +204,32 @@ function init_pensopay_gateway() {
 			add_action( 'woocommerce_api_wc_' . $this->id, array( $this, 'callback_handler' ) );
 			add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
 			add_action( 'woocommerce_order_status_completed', array( $this, 'woocommerce_order_status_completed' ) );
-			add_action( 'in_plugin_update_message-woocommerce-pensopay/woocommerce-pensopay.php', array( __CLASS__, 'in_plugin_update_message' ) );
+			add_action( 'in_plugin_update_message-woocommerce-pensopay/woocommerce-pensopay.php', array(
+				__CLASS__,
+				'in_plugin_update_message'
+			) );
 
 			// WooCommerce Subscriptions hooks/filters
-			add_action( 'woocommerce_scheduled_subscription_payment_' . $this->id, array( $this, 'scheduled_subscription_payment' ), 10, 2 );
-			add_action( 'woocommerce_subscription_cancelled_' . $this->id, array( $this, 'subscription_cancellation' ) );
+			add_action( 'woocommerce_scheduled_subscription_payment_' . $this->id, array(
+				$this,
+				'scheduled_subscription_payment'
+			), 10, 2 );
+			add_action( 'woocommerce_subscription_cancelled_' . $this->id, array(
+				$this,
+				'subscription_cancellation'
+			) );
 			add_action( 'woocommerce_subscription_payment_method_updated_to_' . $this->id, array(
 				$this,
 				'on_subscription_payment_method_updated_to_pensopay',
 			), 10, 2 );
-			add_filter( 'wcs_renewal_order_meta_query', array( $this, 'remove_failed_pensopay_attempts_meta_query' ), 10 );
+			add_filter( 'wcs_renewal_order_meta_query', array(
+				$this, 'remove_failed_pensopay_attempts_meta_query'
+			), 10 );
 			add_filter( 'wcs_renewal_order_meta_query', array( $this, 'remove_legacy_transaction_id_meta_query' ), 10 );
-			add_filter( 'woocommerce_subscription_payment_meta', array( $this, 'woocommerce_subscription_payment_meta' ), 10, 2 );
+			add_filter( 'woocommerce_subscription_payment_meta', array(
+				$this,
+				'woocommerce_subscription_payment_meta'
+			), 10, 2 );
 			add_action( 'woocommerce_subscription_validate_payment_meta_' . $this->id, array(
 				$this,
 				'woocommerce_subscription_validate_payment_meta',
@@ -213,15 +240,25 @@ function init_pensopay_gateway() {
 			add_action( 'load-edit.php', array( $this, 'handle_bulk_actions' ) );
 
 			// WooCommerce Pre-Orders
-			add_action( 'wc_pre_orders_process_pre_order_completion_payment_' . $this->id, array( $this, 'process_pre_order_payments' ) );
+			add_action( 'wc_pre_orders_process_pre_order_completion_payment_' . $this->id, array(
+				$this,
+				'process_pre_order_payments'
+			) );
 
 			if ( is_admin() ) {
 				add_action( 'admin_menu', 'WC_PensoPay_Helper::enqueue_stylesheet' );
 				add_action( 'admin_menu', 'WC_PensoPay_Helper::enqueue_javascript_backend' );
-				add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-				add_action( 'wp_ajax_pensopay_manual_transaction_actions', array( $this, 'ajax_pensopay_manual_transaction_actions' ) );
+				add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
+					$this,
+					'process_admin_options'
+				) );
+				add_action( 'wp_ajax_pensopay_manual_transaction_actions', array(
+					$this,
+					'ajax_pensopay_manual_transaction_actions'
+				) );
 				add_action( 'wp_ajax_pensopay_empty_logs', array( $this, 'ajax_empty_logs' ) );
 				add_action( 'wp_ajax_pensopay_ping_api', array( $this, 'ajax_ping_api' ) );
+				add_action( 'wp_ajax_pensopay_fetch_private_key', array( $this, 'ajax_fetch_private_key' ) );
 				add_action( 'wp_ajax_pensopay_run_data_upgrader', 'WC_PensoPay_Install::ajax_run_upgrader' );
 				add_action( 'in_plugin_update_message-woocommerce-pensopay/woocommerce-pensopay.php', array(
 					__CLASS__,
@@ -235,10 +272,19 @@ function init_pensopay_gateway() {
 				add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 
 				if ( WC_PensoPay_Helper::option_is_enabled( $this->s( 'pensopay_orders_transaction_info', 'yes' ) ) ) {
-					add_filter( 'manage_edit-shop_order_columns', array( $this, 'filter_shop_order_posts_columns' ), 10, 1 );
+					add_filter( 'manage_edit-shop_order_columns', array(
+						$this,
+						'filter_shop_order_posts_columns'
+					), 10, 1 );
 					add_filter( 'manage_shop_order_posts_custom_column', array( $this, 'apply_custom_order_data' ) );
-					add_filter( 'manage_shop_subscription_posts_custom_column', array( $this, 'apply_custom_order_data' ) );
-					add_action( 'woocommerce_pensopay_accepted_callback', array( $this, 'callback_update_transaction_cache' ), 10, 2 );
+					add_filter( 'manage_shop_subscription_posts_custom_column', array(
+						$this,
+						'apply_custom_order_data'
+					) );
+					add_action( 'woocommerce_pensopay_accepted_callback', array(
+						$this,
+						'callback_update_transaction_cache'
+					), 10, 2 );
 				}
 
 				add_action( 'admin_notices', array( $this, 'admin_notices' ) );
@@ -269,7 +315,7 @@ function init_pensopay_gateway() {
 				return $this->settings[ $key ];
 			}
 
-			return ! is_null( $default ) ? $default : '';
+			return apply_filters( 'woocommerce_pensopay_get_setting_' . $key, ! is_null( $default ) ? $default : '', $this );
 		}
 
 		/**
@@ -388,6 +434,13 @@ function init_pensopay_gateway() {
 			}
 			echo json_encode( array( 'status' => $status ) );
 			exit;
+		}
+
+		/**
+		 * Attempts to fetch the merchant's private key through the API
+		 */
+		public function ajax_fetch_private_key() {
+			//$private_key =
 		}
 
 		/**
@@ -584,9 +637,9 @@ function init_pensopay_gateway() {
 		 * Process refunds
 		 * WooCommerce 2.2 or later
 		 *
-		 * @param  int    $order_id
-		 * @param  float  $amount
-		 * @param  string $reason
+		 * @param int $order_id
+		 * @param float $amount
+		 * @param string $reason
 		 *
 		 * @return bool|WP_Error
 		 */
@@ -755,9 +808,9 @@ function init_pensopay_gateway() {
 		/**
 		 * Declare gateway's meta data requirements in case of manual payment gateway changes performed by admins.
 		 *
-		 * @param array            $payment_meta
+		 * @param array $payment_meta
 		 *
-		 * @param  WC_Subscription $subscription
+		 * @param WC_Subscription $subscription
 		 *
 		 * @return array
 		 */
@@ -779,7 +832,7 @@ function init_pensopay_gateway() {
 		 * Check if the transaction ID actually exists as a subscription transaction in the manager.
 		 * If not, an exception will be thrown resulting in a validation error.
 		 *
-		 * @param array           $payment_meta
+		 * @param array $payment_meta
 		 *
 		 * @param WC_Subscription $subscription
 		 *
@@ -886,10 +939,6 @@ function init_pensopay_gateway() {
 			// Get callback body
 			$request_body = file_get_contents( "php://input" );
 
-			if ( empty( $request_body ) ) {
-				return;
-			}
-
 			// Decode the body into JSON
 			$json = json_decode( $request_body );
 
@@ -908,7 +957,9 @@ function init_pensopay_gateway() {
 
 			if ( $payment->is_authorized_callback( $request_body ) ) {
 				// Instantiate order object
-				$order = new WC_PensoPay_Order( $order_number );
+				$order = wc_get_order( $order_number );
+
+				$order = new WC_PensoPay_Order( $order->get_id() );
 
 				$order_id = $order->get_id();
 
@@ -917,6 +968,9 @@ function init_pensopay_gateway() {
 
 				// Is the transaction accepted and approved by QP / Acquirer?
 				if ( $json->accepted ) {
+
+					do_action( 'woocommerce_pensopay_accepted_callback_before_processing', $order, $json );
+					do_action( 'woocommerce_pensopay_accepted_callback_before_processing_status_' . $transaction->type, $order, $json );
 
 					// Perform action depending on the operation status type
 					try {
@@ -939,75 +993,16 @@ function init_pensopay_gateway() {
 								break;
 
 							case 'authorize' :
-								// Set the transaction order ID
-								$order->set_transaction_order_id( $json->order_id );
-
-								// Remove payment link
-								$order->delete_payment_link();
-
-								// Remove payment ID, now we have the transaction ID
-								$order->delete_payment_id();
+								WC_PensoPay_Callbacks::authorized( $order, $json );
 
 								// Subscription authorization
-								if ( ! empty( $subscription_id ) ) {
+								if ( ! empty( $subscription_id ) && isset( $subscription ) ) {
 									// Write log
-									$subscription->note( sprintf( __( 'Subscription authorized. Transaction ID: %s', 'woo-pensopay' ), $json->id ) );
-									// Activate the subscription
-
-									// Check if there is an initial payment on the subscription.
-									// We are saving the total before completing the original payment.
-									// This gives us the correct payment for the auto initial payment on subscriptions.
-									$subscription_initial_payment = $order->get_total();
-
-									// Mark the payment as complete
-									//$subscription->set_transaction_id($json->id);
-									// Temporarily save the transaction ID on a custom meta row to avoid empty values in 3.0.
-									update_post_meta( $subscription_id, '_pensopay_transaction_id', $json->id );
-									//$subscription->payment_complete($json->id);
-									$subscription->set_transaction_order_id( $json->order_id );
-
-									// Only make an instant payment if there is an initial payment
-									if ( $subscription_initial_payment > 0 ) {
-										// Check if this is an order containing a subscription
-										if ( ! WC_PensoPay_Subscription::is_subscription( $order_id ) && $order->contains_subscription() ) {
-											// Process a recurring payment.
-											$this->process_recurring_payment( new WC_PensoPay_API_Subscription(), $json->id, $subscription_initial_payment, $order );
-										}
-									}
-									// If there is no initial payment, we will mark the order as complete.
-									// This is usually happening if a subscription has a free trial.
-									else {
-										// Only complete the order payment if we are not changing payment method.
-										// This is to avoid the subscription going into a 'processing' limbo.
-										if ( empty( $json->variables->change_payment ) ) {
-											$order->payment_complete();
-										}
-									}
+									WC_PensoPay_Callbacks::subscription_authorized( $subscription, $order, $json );
 
 								} // Regular payment authorization
 								else {
-									// Add order transaction fee if available
-									if ( ! empty( $json->fee ) ) {
-										$order->add_transaction_fee( $json->fee );
-									}
-
-									// Check for pre-order
-									if ( WC_PensoPay_Helper::has_preorder_plugin() && WC_Pre_Orders_Order::order_contains_pre_order( $order ) && WC_Pre_Orders_Order::order_requires_payment_tokenization( $order_id ) ) {
-										try {
-											// Set transaction ID without marking the payment as complete
-											$order->set_transaction_id( $json->id );
-										} catch ( WC_Data_Exception $e ) {
-											$this->log->add( __( 'An error occured while setting transaction id: %d on order %s. %s', $json->id, $order_id, $e->getMessage() ) );
-										}
-										WC_Pre_Orders_Order::mark_order_as_pre_ordered( $order );
-									} // Regular product
-									else {
-										// Register the payment on the order
-										$order->payment_complete( $json->id );
-									}
-
-									// Write a note to the order history
-									$order->note( sprintf( __( 'Payment authorized. Transaction ID: %s', 'woo-pensopay' ), $json->id ) );
+									WC_PensoPay_Callbacks::payment_authorized( $order, $json );
 								}
 								break;
 						}
@@ -1278,12 +1273,12 @@ function init_pensopay_gateway() {
 		 * @access public
 		 *
 		 * @param WC_Order $order
-		 * @param boolean  $sent_to_admin
+		 * @param boolean $sent_to_admin
 		 *
 		 * @return bool /string/void
 		 */
 		public function email_instructions( $order, $sent_to_admin ) {
-			$payment_method = version_compare( WC_VERSION, '3.0', '<' ) ? $order->payment_method : $order->get_payment_method();
+			$payment_method = $order->get_payment_method();
 
 			if ( $sent_to_admin || ( $order->get_status() !== 'processing' && $order->get_status() !== 'completed' ) || $payment_method !== 'pensopay' ) {
 				return;
@@ -1440,7 +1435,7 @@ function init_pensopay_gateway() {
 		 */
 		public function get_gateway_currency( $order ) {
 			if ( WC_PensoPay_Helper::option_is_enabled( $this->s( 'pensopay_currency_auto' ) ) ) {
-				$currency = version_compare( WC_VERSION, '3.0', '<' ) ? $order->get_order_currency() : $order->get_currency();
+				$currency = $order->get_currency();
 			} else {
 				$currency = $this->s( 'pensopay_currency' );
 			}
@@ -1547,7 +1542,7 @@ function init_pensopay_gateway() {
 			if ( ! empty( $order_ids ) ) {
 				foreach ( $order_ids as $order_id ) {
 					$order          = new WC_PensoPay_Order( $order_id );
-					$payment_method = version_compare( WC_VERSION, '3.0', '<' ) ? $order->payment_method : $order->get_payment_method();
+					$payment_method = $order->get_payment_method();
 					if ( WC_PensoPay_Subscription::is_renewal( $order ) && $order->needs_payment() && $payment_method === $this->id ) {
 						$this->scheduled_subscription_payment( $order->get_total(), $order );
 					}
@@ -1587,7 +1582,7 @@ function init_pensopay_gateway() {
 		 *
 		 * Parse update notice from readme file.
 		 *
-		 * @param  string $content
+		 * @param string $content
 		 *
 		 * @return string
 		 */

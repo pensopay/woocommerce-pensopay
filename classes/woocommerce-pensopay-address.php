@@ -19,7 +19,10 @@ class WC_PensoPay_Address {
 	public static function get_street_name( $address ) {
 		$house_number = self::get_house_number( $address );
 
-		list( $street_name, $extension ) = explode( $house_number, $address, 2 );
+		$street_name = $address;
+		if ( ! empty($house_number)) {
+			list( $street_name, $extension ) = explode( $house_number, $address, 2 );
+		}
 
 		return trim( $street_name );
 	}
@@ -42,8 +45,11 @@ class WC_PensoPay_Address {
 	 */
 	public static function get_house_extension( $address ) {
 		$house_number = self::get_house_number( $address );
+		$extension    = null;
 
-		list( $street_name, $extension ) = explode( $house_number, $address, 2 );
+		if ( ! empty( $house_number ) ) {
+			list( $street_name, $extension ) = explode( $house_number, $address, 2 );
+		}
 
 		return trim( trim( $extension, "," ) );
 	}

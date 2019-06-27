@@ -20,13 +20,6 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	protected $loaded_from_cache = false;
 
 	/**
-	 * @return boolean
-	 */
-	public static function is_transaction_caching_enabled() {
-		return apply_filters( 'woocommerce_pensopay_transaction_cache_enabled', true );
-	}
-
-	/**
 	 * get_current_type function.
 	 *
 	 * Returns the current payment type
@@ -154,7 +147,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 			'payment_methods'              => apply_filters( 'woocommerce_pensopay_cardtypelock_' . $payment_method, $cardtypelock, $payment_method ),
 			'branding_id'                  => WC_PP()->s( 'pensopay_branding_id' ),
 			'google_analytics_tracking_id' => WC_PP()->s( 'pensopay_google_analytics_tracking_id' ),
-			'customer_email'               => version_compare( WC_VERSION, '3.0', '<' ) ? $order->billing_email : $order->get_billing_email(),
+			'customer_email'               => $order->get_billing_email(),
 		);
 
 		$order_params = $order->get_transaction_link_params();
@@ -361,11 +354,18 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 
 		$this->get( $transaction_id );
 
-		if ($is_caching_enabled) {
+		if ( $is_caching_enabled ) {
 			$this->cache_transaction();
 		}
 
 		return $this->resource_data;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public static function is_transaction_caching_enabled() {
+		return apply_filters( 'woocommerce_pensopay_transaction_cache_enabled', true );
 	}
 
 	/**

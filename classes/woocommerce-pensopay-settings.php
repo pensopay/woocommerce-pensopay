@@ -239,7 +239,12 @@ class WC_PensoPay_Settings {
                             'sofort' => 'Sofort',
                             'cirrus' => 'Cirrus',
                             'klarna' => 'Klarna',
-                            'bankaxess' => 'BankAxess'
+                            'bankaxess' => 'BankAxess',
+                            'vipps' => 'Vipps',
+                            'swish' => 'Swish',
+                            'bitcoin' => 'Bitcoin',
+                            'trustly' => 'Trustly',
+                            'paysafecard' => 'Paysafe Card',
                         ),
 					),
 					'pensopay_icons_maxheight' => array(

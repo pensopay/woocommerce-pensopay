@@ -29,24 +29,38 @@ class WC_PensoPay_Log {
         $this->_logger = new WC_Logger();
     }
 
-    
-    /**
-	* add function.
-	*
-	* Uses the build in logging method in WooCommerce.
-	* Logs are available inside the System status tab
-	*
-	* @access public 
-	* @param  string|array|object
-	* @return void
-	*/	
-    public function add( $param ) 
+
+	/**
+	 * add function.
+	 *
+	 * Uses the build in logging method in WooCommerce.
+	 * Logs are available inside the System status tab
+	 *
+	 * @access public
+	 *
+	 * @param      $param
+	 * @param null $file
+	 * @param null $line
+	 *
+	 * @return void
+	 */
+    public function add( $param, $file = null, $line = null )
     {
+    	$message = '';
+
+	    if ($file) {
+		    $message .= sprintf('File: %s -> ', $file);
+	    }
+
+	    if ($line) {
+			$message .= sprintf('Line: %s -> ', $line);
+	    }
+
         if( is_array( $param ) ) {
-            $param = print_r( $param, TRUE );  
+            $message .= print_r( $param, TRUE );
         }
-        
-        $this->_logger->add( $this->_domain, $param );
+
+        $this->_logger->add( $this->_domain, $message );
     }
     
     

@@ -18,6 +18,9 @@ class WC_PensoPay_Helper {
 	 * Returns the price with decimals. 1010 returns as 10.10.
 	 *
 	 * @access public static
+	 *
+	 * @param $price
+	 *
 	 * @return float
 	 */
 	public static function price_normalize( $price ) {
@@ -42,8 +45,7 @@ class WC_PensoPay_Helper {
 		$decimal_separator  = get_option( 'woocommerce_price_decimal_sep' );
 		$thousand_separator = get_option( 'woocommerce_price_thousand_sep' );
 
-		$price = str_replace( $thousand_separator, '', $price );
-		$price = str_replace( $decimal_separator, '.', $price );
+		$price = str_replace( array( $thousand_separator, $decimal_separator ), array( '', '.' ), $price );
 
 		return self::price_multiply( $price );
 	}
@@ -54,6 +56,9 @@ class WC_PensoPay_Helper {
 	 * Returns the price with no decimals. 10.10 returns as 1010.
 	 *
 	 * @access public static
+	 *
+	 * @param $price
+	 *
 	 * @return integer
 	 */
 	public static function price_multiply( $price ) {
@@ -64,10 +69,10 @@ class WC_PensoPay_Helper {
 	 * enqueue_javascript_backend function.
 	 *
 	 * @access public static
-	 * @return string
+	 * @return void
 	 */
 	public static function enqueue_javascript_backend() {
-		wp_enqueue_script( 'pensopay-backend', plugins_url( '/assets/javascript/backend.js', dirname( __FILE__ ) ), array( 'jquery' ), self::static_version() );
+		wp_enqueue_script( 'pensopay-backend', plugins_url( '/assets/javascript/backend.js', __DIR__ ), array( 'jquery' ), self::static_version() );
 		wp_localize_script( 'pensopay-backend', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
 	}
 
@@ -80,10 +85,10 @@ class WC_PensoPay_Helper {
 	 * enqueue_stylesheet function.
 	 *
 	 * @access public static
-	 * @return string
+	 * @return void
 	 */
 	public static function enqueue_stylesheet() {
-		wp_enqueue_style( 'style', plugins_url( '/assets/stylesheets/woocommerce-pensopay.css', dirname( __FILE__ ) ), array(), self::static_version() );
+		wp_enqueue_style( 'style', plugins_url( '/assets/stylesheets/woocommerce-pensopay.css', __DIR__ ), array(), self::static_version() );
 	}
 
 
@@ -104,10 +109,13 @@ class WC_PensoPay_Helper {
 	 * Checks if a setting options is enabled by checking on yes/no data.
 	 *
 	 * @access public static
+	 *
+	 * @param mixed $value
+	 *
 	 * @return int
 	 */
 	public static function option_is_enabled( $value ) {
-		return ( $value == 'yes' ) ? 1 : 0;
+		return ( $value === 'yes' ) ? 1 : 0;
 	}
 
 
@@ -117,6 +125,9 @@ class WC_PensoPay_Helper {
 	 * Returns the order's main callback url
 	 *
 	 * @access public
+	 *
+	 * @param null $post_id
+	 *
 	 * @return string
 	 */
 	public static function get_callback_url( $post_id = null ) {
@@ -128,7 +139,7 @@ class WC_PensoPay_Helper {
 
 		$args = apply_filters( 'woocommerce_pensopay_callback_args', $args, $post_id );
 
-		return add_query_arg( $args, site_url( '/' ) );
+		return apply_filters( 'woocommerce_pensopay_callback_url', add_query_arg( $args, home_url( '/' ) ), $args, $post_id );
 	}
 
 
@@ -138,6 +149,9 @@ class WC_PensoPay_Helper {
 	 * Checks if a string is a URL
 	 *
 	 * @access public
+	 *
+	 * @param $url
+	 *
 	 * @return string
 	 */
 	public static function is_url( $url ) {
@@ -152,28 +166,29 @@ class WC_PensoPay_Helper {
 	 * @return null
 	 */
 	public static function get_payment_type_logo( $payment_type ) {
-		$logos = array(
-			"american-express" => "americanexpress.svg",
-			"dankort"          => "dankort.svg",
-			"diners"           => "diners.svg",
-			"edankort"         => "edankort.png",
-			"fbg1886"          => "forbrugsforeningen.svg",
-			"jcb"              => "jcb.svg",
-			"maestro"          => "maestro.svg",
-			"mastercard"       => "mastercard.svg",
-			"mastercard-debet" => "mastercard.svg",
-			"mobilepay"        => "mobilepay.svg",
-			"visa"             => "visa.svg",
-			"visa-electron"    => "visaelectron.png",
-			"paypal"           => "paypal.svg",
-			"sofort"           => "sofort.svg",
-			"viabill"          => "viabill.svg",
-			"klarna"           => "klarna.svg",
-			"bank-axess"       => "bankaxess.svg",
-			"unionpay"         => "unionpay.svg",
-			"cirrus"           => "cirrus.svg",
-			"ideal"            => "ideal.svg",
-		);
+		$logos = [
+			'american-express' => 'americanexpress.svg',
+			'dankort'          => 'dankort.svg',
+			'diners'           => 'diners.svg',
+			'edankort'         => 'edankort.png',
+			'fbg1886'          => 'forbrugsforeningen.svg',
+			'jcb'              => 'jcb.svg',
+			'maestro'          => 'maestro.svg',
+			'mastercard'       => 'mastercard.svg',
+			'mastercard-debet' => 'mastercard.svg',
+			'mobilepay'        => 'mobilepay.svg',
+			'visa'             => 'visa.svg',
+			'visa-electron'    => 'visaelectron.png',
+			'paypal'           => 'paypal.svg',
+			'sofort'           => 'sofort.svg',
+			'viabill'          => 'viabill.svg',
+			'klarna'           => 'klarna.svg',
+			'bank-axess'       => 'bankaxess.svg',
+			'unionpay'         => 'unionpay.svg',
+			'cirrus'           => 'cirrus.svg',
+			'ideal'            => 'ideal.svg',
+			'vipps'            => 'vipps.png',
+		];
 
 		if ( array_key_exists( trim( $payment_type ), $logos ) ) {
 			return WC_PP()->plugin_url( 'assets/images/cards/' . $logos[ $payment_type ] );
@@ -261,5 +276,3 @@ class WC_PensoPay_Helper {
 		return $haystack;
 	}
 }
-
-?>
