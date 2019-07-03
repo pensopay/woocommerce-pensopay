@@ -18,8 +18,79 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
         $this->description = $this->s('description');
         
         add_filter( 'woocommerce_pensopay_cardtypelock_viabill', array( $this, 'filter_cardtypelock' ) );
+
+	    add_filter('woocommerce_get_price_html', array( $this, 'viabill_price_html' ), 10, 2);
+	    add_filter('woocommerce_cart_totals_order_total_html', array( $this, 'viabill_price_html_cart' ), 10, 1);
+	    add_filter('woocommerce_gateway_method_description', array( $this, 'viabill_payment_method' ), 10, 2);
     }
 
+	public function viabill_header()
+	{
+	    ?>
+        <script type="text/javascript">
+            var o;
+
+            var viabillInit = function() {
+                o =document.createElement('script');
+                o.type='text/javascript';
+                o.async=true;
+                o.id = 'viabillscript';
+                <?php //$shopId = $pensopayHelper->getViabillId(); ?>
+                o.src='https://pricetag.viabill.com/script/<?= 'LZMOVKuCvMc='; ?>';
+                var s=document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(o,s);
+            };
+
+            var viabillReset = function() {
+                document.getElementById('viabillscript').remove();
+                vb = null;
+                pricetag = null;
+                viabillInit();
+            };
+
+            jQuery(document).ready(function() {
+                viabillInit();
+                jQuery('body').on('updated_checkout', viabillReset);
+            });
+        </script>
+        <?php
+	}
+
+	/**
+	 * payment_fields function.
+	 *
+	 * Prints out the description of the gateway. Also adds two checkboxes for viaBill/creditcard for customers to choose how to pay.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function payment_fields() {
+		echo wpautop( wptexturize( $this->description ) ) . $this->getViabillPriceHtml('basket', WC()->cart->get_total('nodisplay'));
+	}
+
+	public function viabill_payment_method($description, $instance)
+	{
+		return $description;
+	}
+
+	public function getViabillPriceHtml($type, $price)
+	{
+		return sprintf('<div class="viabill-pricetag" data-view="%s" data-price="%s"></div>', $type, $price);
+	}
+
+	public function viabill_price_html_cart($value)
+	{
+		if (is_cart()) {
+			return $value . $this->getViabillPriceHtml('basket', WC()->cart->get_total('nodisplay'));
+		} else {
+			return $value;
+		}
+	}
+
+	public function viabill_price_html($price, $product)
+	{
+		return $price . $this->getViabillPriceHtml(is_product() ? 'product' : 'list', $product->get_price());
+	}
     
     /**
     * init_form_fields function.

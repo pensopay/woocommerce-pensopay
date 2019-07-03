@@ -166,6 +166,30 @@ class WC_PensoPay_Order extends WC_Order {
 	}
 
 	/**
+	 * get_payment_cancelled function
+	 *
+	 * If the payment was in an iframe and was cancelled, it will return true.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function get_payment_cancelled() {
+		return get_post_meta( $this->get_id(), 'PENSOPAY_PAYMENT_CANCELLED', true );
+	}
+
+	/**
+	 * set_payment_cancelled function
+	 *
+	 * Set whether an iframe payment was cancelled.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function set_payment_cancelled( $bool ) {
+		update_post_meta( $this->get_id(), 'PENSOPAY_PAYMENT_CANCELLED', $bool );
+	}
+
+	/**
 	 * add_transaction_fee function.
 	 *
 	 * Adds order transaction fee to the order before sending out the order confirmation
@@ -707,6 +731,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'continueurl' => $this->get_continue_url(),
 			'cancelurl'   => $this->get_cancellation_url(),
 			'amount'      => WC_PensoPay_Helper::price_multiply( $amount ),
+			'framed'      => WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))
 		);
 	}
 

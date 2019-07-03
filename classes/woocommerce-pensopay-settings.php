@@ -141,8 +141,15 @@ class WC_PensoPay_Settings {
                         'description' => __( 'Leave empty if you have no custom branding options', 'woo-pensopay' ),
                         'default' => '',
                         'desc_tip' => true,
-					),	
-
+					),
+					'pensopay_iframe' => array(
+						'title' => __( 'Enable IFrame', 'woo-pensopay' ),
+						'type' => 'checkbox',
+						'label' => __( 'Enable', 'woo-pensopay' ),
+						'description' => __( 'If enabled, payments are made in the shop using an iframe instead of a redirect to pensopay.', 'woo-pensopay' ),
+						'default' => 'no',
+						'desc_tip' => true,
+					),
 					'pensopay_autofee' => array(
                         'title' => __( 'Enable autofee', 'woo-pensopay' ),
                         'type' => 'checkbox', 
