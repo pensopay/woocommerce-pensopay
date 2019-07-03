@@ -104,7 +104,7 @@
 	};
 
 	PensoPayCheckAPIStatus.prototype.pingAPI = function () {
-		$.post(ajaxurl, { action: 'pensopay_ping_api', apiKey: this.apiSettingsField.val() }, $.proxy(function (response) {
+		$.post(ajaxurl, { action: 'pensopay_ping_api', api_key: this.apiSettingsField.val() }, $.proxy(function (response) {
 			if (response.status === 'success') {
 				this.indicator.addClass('ok').removeClass('error');
 			} else {
@@ -117,6 +117,7 @@
 	$(function() {
 		new PensoPay().init();
 		new PensoPayCheckAPIStatus().init();
+		new PensoPayPrivateKey().init();
 
         var emptyLogsButton = $('#wcpp_logs_clear');
         emptyLogsButton.on('click', function(e) {
@@ -147,6 +148,41 @@
     function PensoPayCheckAPIStatus() {
     	this.apiSettingsField = $('#woocommerce_pensopay_pensopay_apikey');
 		this.indicator = $('<span class="wcpp_api_indicator"></span>');
+	}
+
+	function PensoPayPrivateKey() {
+		this.field = $('#woocommerce_pensopay_pensopay_privatekey');
+		this.apiKeyField = $('#woocommerce_pensopay_pensopay_apikey');
+		this.refresh = $('<span class="wcpp_api_indicator refresh"></span>');
+	}
+
+	PensoPayPrivateKey.prototype.init = function () {
+		var self = this;
+		this.field.parent().append(this.refresh);
+
+		this.refresh.on('click', function() {
+			self.refresh.addClass('is-loading');
+			$.post(ajaxurl + '?action=pensopay_fetch_private_key', { api_key: self.apiKeyField.val() }, function(response) {
+				if (response.status === 'success') {
+					self.field.val(response.data.private_key);
+				} else {
+					self.flashError(response.message);
+				}
+
+				self.refresh.removeClass('is-loading');
+			}, 'json');
+		});
+	}
+
+	PensoPayPrivateKey.prototype.flashError = function (message) {
+		var message = $('<div style="color: red; font-style: italic;"><p style="font-size: 12px;">' + message + '</p></div>');
+		message.hide().insertAfter(this.refresh).fadeIn('fast', function() {
+			setTimeout(function () {
+				message.fadeOut('fast', function() {
+					message.remove();
+				})
+			}, 10000)
+		});
 	}
 
 })(jQuery);

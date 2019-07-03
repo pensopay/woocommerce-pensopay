@@ -33,17 +33,16 @@ class WC_PensoPay_Settings {
 					'type' => 'title',
 					'title' => __( 'API - Integration', 'woo-pensopay' ),
 				),
-
-					'pensopay_privatekey' => array(
-						'title' => __('Private key', 'woo-pensopay') . self::get_required_symbol(),
-						'type' => 'text',
-						'description' => __( 'Your agreement private key. Found in the "Integration" tab inside the PensoPay manager.', 'woo-pensopay' ),
-                        'desc_tip' => true,
-					),
 					'pensopay_apikey' => array(
 						'title' => __('Api User key', 'woo-pensopay') . self::get_required_symbol(),
 						'type' => 'text',
 						'description' => __( 'Your API User\'s key. Create a separate API user in the "Users" tab inside the PensoPay manager.' , 'woo-pensopay' ),
+						'desc_tip' => true,
+					),
+					'pensopay_privatekey' => array(
+						'title' => __('Private key', 'woo-pensopay') . self::get_required_symbol(),
+						'type' => 'text',
+						'description' => __( 'Your agreement private key. Found in the "Integration" tab inside the PensoPay manager.', 'woo-pensopay' ),
                         'desc_tip' => true,
 					),
 				'_Autocapture' => array(
@@ -268,7 +267,7 @@ class WC_PensoPay_Settings {
 					'pensopay_google_analytics_tracking_id' => array(
                         'title' => __( 'Tracking ID', 'woo-pensopay' ),
                         'type' => 'text', 
-                        'description' => __( 'Your Google Analytics tracking ID. Digits only.', 'woo-pensopay' ),
+                        'description' => __( 'Your Google Analytics tracking ID. I.E: UA-XXXXXXXXX-X', 'woo-pensopay' ),
                         'default' => '',
                         'desc_tip' => true,
                     ),

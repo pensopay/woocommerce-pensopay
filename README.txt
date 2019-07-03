@@ -2,7 +2,7 @@
 Contributors: PensoPay
 Tags: gateway, woo commerce, pensopay, gateway, integration, woocommerce, woocommerce pensopay, payment, payment gateway, psp
 Requires at least: 4.0.0
-Tested up to: 5.2.1
+Tested up to: 5.2.2
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -27,6 +27,17 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.1.0 =
+* Feature: Possibility to fetch the API private key directly from the settings page. Requires an API user with permissions to perform GET requests to /accounts/private-key.
+* Fix: Minor helper text update for GA tracking ID on the settings page.
+* Fix: Add fallback for saving transaction IDs on orders since this seemed to randomly fail when using WC_Order::payment_complete to set it.
+* Tested up to WP 5.2.2
+* Dev - Add action: woocommerce_pensopay_meta_box_subscription_before_content
+* Dev - Add action: woocommerce_pensopay_meta_box_subscription_after_content
+* Dev - Add action: woocommerce_pensopay_meta_box_payment_before_content
+* Dev - Add action: woocommerce_pensopay_meta_box_payment_after_content
+* Dev - Add filter: woocommerce_pensopay_capture_on_order_completion
+
 = 5.0.0 =
 * Feature: Add Mobilepay Checkout support
 * Feature: Add Vipps

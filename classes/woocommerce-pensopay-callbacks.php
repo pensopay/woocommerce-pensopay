@@ -34,6 +34,9 @@ class WC_PensoPay_Callbacks {
 
 		// Write a note to the order history
 		$order->note( sprintf( __( 'Payment authorized. Transaction ID: %s', 'woo-pensopay' ), $transaction->id ) );
+
+		// Fallback to save transaction IDs since this has seemed to sometimes fail when using WC_Order::payment_complete
+		self::save_transaction_id_fallback( $order, $transaction );
 	}
 
 	/**
@@ -92,5 +95,20 @@ class WC_PensoPay_Callbacks {
 
 		// Remove payment ID, now we have the transaction ID
 		$order->delete_payment_id();
+	}
+
+	/**
+	 * @param WC_PensoPay_Order $order
+	 * @param stdClass $transaction
+	 */
+	public static function save_transaction_id_fallback( $order, $transaction ) {
+		try {
+			if ( ! empty( $transaction->id ) ) {
+				$order->set_transaction_id( $transaction->id );
+				$order->save();
+			}
+		} catch ( WC_Data_Exception $e ) {
+			wc_get_logger()->error( $e->getMessage() );
+		}
 	}
 }
