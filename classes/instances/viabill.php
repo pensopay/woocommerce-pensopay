@@ -35,8 +35,7 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
                 o.type='text/javascript';
                 o.async=true;
                 o.id = 'viabillscript';
-                <?php //$shopId = $pensopayHelper->getViabillId(); ?>
-                o.src='https://pricetag.viabill.com/script/<?= 'LZMOVKuCvMc='; ?>';
+                o.src='https://pricetag.viabill.com/script/<?= $this->settings['id']; ?>';
                 var s=document.getElementsByTagName('script')[0];
                 s.parentNode.insertBefore(o,s);
             };
@@ -124,6 +123,10 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
                     'type' => 'textarea', 
                     'description' => __( 'This controls the description which the user sees during checkout.', 'woo-pensopay' ),
                     'default' => __('Pay with ViaBill', 'woo-pensopay')
+                ),
+                'id' => array(
+                    'title' => __( 'Viabill ID', 'woo-pensopay' ),
+                    'type' => 'text'
                 ),
         );
     }
