@@ -29,6 +29,8 @@ General:
 == Changelog ==
 = 5.1.0 =
 * Feature: Possibility to fetch the API private key directly from the settings page. Requires an API user with permissions to perform GET requests to /accounts/private-key.
+* Feature: Add iframe payment where user doesn't leave the store
+* Feature: Add toggleable ViaBill pricetag
 * Fix: Minor helper text update for GA tracking ID on the settings page.
 * Fix: Add fallback for saving transaction IDs on orders since this seemed to randomly fail when using WC_Order::payment_complete to set it.
 * Tested up to WP 5.2.2
