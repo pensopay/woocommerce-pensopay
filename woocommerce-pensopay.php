@@ -260,7 +260,7 @@ function init_pensopay_gateway() {
 			add_action('wp_head', 'WC_PensoPay_Helper::viabill_header'); //Header JS
 
 			add_filter('query_vars', function($vars) {
-				$vars = array_merge($vars, array(WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPOLL, WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID));
+				$vars = array_merge($vars, array(WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPOLL, WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE));
 				return $vars;
 			});
 
@@ -268,11 +268,27 @@ function init_pensopay_gateway() {
 				add_rewrite_endpoint(WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY, EP_PERMALINK );
 				add_rewrite_endpoint(WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPOLL, EP_PERMALINK );
 				add_rewrite_endpoint(WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL, EP_PERMALINK );
+				add_rewrite_endpoint(WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE, EP_PERMALINK );
 			});
 
 			add_filter('woocommerce_get_cancel_order_url', function($url) {
-				if (WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))) {
-					$url = add_query_arg( WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL, true, $url );
+				$order_id = WC()->session->get( 'order_awaiting_payment' );
+				$order = new WC_PensoPay_Order($order_id);
+				if ($order->get_id() && $order->has_pensopay_payment()) {
+					if (WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))) {
+						$url = add_query_arg( WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL, true, $url );
+					}
+				}
+				return $url;
+			});
+
+			add_filter('woocommerce_get_checkout_order_received_url', function($url) {
+				$order_id = WC()->session->get( 'order_awaiting_payment' );
+				$order = new WC_PensoPay_Order($order_id);
+				if ($order->get_id() && $order->has_pensopay_payment()) {
+					if (WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))) {
+						$url = add_query_arg( WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE, true, $url );
+					}
 				}
 				return $url;
 			});
@@ -282,17 +298,26 @@ function init_pensopay_gateway() {
 				if (isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY])) {
 					include plugin_dir_path( __FILE__ ) . 'templates/checkout/iframe.php';
 					die;
+				} else if ($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE]) {
+					global $wp_query;
+					if (isset($wp_query->query_vars['key'])) { //order key
+						$order_key = $wp_query->query_vars['key'];
+						$order = new WC_PensoPay_Order(wc_get_order_id_by_order_key($order_key));
+						if ($order->get_id() && $order->has_pensopay_payment()) {
+							echo 'Please Wait..';
+							die;
+						}
+					}
 				} else if ($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL] && isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID])) {
-					$order_key = $wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID];
-					$order = new WC_PensoPay_Order($order_key);
-					if ($order->get_id() && $order->get_payment_method() == WC_PP()->id && !$order->get_payment_cancelled()) {
+					$order_id = $wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID];
+					$order = new WC_PensoPay_Order($order_id);
+					if ($order->get_id() && $order->has_pensopay_payment() && !$order->get_payment_cancelled()) {
 						$order->set_payment_cancelled( true );
 						echo 'Please Wait..';
 						die;
 					}
-				} else if (isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPOLL]) && isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID])) {
-					$order_key = $wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID];
-					$order = new WC_PensoPay_Order(wc_get_order_id_by_order_key($order_key));
+				} else if (isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPOLL])) {
+					$order = new WC_PensoPay_Order(WC()->session->get('order_awaiting_payment'));
 					$payment = new WC_PensoPay_API_Payment();
 					if ($order->get_id() > 0) {
 						try {
@@ -658,7 +683,7 @@ function init_pensopay_gateway() {
 
 					if ( WC_PensoPay_Helper::is_url( $link->url ) ) {
 						if (WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))) {
-							$redirect_to = sprintf('%s?%s&%s=%s', get_site_url(), WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY, WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID, $order->get_order_key());
+							$redirect_to = sprintf('%s?%s', get_site_url(), WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY);
 						} else
 							$redirect_to = $link->url;
 					}

@@ -1,14 +1,9 @@
 <?php
 
 get_template_part('header');
-$order_id = null;
-$order = null;
+$order_id = WC()->session->get( 'order_awaiting_payment' );
+$order = new WC_PensoPay_Order( $order_id );
 
-global $wp_query;
-if (isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID])) {
-	$order_key = $wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID];
-	$order = new WC_PensoPay_Order( wc_get_order_id_by_order_key($order_key) );
-}
 ?>
 
 <?php if (empty($order->get_id())): ?>
@@ -24,7 +19,7 @@ if (isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID])) {
         var poller = setInterval(pollPayment, 5000);
 
         function pollPayment() {
-            jQuery.ajax('<?php echo sprintf('%s?%s&%s=%s', get_site_url(), WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPOLL, WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID, $order->get_order_key());  ?>', {
+            jQuery.ajax('<?php echo sprintf('%s?%s', get_site_url(), WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPOLL);  ?>', {
                 success: function(response) {
                     var obj = response;
                     if (!obj.repeat) {
