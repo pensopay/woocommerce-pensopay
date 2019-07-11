@@ -53,6 +53,9 @@ function init_pensopay_gateway() {
 		return;
 	}
 
+	// Import helper methods
+	require_once WCPP_PATH . 'includes/template.php';
+
 	// Import helper classes
 	require_once WCPP_PATH . 'helpers/notices.php';
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-install.php';

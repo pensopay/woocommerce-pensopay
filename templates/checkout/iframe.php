@@ -11,7 +11,7 @@ $order = new WC_PensoPay_Order( $order_id );
         window.location = '<?php echo get_site_url(); ?>';
 	</script>
 <?php else: ?>
-	<iframe src="<?= $order->get_payment_link(); ?>" height="100%" width="100%" style="min-height: 400px; min-height:500px">
+	<iframe src="<?= $order->get_payment_link(); ?>" height="100%" width="100%" style="min-height: 400px; min-height:500px; border: 0;">
 
 	</iframe>
 
