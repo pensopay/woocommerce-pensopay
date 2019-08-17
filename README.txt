@@ -30,6 +30,7 @@ General:
 = 5.1.2 =
 * Fix: Patch payments in 'process_payment' to make sure all transaction variables are up to date to avoid problems when gateway switching after cancelling a payment.
 * Fix: Optimize gateway availability check on MobilePay Checkout payments in order to remove the fast checkout button when a subscription is in the cart.
+* Fix: Race condition that may cause a client to miss the success page on iFrame payments.
 
 = 5.1.1 =
 * Fix: Add fallback in WC_PensoPay_Subscription::process_recurring_response to save transaction ID in case WC_Order::payment_complete fails to do so.
