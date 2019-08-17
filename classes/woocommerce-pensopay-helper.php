@@ -16,6 +16,7 @@ class WC_PensoPay_Helper {
 	const PENSOPAY_VAR_IFRAMECANCEL = 'pensoPayCancel';
 	const PENSOPAY_VAR_IFRAMECONTINUE = 'pensoPayContinue';
 	const PENSOPAY_VAR_ORDERID = 'order_id';
+	const PENSOPAY_VAR_IFRAMESUCCESS = 'pensoPaySuccess';
 
 	public static function viabill_header()
 	{

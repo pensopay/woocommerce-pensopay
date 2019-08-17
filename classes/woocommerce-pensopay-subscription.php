@@ -51,7 +51,7 @@ class WC_PensoPay_Subscription {
     *
     * @access public static
     * @param  object $recurring_response
-    * @param  WC_Order $order
+    * @param  WC_PensoPay_Order $order
     * @return void
     */
     public static function process_recurring_response( $recurring_response, $order )
@@ -61,6 +61,11 @@ class WC_PensoPay_Subscription {
 
         // Complete payment
         $order->payment_complete( $recurring_response->id );
+
+	    // Fallback in case the transaction ID is not properly saved through WC_Order::payment_complete.
+	    $order->update_meta_data('_transaction_id', $recurring_response->id);
+	    $order->update_meta_data('_pensopay_transaction_id', $recurring_response->id);
+	    $order->save_meta_data();
 
         $autocomplete_renewal_orders = WC_PP()->s('subscription_autocomplete_renewal_orders');
 

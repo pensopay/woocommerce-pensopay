@@ -4,21 +4,21 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 5.1.0
+ * Version: 5.1.2
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
  * Author URI: https://pensopay.com/
  * Wiki: https://pensopay.zendesk.com/hc/da
  * WC requires at least: 3.0.0
- * WC tested up to: 3.6.4
+ * WC tested up to: 3.6.5
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '5.1.0' );
+define( 'WCPP_VERSION', '5.1.2' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -263,7 +263,7 @@ function init_pensopay_gateway() {
 			add_action('wp_head', 'WC_PensoPay_Helper::viabill_header'); //Header JS
 
 			add_filter('query_vars', function($vars) {
-				$vars = array_merge($vars, array(WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPOLL, WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE));
+				$vars = array_merge($vars, array(WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPOLL, WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMESUCCESS));
 				return $vars;
 			});
 
@@ -301,10 +301,17 @@ function init_pensopay_gateway() {
 				if (isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY])) {
 					include plugin_dir_path( __FILE__ ) . 'templates/checkout/iframe.php';
 					die;
-				} else if ($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE]) {
+				} else if ($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE] && !isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMESUCCESS])) {
 					global $wp_query;
 					if (isset($wp_query->query_vars['key'])) { //order key
 						$order_key = $wp_query->query_vars['key'];
+					} else if (isset($_GET['key'])) {
+						$order_key = $_GET['key'];
+					} else {
+						$order_key = '';
+					}
+					if (!empty($order_key)) {
+						/** @var WC_PensoPay_Order $order */
 						$order = new WC_PensoPay_Order(wc_get_order_id_by_order_key($order_key));
 						if ($order->get_id() && $order->has_pensopay_payment()) {
 							echo 'Please Wait..';
@@ -347,7 +354,7 @@ function init_pensopay_gateway() {
 											'repeat' => 0,
 											'error' => 0,
 											'success' => 1,
-											'redirect' => $order->get_continue_url()
+											'redirect' => add_query_arg( WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMESUCCESS, true, $order->get_continue_url() )
 										];
 								} else {
 									$response =
@@ -673,6 +680,9 @@ function init_pensopay_gateway() {
 						$payment = $api_transaction->create( $order );
 						$order->set_payment_id( $payment->id );
 					}
+
+					// Patch the payment to make sure all data i up to date
+					$api_transaction->patch_payment($payment->id, $order);
 
 					// Create or update the payment link. This is necessary to do EVERY TIME
 					// to avoid fraud with changing amounts.

@@ -136,9 +136,16 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 * Insert fast track to MobilePay checkout with a button to easily select MobilePay and checkout.
 	 */
 	public function insert_woocommerce_pensopay_mobilepay_checkout() {
-		if ( $this->is_enabled() ) {
+		if ( $this->is_gateway_available() ) {
 			woocommerce_pensopay_get_template( 'checkout/mobilepay-checkout.php' );
 		}
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function is_gateway_available() {
+		return array_key_exists($this->id, WC()->payment_gateways->get_available_payment_gateways());
 	}
 
 	/**

@@ -94,7 +94,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 *
 	 * @access public
 	 *
-	 * @param  WC_PensoPay_Order $order
+	 * @param WC_PensoPay_Order $order
 	 *
 	 * @return object
 	 * @throws PensoPay_API_Exception
@@ -124,14 +124,14 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 *
 	 * Creates or updates a payment link via the API
 	 *
-	 * @since  4.5.0
-	 * @access public
-	 *
-	 * @param  int               $transaction_id
-	 * @param  WC_PensoPay_Order $order
+	 * @param int $transaction_id
+	 * @param WC_PensoPay_Order $order
 	 *
 	 * @return object
 	 * @throws PensoPay_API_Exception
+	 * @since  4.5.0
+	 * @access public
+	 *
 	 */
 	public function patch_link( $transaction_id, WC_PensoPay_Order $order ) {
 		$cardtypelock = WC_PP()->s( 'pensopay_cardtypelock' );
@@ -162,13 +162,41 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	}
 
 	/**
+	 * @param $transaction_id
+	 * @param WC_PensoPay_Order $order
+	 *
+	 * @return object
+	 * @throws PensoPay_API_Exception
+	 */
+	public function patch_payment( $transaction_id, WC_PensoPay_Order $order ) {
+		$base_params = array(
+			'currency'      => WC_PP()->get_gateway_currency( $order ),
+			'order_post_id' => $order->get_id(),
+		);
+
+		$text_on_statement = WC_PP()->s( 'pensopay_text_on_statement' );
+
+		if ( ! empty( $text_on_statement ) ) {
+			$base_params['text_on_statement'] = $text_on_statement;
+		}
+
+		$order_params = $order->get_transaction_params();
+
+		$params = array_merge( $base_params, $order_params );
+
+		$payment = $this->patch( sprintf( '/%s', $transaction_id ), $params );
+
+		return $payment;
+	}
+
+	/**
 	 * get_cardtype function
 	 *
 	 * Returns the payment type / card type used on the transaction
 	 *
-	 * @since  4.5.0
 	 * @return mixed
 	 * @throws PensoPay_API_Exception
+	 * @since  4.5.0
 	 */
 	public function get_brand() {
 		if ( ! is_object( $this->resource_data ) ) {
@@ -183,9 +211,9 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 *
 	 * Returns a formatted transaction balance
 	 *
-	 * @since  4.5.0
 	 * @return mixed
 	 * @throws PensoPay_API_Exception
+	 * @since  4.5.0
 	 */
 	public function get_formatted_balance() {
 		return WC_PensoPay_Helper::price_normalize( $this->get_balance() );
@@ -196,9 +224,9 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 *
 	 * Returns the transaction balance
 	 *
-	 * @since  4.5.0
 	 * @return mixed
 	 * @throws PensoPay_API_Exception
+	 * @since  4.5.0
 	 */
 	public function get_balance() {
 		if ( ! is_object( $this->resource_data ) ) {
@@ -213,9 +241,9 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 *
 	 * Returns a transaction currency
 	 *
-	 * @since  4.5.0
 	 * @return mixed
 	 * @throws PensoPay_API_Exception
+	 * @since  4.5.0
 	 */
 	public function get_currency() {
 		if ( ! is_object( $this->resource_data ) ) {
@@ -230,9 +258,9 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 *
 	 * Returns a formatted transaction balance
 	 *
-	 * @since  4.5.0
 	 * @return mixed
 	 * @throws PensoPay_API_Exception
+	 * @since  4.5.0
 	 */
 	public function get_formatted_remaining_balance() {
 		return WC_PensoPay_Helper::price_normalize( $this->get_remaining_balance() );
@@ -243,9 +271,9 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 *
 	 * Returns a remaining balance
 	 *
-	 * @since  4.5.0
 	 * @return mixed
 	 * @throws PensoPay_API_Exception
+	 * @since  4.5.0
 	 */
 	public function get_remaining_balance() {
 		$balance = $this->get_balance();
@@ -277,8 +305,8 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 * @param null $operation
 	 *
 	 * @return bool
-	 * @since 4.5.0
 	 * @throws PensoPay_API_Exception
+	 * @since 4.5.0
 	 */
 	public function is_operation_approved( $operation = null ) {
 		if ( ! is_object( $this->resource_data ) ) {
@@ -297,9 +325,9 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 *
 	 * Returns the metadata of a transaction
 	 *
-	 * @since  4.5.0
 	 * @return mixed
 	 * @throws PensoPay_API_Exception
+	 * @since  4.5.0
 	 */
 	public function get_metadata() {
 		if ( ! is_object( $this->resource_data ) ) {
@@ -314,9 +342,9 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 *
 	 * Returns the current transaction state
 	 *
-	 * @since  4.5.0
 	 * @return mixed
 	 * @throws PensoPay_API_Exception
+	 * @since  4.5.0
 	 */
 	public function get_state() {
 		if ( ! is_object( $this->resource_data ) ) {

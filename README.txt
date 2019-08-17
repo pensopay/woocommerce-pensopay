@@ -27,6 +27,15 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.1.2 =
+* Fix: Patch payments in 'process_payment' to make sure all transaction variables are up to date to avoid problems when gateway switching after cancelling a payment.
+* Fix: Optimize gateway availability check on MobilePay Checkout payments in order to remove the fast checkout button when a subscription is in the cart.
+
+= 5.1.1 =
+* Fix: Add fallback in WC_PensoPay_Subscription::process_recurring_response to save transaction ID in case WC_Order::payment_complete fails to do so.
+* Fix: Add "needs payment" check on authorized subscription callbacks before creating a recurring payment.
+* Tested up to WC 3.6.5
+
 = 5.1.0 =
 * Feature: Possibility to fetch the API private key directly from the settings page. Requires an API user with permissions to perform GET requests to /accounts/private-key.
 * Feature: Add iframe payment where user doesn't leave the store
