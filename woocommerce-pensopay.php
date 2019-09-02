@@ -4,7 +4,7 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 5.1.2
+ * Version: 5.1.3
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '5.1.2' );
+define( 'WCPP_VERSION', '5.1.3' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -301,7 +301,7 @@ function init_pensopay_gateway() {
 				if (isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY])) {
 					include plugin_dir_path( __FILE__ ) . 'templates/checkout/iframe.php';
 					die;
-				} else if ($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE] && !isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMESUCCESS])) {
+				} else if (isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE]) && !isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMESUCCESS])) {
 					global $wp_query;
 					if (isset($wp_query->query_vars['key'])) { //order key
 						$order_key = $wp_query->query_vars['key'];
@@ -318,7 +318,7 @@ function init_pensopay_gateway() {
 							die;
 						}
 					}
-				} else if ($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL] && isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID])) {
+				} else if (isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL]) && isset($wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID])) {
 					$order_id = $wp_query->query_vars[WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID];
 					$order = new WC_PensoPay_Order($order_id);
 					if ($order->get_id() && $order->has_pensopay_payment() && !$order->get_payment_cancelled()) {

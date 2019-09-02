@@ -22,6 +22,7 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
 	    add_filter('woocommerce_get_price_html', array( $this, 'viabill_price_html' ), 10, 2);
 	    add_filter('woocommerce_cart_totals_order_total_html', array( $this, 'viabill_price_html_cart' ), 10, 1);
 	    add_filter('woocommerce_gateway_method_description', array( $this, 'viabill_payment_method' ), 10, 2);
+	    add_action('woocommerce_checkout_order_review', array( $this, 'viabill_checkout_order_review'), 10, 0);
     }
 
 	public function viabill_header()
@@ -77,9 +78,15 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
 		return sprintf('<div class="viabill-pricetag" data-view="%s" data-price="%s"></div>', $type, $price);
 	}
 
+    /**
+     * Display pricetag in cart
+     *
+     * @param $value
+     * @return string
+     */
 	public function viabill_price_html_cart($value)
 	{
-		if (is_cart()) {
+		if (is_cart() && $this->settings['show_pricetag_in_cart'] === 'yes') {
 			return $value . $this->getViabillPriceHtml('basket', WC()->cart->get_total('nodisplay'));
 		} else {
 			return $value;
@@ -88,8 +95,30 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
 
 	public function viabill_price_html($price, $product)
 	{
+	    if ((is_front_page() || is_shop()) && $this->settings['show_pricetag_on_frontpage'] !== 'yes') {
+	        return;
+        }
+
+	    if (is_product() && $this->settings['show_pricetag_on_product_page'] !== 'yes') {
+	        return;
+        }
+
+	    if (is_product_category() && $this->settings['show_pricetag_on_category_page'] !== 'yes') {
+	        return;
+        }
+
 		return $price . $this->getViabillPriceHtml(is_product() ? 'product' : 'list', $product->get_price());
 	}
+
+    /**
+     * Show pricetag in checkout
+     */
+	public function viabill_checkout_order_review()
+    {
+        if ($this->settings['show_pricetag_in_checkout'] === 'yes') {
+            echo $this->getViabillPriceHtml('basket', WC()->cart->get_total('nodisplay'));
+        }
+    }
     
     /**
     * init_form_fields function.
@@ -124,9 +153,43 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
                     'description' => __( 'This controls the description which the user sees during checkout.', 'woo-pensopay' ),
                     'default' => __('Pay with ViaBill', 'woo-pensopay')
                 ),
+            '_Pricetag' => array(
+                'type' => 'title',
+                'title' => __('Pricetag settings', 'woo-pensopay' )
+            ),
                 'id' => array(
                     'title' => __( 'Viabill ID', 'woo-pensopay' ),
                     'type' => 'text'
+                ),
+                'show_pricetag_on_frontpage' => array(
+                    'title' => __( 'Show pricetag on frontpage', 'woo-pensopay' ),
+                    'type' => 'checkbox',
+                    'label' => __( 'Enable ViaBill pricetag on frontpage', 'woo-pensopay' ),
+                    'default' => 'no'
+                ),
+                'show_pricetag_on_product_page' => array(
+                    'title' => __( 'Show pricetag on product page', 'woo-pensopay' ),
+                    'type' => 'checkbox',
+                    'label' => __( 'Enable ViaBill pricetag on product page', 'woo-pensopay' ),
+                    'default' => 'no'
+                ),
+                'show_pricetag_on_category_page' => array(
+                    'title' => __( 'Show pricetag on category page', 'woo-pensopay' ),
+                    'type' => 'checkbox',
+                    'label' => __( 'Enable ViaBill pricetag on category page', 'woo-pensopay' ),
+                    'default' => 'no'
+                ),
+                'show_pricetag_in_cart' => array(
+                    'title' => __( 'Show pricetag in cart', 'woo-pensopay' ),
+                    'type' => 'checkbox',
+                    'label' => __( 'Enable ViaBill pricetag in cart', 'woo-pensopay' ),
+                    'default' => 'no'
+                ),
+                'show_pricetag_in_checkout' => array(
+                    'title' => __( 'Show pricetag in checkout', 'woo-pensopay' ),
+                    'type' => 'checkbox',
+                    'label' => __( 'Enable ViaBill pricetag in checkout', 'woo-pensopay' ),
+                    'default' => 'no'
                 ),
         );
     }
