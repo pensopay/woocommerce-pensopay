@@ -96,15 +96,15 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
 	public function viabill_price_html($price, $product)
 	{
 	    if ((is_front_page() || is_shop()) && $this->settings['show_pricetag_on_frontpage'] !== 'yes') {
-	        return;
+	        return $price;
         }
 
 	    if (is_product() && $this->settings['show_pricetag_on_product_page'] !== 'yes') {
-	        return;
+            return $price;
         }
 
 	    if (is_product_category() && $this->settings['show_pricetag_on_category_page'] !== 'yes') {
-	        return;
+            return $price;
         }
 
 		return $price . $this->getViabillPriceHtml(is_product() ? 'product' : 'list', $product->get_price());
