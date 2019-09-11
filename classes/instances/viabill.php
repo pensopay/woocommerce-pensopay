@@ -95,18 +95,28 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
 
 	public function viabill_price_html($price, $product)
 	{
+        global $woocommerce_loop;
+
+        //Frontpage / shop page
 	    if ((is_front_page() || is_shop()) && $this->settings['show_pricetag_on_frontpage'] !== 'yes') {
 	        return $price;
         }
 
-	    if (is_product() && $this->settings['show_pricetag_on_product_page'] !== 'yes') {
+	    //Category page
+        if (is_product_category() && $this->settings['show_pricetag_on_category_page'] !== 'yes') {
             return $price;
         }
 
-	    if (is_product_category() && $this->settings['show_pricetag_on_category_page'] !== 'yes') {
+        //Product page
+        if (is_product() && $this->settings['show_pricetag_on_product_page'] !== 'yes') {
             return $price;
         }
 
+        //Related products
+        if (is_product() && $woocommerce_loop['name'] == 'related' && $this->settings['show_pricetag_on_related_products'] !== 'yes') {
+            return $price;
+        }
+        
 		return $price . $this->getViabillPriceHtml(is_product() ? 'product' : 'list', $product->get_price());
 	}
 
@@ -171,6 +181,12 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
                     'title' => __( 'Show pricetag on product page', 'woo-pensopay' ),
                     'type' => 'checkbox',
                     'label' => __( 'Enable ViaBill pricetag on product page', 'woo-pensopay' ),
+                    'default' => 'no'
+                ),
+                'show_pricetag_on_related_products' => array(
+                    'title' => __( 'Show pricetag on related products', 'woo-pensopay' ),
+                    'type' => 'checkbox',
+                    'label' => __( 'Enable ViaBill pricetag on related products', 'woo-pensopay' ),
                     'default' => 'no'
                 ),
                 'show_pricetag_on_category_page' => array(
