@@ -53,11 +53,11 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 		}
 
 		// Loop through all the operations and return only the operations that were successful (based on the qp_status_code and pending mode).
-		$successful_operations = array_filter( $this->resource_data->operations, function ( $operation ) {
+		$successful_operations = array_filter( (array) $this->resource_data->operations, function ( $operation ) {
 			return $operation->qp_status_code == 20000 || $operation->pending == true;
 		} );
 
-		$last_operation = end( $successful_operations );
+		$last_operation = (object) end( $successful_operations );
 
 		if ( ! is_object( $last_operation ) ) {
 			throw new PensoPay_API_Exception( 'Malformed operation object' );

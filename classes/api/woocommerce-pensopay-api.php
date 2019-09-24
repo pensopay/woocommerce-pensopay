@@ -218,7 +218,7 @@ class WC_PensoPay_API
  		}
 
  		// Execute the request and decode the response to JSON
- 		$this->resource_data = json_decode( curl_exec( $this->ch ) );
+ 		$this->resource_data = (object) json_decode( curl_exec( $this->ch ) );
 
  		// Retrieve the HTTP response code
  		$response_code = (int) curl_getinfo( $this->ch, CURLINFO_HTTP_CODE );
