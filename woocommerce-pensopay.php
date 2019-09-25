@@ -11,7 +11,7 @@
  * Author URI: https://pensopay.com/
  * Wiki: https://pensopay.zendesk.com/hc/da
  * WC requires at least: 3.0.0
- * WC tested up to: 3.6.5
+ * WC tested up to: 3.7
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
