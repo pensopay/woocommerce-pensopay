@@ -36,7 +36,7 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
                 o.type='text/javascript';
                 o.async=true;
                 o.id = 'viabillscript';
-                o.src='https://pricetag.viabill.com/script/<?= $this->settings['id']; ?>';
+                o.src='https://pricetag.viabill.com/script/<?= isset($this->settings['id']) ? $this->settings['id'] : '' ?>';
                 var s=document.getElementsByTagName('script')[0];
                 s.parentNode.insertBefore(o,s);
             };
@@ -86,7 +86,7 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
      */
 	public function viabill_price_html_cart($value)
 	{
-		if (is_cart() && $this->settings['show_pricetag_in_cart'] === 'yes') {
+		if (is_cart() && isset($this->settings['show_pricetag_in_cart']) && $this->settings['show_pricetag_in_cart'] === 'yes') {
 			return $value . $this->getViabillPriceHtml('basket', WC()->cart->get_total('nodisplay'));
 		} else {
 			return $value;
@@ -98,22 +98,22 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
         global $woocommerce_loop;
 
         //Frontpage / shop page
-	    if ((is_front_page() || is_shop()) && $this->settings['show_pricetag_on_frontpage'] !== 'yes') {
+	    if ((is_front_page() || is_shop()) && isset($this->settings['show_pricetag_on_frontpage']) && $this->settings['show_pricetag_on_frontpage'] !== 'yes') {
 	        return $price;
         }
 
 	    //Category page
-        if (is_product_category() && $this->settings['show_pricetag_on_category_page'] !== 'yes') {
+        if (is_product_category() && isset($this->settings['show_pricetag_on_category_page']) && $this->settings['show_pricetag_on_category_page'] !== 'yes') {
             return $price;
         }
 
         //Product page
-        if (is_product() && $this->settings['show_pricetag_on_product_page'] !== 'yes') {
+        if (is_product() && isset($this->settings['show_pricetag_on_product_page']) && $this->settings['show_pricetag_on_product_page'] !== 'yes') {
             return $price;
         }
 
         //Related products
-        if (is_product() && $woocommerce_loop['name'] == 'related' && $this->settings['show_pricetag_on_related_products'] !== 'yes') {
+        if (is_product() && isset($woocommerce_loop['name']) && $woocommerce_loop['name'] === 'related' && isset($this->settings['show_pricetag_on_related_products']) && $this->settings['show_pricetag_on_related_products'] !== 'yes') {
             return $price;
         }
         
@@ -125,7 +125,7 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
      */
 	public function viabill_checkout_order_review()
     {
-        if ($this->settings['show_pricetag_in_checkout'] === 'yes') {
+        if (isset($this->settings['show_pricetag_in_checkout']) && $this->settings['show_pricetag_in_checkout'] === 'yes') {
             echo $this->getViabillPriceHtml('basket', WC()->cart->get_total('nodisplay'));
         }
     }
