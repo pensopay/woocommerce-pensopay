@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.1.5 =
+* Fixes an undefined index bug for some viabill related variables.
+
 = 5.1.4 =
 * Add casts to ensure iframe payment works
 
