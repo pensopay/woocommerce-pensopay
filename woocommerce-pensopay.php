@@ -4,7 +4,7 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 5.1.5
+ * Version: 5.1.6
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '5.1.5' );
+define( 'WCPP_VERSION', '5.1.6' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -275,22 +275,26 @@ function init_pensopay_gateway() {
 			});
 
 			add_filter('woocommerce_get_cancel_order_url', function($url) {
-				$order_id = WC()->session->get( 'order_awaiting_payment' );
-				$order = new WC_PensoPay_Order($order_id);
-				if ($order->get_id() && $order->has_pensopay_payment()) {
-					if (WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))) {
-						$url = add_query_arg( WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL, true, $url );
+				if (WC()->session) {
+					$order_id = WC()->session->get( 'order_awaiting_payment' );
+					$order    = new WC_PensoPay_Order( $order_id );
+					if ( $order->get_id() && $order->has_pensopay_payment() ) {
+						if ( WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ) ) ) {
+							$url = add_query_arg( WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL, true, $url );
+						}
 					}
 				}
 				return $url;
 			});
 
 			add_filter('woocommerce_get_checkout_order_received_url', function($url) {
-				$order_id = WC()->session->get( 'order_awaiting_payment' );
-				$order = new WC_PensoPay_Order($order_id);
-				if ($order->get_id() && $order->has_pensopay_payment()) {
-					if (WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))) {
-						$url = add_query_arg( WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE, true, $url );
+				if (WC()->session) {
+					$order_id = WC()->session->get( 'order_awaiting_payment' );
+					$order = new WC_PensoPay_Order($order_id);
+					if ($order->get_id() && $order->has_pensopay_payment()) {
+						if (WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))) {
+							$url = add_query_arg( WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE, true, $url );
+						}
 					}
 				}
 				return $url;

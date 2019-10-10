@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.1.6 =
+* Fixes a bug that made creating a payment link from admin impossible.
+
 = 5.1.5 =
 * Fixes an undefined index bug for some viabill related variables.
 
