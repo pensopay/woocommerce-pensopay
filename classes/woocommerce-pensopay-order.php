@@ -838,7 +838,6 @@ class WC_PensoPay_Order extends WC_Order {
 			'viabill',
 			'sofort',
 			'klarna',
-			'resurs',
 			'vipps',
 		) );
 	}

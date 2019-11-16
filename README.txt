@@ -2,7 +2,7 @@
 Contributors: PensoPay
 Tags: gateway, woo commerce, pensopay, gateway, integration, woocommerce, woocommerce pensopay, payment, payment gateway, psp
 Requires at least: 4.0.0
-Tested up to: 5.2.2
+Tested up to: 5.3
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -26,7 +26,12 @@ General:
 2. WooCommerce >= 3.0
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
-== Changelog ==
+== Changelog ==`
+= 5.1.7 =
+Fix enabled condition for viabill, fixing warnings and currency issues (DKK, USD, NOK only)
+Remove spinning animation
+Remove recurs
+
 = 5.1.6 =
 * Fixes a bug that made creating a payment link from admin impossible.
 

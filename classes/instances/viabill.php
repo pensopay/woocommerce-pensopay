@@ -25,9 +25,17 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
 	    add_action('woocommerce_checkout_order_review', array( $this, 'viabill_checkout_order_review'), 10, 0);
     }
 
+    public function is_available() {
+	    $currency = get_woocommerce_currency();
+	    if (in_array($currency, array('DKK', 'NOK', 'USD'))) {
+		    return parent::is_available() && isset($this->settings['id']) && !empty($this->settings['id']);
+	    }
+	    return false;
+    }
+
 	public function viabill_header()
 	{
-	    ?>
+	    if ($this->is_available()): ?>
         <script type="text/javascript">
             var o;
 
@@ -53,7 +61,7 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
                 jQuery('body').on('updated_checkout', viabillReset);
             });
         </script>
-        <?php
+        <?php endif;
 	}
 
 	/**
@@ -116,7 +124,9 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
         if (is_product() && isset($woocommerce_loop['name']) && $woocommerce_loop['name'] === 'related' && isset($this->settings['show_pricetag_on_related_products']) && $this->settings['show_pricetag_on_related_products'] !== 'yes') {
             return $price;
         }
-        
+        global $wp_query;
+		$post = $wp_query->get_queried_object();
+
 		return $price . $this->getViabillPriceHtml(is_product() ? 'product' : 'list', $product->get_price());
 	}
 
@@ -125,11 +135,13 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
      */
 	public function viabill_checkout_order_review()
     {
-        if (isset($this->settings['show_pricetag_in_checkout']) && $this->settings['show_pricetag_in_checkout'] === 'yes') {
-            echo $this->getViabillPriceHtml('basket', WC()->cart->get_total('nodisplay'));
-        }
+	    if ( $this->is_available() ) {
+		    if ( isset( $this->settings['show_pricetag_in_checkout'] ) && $this->settings['show_pricetag_in_checkout'] === 'yes' ) {
+			    echo $this->getViabillPriceHtml( 'basket', WC()->cart->get_total( 'nodisplay' ) );
+		    }
+	    }
     }
-    
+
     /**
     * init_form_fields function.
     *
