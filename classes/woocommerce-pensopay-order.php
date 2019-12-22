@@ -29,12 +29,19 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @return int
 	 */
 	public static function get_order_id_from_callback( $callback_data ) {
+		global $wpdb;
+
 		// Check for the post ID reference on the response object.
 		// This should be available on all new orders.
 		if ( ! empty( $callback_data->variables ) && ! empty( $callback_data->variables->order_post_id ) ) {
 			return $callback_data->variables->order_post_id;
 		} else if ( isset( $_GET['order_post_id'] ) ) {
 			return trim( $_GET['order_post_id'] );
+		} else {
+			$result = $wpdb->get_var("SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'TRANSACTION_ORDER_ID' AND meta_value = '{$callback_data->order_id}' LIMIT 1");
+			if ($result) {
+				return $result;
+			}
 		}
 
 		// Fallback
