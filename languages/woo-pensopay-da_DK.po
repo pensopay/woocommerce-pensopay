@@ -494,12 +494,12 @@ msgstr "Betalingsmetoder"
 #: classes/woocommerce-pensopay-settings.php:134
 msgid ""
 "Default: creditcard. Type in the cards you wish to accept (comma separated). "
-"See the valid payment types here: <b>http://tech.pensopay.net/appendixes/"
+"See the valid payment types here: <b>http://tech.quickpay.net/appendixes/"
 "payment-methods/</b>"
 msgstr ""
 "Standard: creditcard. Indtast de korttyper, du ønsker at aktivere "
 "(kommasepareret). Se en liste med de mulige betalingstyper her: <b>http://"
-"tech.pensopay.net/appendixes/payment-methods/</b>"
+"tech.quickpay.net/appendixes/payment-methods/</b>"
 
 #: classes/woocommerce-pensopay-settings.php:138
 msgid "Branding ID"
@@ -1111,7 +1111,7 @@ msgstr ""
 #~ msgstr ""
 #~ "Standard: creditcard. Indtast de korttyper, du ønsker at aktivere "
 #~ "(kommasepareret). Se en liste med de mulige betalingstyper her: <b>http://"
-#~ "tech.pensopay.net/appendixes/payment-methods/</b>"
+#~ "tech.quickpay.net/appendixes/payment-methods/</b>"
 
 #, fuzzy
 #~| msgid "Enable Swipp payment"

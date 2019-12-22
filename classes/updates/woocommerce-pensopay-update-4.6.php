@@ -21,7 +21,7 @@ $subscriptions = $wpdb->get_results("SELECT * FROM {$wpdb->posts} p WHERE p.post
 
 if (!empty($subscriptions)) {
     foreach( $subscriptions as $subscription_post ) {
-        // Change from DB object to a QP Order object
+        // Change from DB object to a PP Order object
         $subscription = new WC_PensoPay_Order($subscription_post->ID);
         // Create order object
         $order = new WC_PensoPay_Order($subscription_post->post_parent);

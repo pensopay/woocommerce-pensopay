@@ -28,7 +28,8 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
     public function is_available() {
 	    $currency = get_woocommerce_currency();
 	    if (in_array($currency, array('DKK', 'NOK', 'USD'))) {
-		    return parent::is_available() && isset($this->settings['id']) && !empty($this->settings['id']);
+		    return parent::is_available();
+		    // && isset($this->settings['id']) && !empty($this->settings['id'])
 	    }
 	    return false;
     }

@@ -9,7 +9,7 @@
  * @package        Woocommerce_PensoPay/Classes
  * @category       Class
  * @author         PensoPay
- * @docs        http://tech.pensopay.net/api/services/?scope=merchant
+ * @docs        http://tech.quickpay.net/api/services/?scope=merchant
  */
 
 class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
@@ -422,5 +422,12 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 */
 	public function is_loaded_from_cached() {
 		return $this->loaded_from_cache;
+	}
+
+	/**
+	 * return stdClass
+	 */
+	public function get_data() {
+		return $this->resource_data;
 	}
 }

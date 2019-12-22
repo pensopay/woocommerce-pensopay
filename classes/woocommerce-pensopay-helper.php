@@ -54,6 +54,8 @@ class WC_PensoPay_Helper {
 	 * Multiplies a custom formatted price based on the WooCommerce decimal- and thousand separators
 	 *
 	 * @param $price
+	 *
+	 * @return int
 	 */
 	public static function price_custom_to_multiplied( $price ) {
 		$decimal_separator  = get_option( 'woocommerce_price_decimal_sep' );
@@ -86,8 +88,32 @@ class WC_PensoPay_Helper {
 	 * @return void
 	 */
 	public static function enqueue_javascript_backend() {
-		wp_enqueue_script( 'pensopay-backend', plugins_url( '/assets/javascript/backend.js', __DIR__ ), array( 'jquery' ), self::static_version() );
-		wp_localize_script( 'pensopay-backend', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+		if ( self::maybe_enqueue_admin_statics() ) {
+			wp_enqueue_script( 'pensopay-backend', plugins_url( '/assets/javascript/backend.js', __DIR__ ), array( 'jquery' ), self::static_version() );
+			wp_localize_script( 'pensopay-backend', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+		}
+	}
+
+	/**
+	 * @return bool
+	 */
+	protected static function maybe_enqueue_admin_statics() {
+		global $post;
+		/**
+		 * Enqueue on the settings page for the gateways
+		 */
+		if ( isset( $_GET['page'], $_GET['tab'], $_GET['section'] ) ) {
+			if ( $_GET['page'] === 'wc-settings' && $_GET['tab'] === 'checkout' && array_key_exists( $_GET['section'], array_merge( [ 'pensopay' => null ], WC_PensoPay::get_gateway_instances() ) ) ) {
+				return true;
+			}
+		} /**
+		 * Enqueue on the shop order page
+		 */
+		else if ( ! empty( $post ) && in_array( $post->post_type, [ 'shop_order', 'shop_subscription' ] ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public static function static_version() {
@@ -173,11 +199,11 @@ class WC_PensoPay_Helper {
 	}
 
 	/**
-	 * @since 4.5.0
-	 *
 	 * @param $payment_type
 	 *
 	 * @return null
+	 * @since 4.5.0
+	 *
 	 */
 	public static function get_payment_type_logo( $payment_type ) {
 		$logos = [
@@ -262,10 +288,10 @@ class WC_PensoPay_Helper {
 	/**
 	 * Inserts a new key/value after the key in the array.
 	 *
-	 * @param string $needle    The array key to insert the element after
-	 * @param array  $haystack  An array to insert the element into
-	 * @param string $new_key   The key to insert
-	 * @param mixed  $new_value An value to insert
+	 * @param string $needle The array key to insert the element after
+	 * @param array $haystack An array to insert the element into
+	 * @param string $new_key The key to insert
+	 * @param mixed $new_value An value to insert
 	 *
 	 * @return array The new array if the $needle key exists, otherwise an unmodified $haystack
 	 */

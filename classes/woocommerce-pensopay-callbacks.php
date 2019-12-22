@@ -37,6 +37,8 @@ class WC_PensoPay_Callbacks {
 
 		// Fallback to save transaction IDs since this has seemed to sometimes fail when using WC_Order::payment_complete
 		self::save_transaction_id_fallback( $order, $transaction );
+
+		do_action( 'woocommerce_pensopay_callback_payment_authorized', $order, $transaction );
 	}
 
 	/**
@@ -81,6 +83,8 @@ class WC_PensoPay_Callbacks {
 				$parent_order->payment_complete();
 			}
 		}
+
+		do_action( 'woocommerce_pensopay_callback_subscription_authorized', $subscription, $parent_order, $transaction );
 	}
 
 	/**

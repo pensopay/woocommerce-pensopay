@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '5.1.7' );
+define( 'WCPP_VERSION', '5.3.1' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -65,6 +65,8 @@ function init_pensopay_gateway() {
 	require_once WCPP_PATH . 'classes/api/woocommerce-pensopay-api-subscription.php';
 	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-module.php';
 	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-emails.php';
+	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-checkout-frontend.php';
+	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-checkout.php';
 	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-admin-orders.php';
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-exceptions.php';
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-log.php';
@@ -76,7 +78,8 @@ function init_pensopay_gateway() {
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-countries.php';
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-views.php';
 	require_once WCPP_PATH . 'classes/woocommerce-pensopay-callbacks.php';
-	
+	require_once WCPP_PATH . 'helpers/transactions.php';
+
 
 	// Main class
 	class WC_PensoPay extends WC_Payment_Gateway {
@@ -124,7 +127,7 @@ function init_pensopay_gateway() {
 			$this->id           = 'pensopay';
 			$this->method_title = 'PensoPay';
 			$this->icon         = '';
-			$this->has_fields   = false;
+			$this->has_fields   = true;
 
 			$this->supports = array(
 				'subscriptions',
@@ -168,15 +171,7 @@ function init_pensopay_gateway() {
 		public static function filter_load_instances( $methods ) {
 			require_once WCPP_PATH . 'classes/instances/instance.php';
 
-			$instances = array(
-				'bitcoin'            => 'WC_PensoPay_Bitcoin',
-				'klarna'             => 'WC_PensoPay_Klarna',
-				'mobilepay'          => 'WC_PensoPay_MobilePay',
-				'mobilepay-checkout' => 'WC_PensoPay_MobilePay_Checkout',
-				'sofort'             => 'WC_PensoPay_Sofort',
-				'viabill'            => 'WC_PensoPay_ViaBill',
-				'vipps'              => 'WC_PensoPay_Vipps',
-			);
+			$instances = self::get_gateway_instances();
 
 			foreach ( $instances as $file_name => $class_name ) {
 				$file_path = WCPP_PATH . 'classes/instances/' . $file_name . '.php';
@@ -188,6 +183,27 @@ function init_pensopay_gateway() {
 			}
 
 			return $methods;
+		}
+
+		/**
+		 * @return array
+		 */
+		public static function get_gateway_instances() {
+			return array(
+				'bitcoin'            => 'WC_PensoPay_Bitcoin',
+				'fbg1886'            => 'WC_PensoPay_FBG1886',
+				'ideal'              => 'WC_PensoPay_iDEAL',
+				'klarna'             => 'WC_PensoPay_Klarna',
+				'mobilepay'          => 'WC_PensoPay_MobilePay',
+				'mobilepay-checkout' => 'WC_PensoPay_MobilePay_Checkout',
+				'pensopay-extra'     => 'WC_PensoPay_Extra',
+				'resurs'             => 'WC_PensoPay_Resurs',
+				'sofort'             => 'WC_PensoPay_Sofort',
+				'swish'              => 'WC_PensoPay_Swish',
+				'trustly'            => 'WC_PensoPay_Trustly',
+				'viabill'            => 'WC_PensoPay_ViaBill',
+				'vipps'              => 'WC_PensoPay_Vipps',
+			);
 		}
 
 
@@ -202,6 +218,8 @@ function init_pensopay_gateway() {
 		public function hooks_and_filters() {
 			WC_PensoPay_Admin_Orders::get_instance();
 			WC_PensoPay_Emails::get_instance();
+			WC_PensoPay_Checkout_Frontend::get_instance();
+			WC_PensoPay_Checkout::get_instance();
 
 			add_action( 'woocommerce_api_wc_' . $this->id, array( $this, 'callback_handler' ) );
 			add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
@@ -223,7 +241,6 @@ function init_pensopay_gateway() {
 
 			// WooCommerce Pre-Orders
 			add_action( 'wc_pre_orders_process_pre_order_completion_payment_' . $this->id, array( $this, 'process_pre_order_payments' ) );
-
 
 			if ( is_admin() ) {
 				add_action( 'admin_menu', 'WC_PensoPay_Helper::enqueue_stylesheet' );
@@ -345,13 +362,35 @@ function init_pensopay_gateway() {
 								throw new \Exception(); //get out of here
 							}
 
-							$payment->get($order->get_payment_id());
-							$lastOp = $payment->get_last_operation();
-							if (in_array($lastOp->type, [
-								'authorize',
-								'capture'])
-							) {
-								if ($lastOp->qp_status_code == 20000) {
+							$authorizeOrCapture = false;
+							$isAccepted = false;
+							$isSubscription = false;
+
+							/** We want to try and fail if it is a subscription here because just checking
+							 * if the order has subscriptions in an order where it has both a subscription
+							 * and normal products, it could fail. We are interested in the current payment and figuring
+							 * out whether or not it is a subscription. This allows us to do that by first
+							 * checking if a payment exists with this id, otherwise if a subscription exists with that
+							 * id, then we need to check that subscription was authorized
+							 */
+							try {
+								$payment->get($order->get_payment_id());
+								$lastOp = $payment->get_last_operation();
+								if (in_array($lastOp->type, [ 'authorize', 'capture'])) {
+									$authorizeOrCapture = true;
+									$isAccepted = $lastOp->qp_status_code == 20000;
+								}
+							} catch (\Exception $e) {
+								$subApi = new WC_PensoPay_API_Subscription();
+								if ($subApi->is_authorized($order->get_payment_id()) && $subApi->has_operations()) {
+									$isAccepted = true;
+									$isSubscription = true;
+									//Set the subscription at this level so it repeats properly
+								}
+							}
+
+							if ($authorizeOrCapture || $isSubscription) {
+								if ($isAccepted) {
 									$response =
 										[
 											'repeat' => 0,
@@ -466,6 +505,7 @@ function init_pensopay_gateway() {
 						$payment = new WC_PensoPay_API_Payment();
 						$payment->get( $transaction_id );
 					}
+
 
 					$payment->get( $transaction_id );
 
@@ -621,13 +661,19 @@ function init_pensopay_gateway() {
 		/**
 		 * receipt_page function.
 		 *
-		 * Shows the recipt. This is the very last step before opening the payment window.
+		 * Shows the receipt. This is the very last step before opening the payment window. Only shows on order needing payment.
 		 *
 		 * @access public
+		 *
+		 * @param int $order_id
+		 *
 		 * @return void
 		 */
-		public function receipt_page( $order ) {
-			echo $this->generate_pensopay_form( $order );
+		public function receipt_page( $order_id ) {
+			if ( WC_PensoPay_Checkout_Frontend::is_embedded_payment_enabled() ) {
+				wp_enqueue_script( 'wcpp-overlay' );
+				echo WC_PensoPay_Checkout_Frontend::generate_overlay_form_for_order( $order_id );
+			}
 		}
 
 		/**
@@ -638,9 +684,33 @@ function init_pensopay_gateway() {
 		 * @return array
 		 */
 		public function process_payment( $order_id ) {
+			$order = new WC_PensoPay_Order( $order_id );
+
+			if ( 'pensopay' === $this->id && WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_embedded_payments_enabled' ) ) ) {
+
+				$redirect = $order->get_checkout_payment_url( true );
+				if ( ! empty( $_REQUEST['woocommerce_change_payment'] ) ) {
+					$redirect = add_query_arg( 'pensopay_change_payment_method', $_REQUEST['woocommerce_change_payment'], $redirect );
+				}
+
+				return array(
+					'result'   => 'success',
+					'redirect' => $redirect
+				);
+			} else {
+				return $this->prepare_external_window_payment( $order );
+			}
+		}
+
+		/**
+		 * Processes a payment if embedded payments are disabled.
+		 *
+		 * @param WC_PensoPay_Order $order
+		 *
+		 * @return array
+		 */
+		private function prepare_external_window_payment( $order ) {
 			try {
-				// Instantiate order object
-				$order = new WC_PensoPay_Order( $order_id );
 
 				// Does the order need a new PensoPay payment?
 				$needs_payment = true;
@@ -649,12 +719,10 @@ function init_pensopay_gateway() {
 				$redirect_to = $this->get_return_url( $order );
 
 				// Instantiate a new transaction
-				$api_transaction = new WC_PensoPay_API_Payment();
+				$api_transaction = woocommerce_pensopay_get_transaction_instance_by_order( $order );
 
 				// If the order is a subscripion or an attempt of updating the payment method
-				if ( ! WC_PensoPay_Subscription::cart_contains_switches() && ( $order->contains_subscription() || $order->is_request_to_change_payment() ) ) {
-					// Instantiate a subscription transaction instead of a payment transaction
-					$api_transaction = new WC_PensoPay_API_Subscription();
+				if ( $api_transaction instanceof WC_PensoPay_API_Subscription ) {
 					// Clean up any legacy data regarding old payment links before creating a new payment.
 					$order->delete_payment_id();
 					$order->delete_payment_link();
@@ -666,42 +734,16 @@ function init_pensopay_gateway() {
 				}
 
 				if ( $needs_payment ) {
-					// Create a new object
-					$payment = new stdClass();
-					// If a payment ID exists, go get it
-					$payment->id = $order->get_payment_id();
-					// Create a payment link
-					$link = new stdClass();
-					// If a payment link exists, go get it
-					$link->url = $order->get_payment_link();
-
-					// If the order does not already have a payment ID,
-					// we will create one an attach it to the order
-					// We also check if a payment already exists. If a link exists, we don't
-					// need to create a payment.
-					if ( empty( $payment->id ) && empty( $link->url ) ) {
-						$payment = $api_transaction->create( $order );
-						$order->set_payment_id( $payment->id );
-					}
-
-					// Patch the payment to make sure all data i up to date
-					$api_transaction->patch_payment($payment->id, $order);
-
-					// Create or update the payment link. This is necessary to do EVERY TIME
-					// to avoid fraud with changing amounts.
-					$link = $api_transaction->patch_link( $payment->id, $order );
-
-					if ( WC_PensoPay_Helper::is_url( $link->url ) ) {
-						$order->set_payment_link( $link->url );
-					}
+					$redirect_to = woocommerce_pensopay_create_payment_link( $order );
 
 					// Overwrite the standard checkout url. Go to the PensoPay payment window.
 
-					if ( WC_PensoPay_Helper::is_url( $link->url ) ) {
+					if ( WC_PensoPay_Helper::is_url( $order->get_payment_link() ) ) {
 						if (WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))) {
 							$redirect_to = sprintf('%s?%s', get_site_url(), WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY);
-						} else
-							$redirect_to = $link->url;
+						} else {
+							$redirect_to = $order->get_payment_link();
+						}
 					}
 				}
 
@@ -1006,7 +1048,7 @@ function init_pensopay_gateway() {
 			}
 
 			try {
-				if ( WC_PensoPay_Subscription::is_subscription( $order ) ) {
+				if ( WC_PensoPay_Subscription::is_subscription( $order ) && apply_filters( 'woocommerce_pensopay_allow_subscription_transaction_cancellation', true, $order, $this ) ) {
 					$order          = new WC_PensoPay_Order( $order );
 					$transaction_id = $order->get_transaction_id();
 
@@ -1088,7 +1130,7 @@ function init_pensopay_gateway() {
 				// Get last transaction in operation history
 				$transaction = end( $json->operations );
 
-				// Is the transaction accepted and approved by QP / Acquirer?
+				// Is the transaction accepted and approved by PP / Acquirer?
 				if ( $json->accepted ) {
 
 					do_action( 'woocommerce_pensopay_accepted_callback_before_processing', $order, $json );
@@ -1588,33 +1630,6 @@ function init_pensopay_gateway() {
 		 */
 		public function get_gateway_language() {
 			$language = apply_filters( 'woocommerce_pensopay_language', $this->s( 'pensopay_language' ) );
-
-			if ($language === 'automatic') {
-				$language = $this->detect_gateway_language($language);
-			}
-
-			return $language;
-		}
-
-		/**
-		 *
-		 * detect_gateway_language
-		 *
-		 * Attempts to detect the gateway language
-		 *
-		 * @access public
-		 * @return string
-		 */
-		public function detect_gateway_language($language) {
-			//WPML uses ICL_LANGUAGE_CODE to specify language
-			if( defined('ICL_LANGUAGE_CODE') ) {
-				return ICL_LANGUAGE_CODE;
-			}
-
-			//Polylang
-			if( function_exists('pll_current_language') ) {
-				return pll_current_language('slug');
-			}
 
 			return $language;
 		}

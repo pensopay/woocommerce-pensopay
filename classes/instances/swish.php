@@ -1,6 +1,6 @@
 <?php
 
-class WC_PensoPay_Sofort extends WC_PensoPay_Instance {
+class WC_PensoPay_Swish extends WC_PensoPay_Instance {
 
     public $main_settings = NULL;
 
@@ -8,21 +8,16 @@ class WC_PensoPay_Sofort extends WC_PensoPay_Instance {
         parent::__construct();
 
         // Get gateway variables
-        $this->id = 'sofort';
+        $this->id = 'swish';
 
-        $this->method_title = 'PensoPay - Sofort';
+        $this->method_title = 'PensoPay - Swish';
 
         $this->setup();
 
         $this->title = $this->s('title');
         $this->description = $this->s('description');
 
-        add_filter( 'woocommerce_pensopay_cardtypelock_sofort', array( $this, 'filter_cardtypelock' ) );
-
-	    add_action( 'woocommerce_pensopay_accepted_callback_status_capture', array(
-		    $this,
-		    'additional_callback_handler'
-	    ), 10, 2 );
+        add_filter( 'woocommerce_pensopay_cardtypelock_' . $this->id, array( $this, 'filter_cardtypelock' ) );
     }
 
 
@@ -34,12 +29,13 @@ class WC_PensoPay_Sofort extends WC_PensoPay_Instance {
      * @access public
      * @return array
      */
-    public function init_form_fields() {
+    public function init_form_fields()
+    {
         $this->form_fields = array(
             'enabled' => array(
                 'title' => __( 'Enable', 'woo-pensopay' ),
                 'type' => 'checkbox',
-                'label' => __( 'Enable Sofort payment', 'woo-pensopay' ),
+                'label' => __( 'Enable Swish payment', 'woo-pensopay' ),
                 'default' => 'no'
             ),
             '_Shop_setup' => array(
@@ -50,30 +46,16 @@ class WC_PensoPay_Sofort extends WC_PensoPay_Instance {
                 'title' => __( 'Title', 'woo-pensopay' ),
                 'type' => 'text',
                 'description' => __( 'This controls the title which the user sees during checkout.', 'woo-pensopay' ),
-                'default' => __('Sofort', 'woo-pensopay')
+                'default' => __('Swish', 'woo-pensopay')
             ),
             'description' => array(
                 'title' => __( 'Customer Message', 'woo-pensopay' ),
                 'type' => 'textarea',
                 'description' => __( 'This controls the description which the user sees during checkout.', 'woo-pensopay' ),
-                'default' => __('Pay with your mobile phone', 'woo-pensopay')
+                'default' => __('Pay with Swish', 'woo-pensopay')
             ),
         );
     }
-
-	/**
-	 * Sofort payments are not sending authorized callbacks. Instead a capture callback is sent. We will perform
-	 * gateway specific logic here to handle the payment properly.
-	 *
-	 * @param \WC_PensoPay_Order $order
-	 * @param stdClass $transaction
-	 */
-	public function additional_callback_handler( $order, $transaction ) {
-		if ( $order->get_payment_method() === $this->id ) {
-			WC_PensoPay_Callbacks::authorized($order, $transaction);
-			WC_PensoPay_Callbacks::payment_authorized($order, $transaction);
-		}
-	}
 
 
     /**
@@ -84,7 +66,8 @@ class WC_PensoPay_Sofort extends WC_PensoPay_Instance {
      * @access public
      * @return string
      */
-    public function filter_cardtypelock() {
-        return 'sofort';
+    public function filter_cardtypelock( )
+    {
+        return 'swish';
     }
 }

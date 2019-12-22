@@ -325,6 +325,10 @@ class WC_PensoPay_Order extends WC_Order {
 
 		if ( WC_PensoPay_Subscription::plugin_is_active() ) {
 			$is_request_to_change_payment = WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment;
+
+			if ( ! $is_request_to_change_payment && ! empty( $_GET['pensopay_change_payment_method'] ) ) {
+				$is_request_to_change_payment = true;
+			}
 		}
 
 		return apply_filters( 'woocommerce_pensopay_is_request_to_change_payment', $is_request_to_change_payment );
@@ -832,12 +836,17 @@ class WC_PensoPay_Order extends WC_Order {
 
 		return in_array( get_post_meta( $order_id, '_payment_method', true ), array(
 			'bitcoin',
+			'ideal',
+			'klarna',
 			'pensopay',
 			'mobilepay',
 			'mobilepay_checkout',
-			'viabill',
+			'pensopay',
+			'pensopay-extra',
+			'resurs',
 			'sofort',
-			'klarna',
+			'trustly',
+			'viabill',
 			'vipps',
 		) );
 	}

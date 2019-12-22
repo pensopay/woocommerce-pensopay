@@ -457,7 +457,7 @@ msgstr ""
 #: classes/woocommerce-pensopay-settings.php:134
 msgid ""
 "Default: creditcard. Type in the cards you wish to accept (comma separated). "
-"See the valid payment types here: <b>http://tech.pensopay.net/appendixes/"
+"See the valid payment types here: <b>http://tech.quickpay.net/appendixes/"
 "payment-methods/</b>"
 msgstr ""
 

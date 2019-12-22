@@ -40,6 +40,8 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 		), 10 );
 
 		add_filter( 'woocommerce_update_order_review_fragments', [ $this, 'update_order_review_fragments' ], 10, 1 );
+
+		add_filter( 'woocommerce_pensopay_automatic_shipping_address', [ $this, 'maybe_modify_object_shipping_address' ], 10, 4 );
 	}
 
 	/**
@@ -80,6 +82,7 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	/**
 	 * Removes all required fields validation errors to avoid validation errors when checking out with MobilePay Checkout.
 	 * We will validate all fields set as required by developers.
+	 *
 	 * @param array $data
 	 * @param \WP_Error $errors
 	 */
@@ -161,8 +164,8 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 */
 	public function callback_save_address( $order, $transaction ) {
 		if ( $transaction->variables->payment_method === $this->id && $this->is_enabled() ) {
-			$billing_address  = (object) apply_filters( 'woocommerce_pensopay_automatic_billing_address', ! empty( $transaction->invoice_address ) ? $transaction->invoice_address : null, $order );
-			$shipping_address = (object) apply_filters( 'woocommerce_pensopay_automatic_shipping_address', ! empty( $transaction->shipping_address ) ? $transaction->shipping_address : null, $order );
+			$billing_address  = (object) apply_filters( 'woocommerce_pensopay_automatic_billing_address', ! empty( $transaction->invoice_address ) ? $transaction->invoice_address : null, $order, $transaction );
+			$shipping_address = (object) apply_filters( 'woocommerce_pensopay_automatic_shipping_address', ! empty( $transaction->shipping_address ) ? $transaction->shipping_address : null, $order, $billing_address, $transaction );
 
 			do_action( 'woocommerce_pensopay_save_automatic_addresses_before', $order, $billing_address, $shipping_address, $transaction );
 			try {
@@ -275,6 +278,30 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 			$object->set_shipping_postcode( $address->zip_code );
 			$object->set_shipping_address_2( $address->att );
 		}
+	}
+
+	/**
+	 * @param stdClass|null $shipping_address
+	 * @param \WC_Order $order
+	 * @param stdClass|null $billing_address
+	 * @param stdClass $transaction
+	 *
+	 * @return object
+	 */
+	public function maybe_modify_object_shipping_address( $shipping_address, $order, $billing_address, $transaction ) {
+		if ( $shipping_address !== null ) {
+			$name         = trim( $shipping_address->name );
+			$street       = trim( $shipping_address->street );
+			$city         = trim( $shipping_address->city );
+			$postcode     = trim( $shipping_address->zip_code );
+			$house_number = trim( $shipping_address->house_number );
+
+			if ( is_object( $billing_address ) && ( empty( $name ) || empty( $street ) || empty( $city ) || empty( $postcode ) || empty( $house_number ) ) ) {
+				$shipping_address = $billing_address;
+			}
+		}
+
+		return $shipping_address;
 	}
 
 	/**

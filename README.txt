@@ -2,7 +2,7 @@
 Contributors: PensoPay
 Tags: gateway, woo commerce, pensopay, gateway, integration, woocommerce, woocommerce pensopay, payment, payment gateway, psp
 Requires at least: 4.0.0
-Tested up to: 5.3
+Tested up to: 5.3.0
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -22,11 +22,29 @@ With WooCommerce PensoPay, you are able to integrate your PensoPay gateway to yo
 
 == Dependencies ==
 General:
-1. PHP: >= 5.3
+1. PHP: >= 5.4
 2. WooCommerce >= 3.0
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
-== Changelog ==`
+== Changelog ==
+= 5.3.1 =
+* Fix: Fix missing shipping information on MobilePay Checkout orders if no shipping address is specified in the MobilePay app
+* Fix: Bump minimum PHP version to 5.4
+* Fix: Make .is-loading in backend more specific.
+* Feature: Trustly as separate payment method instance
+* Feature: iDEAL as separate payment method instance
+* Feature: Swish as separate payment method instance
+* Feature: FBG1886 as separate payment method instance
+* Feature: PensoPay - Extra - A flexible payment method instance which takes custom payment methods and icons from the settings panel. This can be used to offer i.e. Dankort payments through NETS if embedded payments are enabled on the main instance.
+* Feature: Possibility to disable cancellation of subscription transactions programmatically through 'woocommerce_pensopay_allow_subscription_transaction_cancellation'
+* Enhancement: Optimized images for Swish and Resurs.
+* Enhancement: Updates helper texts on embedded window and text_on_statement on the settings page
+* Enhancement: Only load the backend javascripts on relevant pages
+* Feature: Add support for embedded payments through overlay with Clearhaus
+* Developer: Add action 'woocommerce_pensopay_callback_subscription_authorized' and 'woocommerce_pensopay_callback_payment_authorized' for easier way of handling authorized callbacks for specific transaction types.
+* Remove eDankort
+* Fix: Minor syntax-error in backend javascript
+
 = 5.1.7 =
 Fix enabled condition for viabill, fixing warnings and currency issues (DKK, USD, NOK only)
 Remove spinning animation

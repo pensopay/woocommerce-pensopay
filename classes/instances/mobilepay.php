@@ -66,8 +66,7 @@ class WC_PensoPay_MobilePay extends WC_PensoPay_Instance {
     * @access public
     * @return string
     */
-    public function filter_cardtypelock( )
-    {
+    public function filter_cardtypelock() {
         return 'mobilepay';
     }
 }

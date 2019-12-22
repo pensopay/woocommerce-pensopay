@@ -11,16 +11,15 @@
 class WC_PensoPay_Settings {
 
 	/**
-	* get_fields function.
-	*
-	* Returns an array of available admin settings fields
-	*
-	* @access public static
-	* @return array
-	*/
-	public static function get_fields()
-	{
-		$fields = 
+	 * get_fields function.
+	 *
+	 * Returns an array of available admin settings fields
+	 *
+	 * @access public static
+	 * @return array
+	 */
+	public static function get_fields() {
+		$fields =
 			array(
 				'enabled' => array(
                     'title' => __( 'Enable', 'woo-pensopay' ),
@@ -91,6 +90,29 @@ class WC_PensoPay_Settings {
                         'default' => 'no',
                         'desc_tip' => true,
                     ),
+				'_Embedded_payments'                 => array(
+					'type'  => 'title',
+					'title' => __( 'Embedded payments', 'woo-pensopay' )
+				),
+				'pensopay_embedded_payments_enabled' => array(
+					'title'           => __( 'Enable', 'woo-pensopay' ),
+					'type'            => 'checkbox',
+					'description'     => __( 'Allows the customer to pay safely directly on your website without redirecting the customer to the PensoPay payment window. <b>Works with Clearhaus only!</b>', 'woo-pensopay' ),
+					'default'         => 'no',
+					'desc_tip'        => false,
+					'checkboxgroup'   => 'start',
+					'shop_if_checked' => 'option'
+				),
+				'pensopay_embedded_autojump'         => array(
+					'title'           => __( 'Autojump', 'woo-pensopay' ),
+					'label'           => __( 'Enable', 'woo-pensopay' ),
+					'type'            => 'checkbox',
+					'description'     => __( 'Automatically jump to the next field when the customer types in card information.', 'woo-pensopay' ),
+					'default'         => 'no',
+					'desc_tip'        => false,
+					'show_if_checked' => 'option',
+					'checkboxgroup'   => 'end'
+				),
 				'_Extra_gateway_settings' => array(
 					'type' => 'title',
 					'title' => __('Extra gateway settings', 'woo-pensopay' )
@@ -131,7 +153,7 @@ class WC_PensoPay_Settings {
 					'pensopay_cardtypelock' => array(
                         'title' => __( 'Payment methods', 'woo-pensopay' ),
                         'type' => 'text', 
-                        'description' => __( 'Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://tech.pensopay.net/appendixes/payment-methods/</b>', 'woo-pensopay' ),
+                        'description' => __( 'Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://tech.quickpay.net/appendixes/payment-methods/</b>', 'woo-pensopay' ),
                         'default' => 'creditcard',
 					),
 					'pensopay_branding_id' => array(
@@ -168,7 +190,7 @@ class WC_PensoPay_Settings {
                     'pensopay_text_on_statement' => array(
                         'title' => __( 'Text on statement', 'woo-pensopay' ),
                         'type' => 'text', 
-                        'description' => __( 'Text that will be placed on cardholder’s bank statement (currently only supported by Clearhaus).', 'woo-pensopay' ),
+                        'description' => __( 'Text that will be placed on cardholder’s bank statement (MAX 22 ASCII characters and only supported by Clearhaus currently).', 'woo-pensopay' ),
                         'default' => '',
                         'desc_tip' => true,
                         'custom_attributes' => array(
@@ -220,38 +242,7 @@ class WC_PensoPay_Settings {
                             'data-placeholder' => __( 'Select icons', 'woo-pensopay' )
                         ),
                         'default' => '',
-                        'options' => array(
-                        	'apple-pay' => 'Apple Pay',
-                            'dankort' => 'Dankort',
-                            'edankort' => 'eDankort',
-                            'visa'	=> 'Visa',
-                            'visaelectron' => 'Visa Electron',
-                            'visa-verified' => 'Verified by Visa',
-                            'mastercard' => 'Mastercard',
-                            'mastercard-securecode' => 'Mastercard SecureCode',
-                            'maestro' => 'Maestro',
-                            'jcb' => 'JCB',
-                            'americanexpress' => 'American Express',
-                            'diners' => 'Diner\'s Club',
-                            'discovercard' => 'Discover Card',
-                            'viabill' => 'ViaBill',
-                            'paypal' => 'Paypal',
-                            'danskebank' => 'Danske Bank',
-                            'nordea' => 'Nordea',
-                            'mobilepay' => 'MobilePay',
-                            'forbrugsforeningen' => 'Forbrugsforeningen',
-                            'ideal' => 'iDEAL',
-                            'unionpay' => 'UnionPay',
-                            'sofort' => 'Sofort',
-                            'cirrus' => 'Cirrus',
-                            'klarna' => 'Klarna',
-                            'bankaxess' => 'BankAxess',
-                            'vipps' => 'Vipps',
-                            'swish' => 'Swish',
-                            'bitcoin' => 'Bitcoin',
-                            'trustly' => 'Trustly',
-                            'paysafecard' => 'Paysafe Card',
-                        ),
+                        'options' => self::get_card_icons(),
 					),
 					'pensopay_icons_maxheight' => array(
 						'title' => __( 'Credit card icons maximum height', 'woo-pensopay' ),
@@ -323,8 +314,45 @@ class WC_PensoPay_Settings {
 
 		return $fields;
 	}
-    
-    
+
+	/**
+	 * @return array
+	 */
+	public static function get_card_icons() {
+		return array(
+			'apple-pay'             => 'Apple Pay',
+			'dankort'               => 'Dankort',
+			'visa'                  => 'Visa',
+			'visaelectron'          => 'Visa Electron',
+			'visa-verified'         => 'Verified by Visa',
+			'mastercard'            => 'Mastercard',
+			'mastercard-securecode' => 'Mastercard SecureCode',
+			'maestro'               => 'Maestro',
+			'jcb'                   => 'JCB',
+			'americanexpress'       => 'American Express',
+			'diners'                => 'Diner\'s Club',
+			'discovercard'          => 'Discover Card',
+			'viabill'               => 'ViaBill',
+			'paypal'                => 'Paypal',
+			'danskebank'            => 'Danske Bank',
+			'nordea'                => 'Nordea',
+			'mobilepay'             => 'MobilePay',
+			'forbrugsforeningen'    => 'Forbrugsforeningen',
+			'ideal'                 => 'iDEAL',
+			'unionpay'              => 'UnionPay',
+			'sofort'                => 'Sofort',
+			'cirrus'                => 'Cirrus',
+			'klarna'                => 'Klarna',
+			'bankaxess'             => 'BankAxess',
+			'vipps'                 => 'Vipps',
+			'swish'                 => 'Swish',
+			'bitcoin'               => 'Bitcoin',
+			'trustly'               => 'Trustly',
+			'paysafecard'           => 'Paysafe Card',
+		);
+	}
+
+
 	/**
 	* custom_variable_options function.
 	*

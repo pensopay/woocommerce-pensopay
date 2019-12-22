@@ -7,7 +7,7 @@
  * @package		Woocommerce_PensoPay/Classes
  * @category	Class
  * @author 		PensoPay
- * @docs        http://tech.pensopay.net/api/services/?scope=merchant
+ * @docs        http://tech.quickpay.net/api/services/?scope=merchant
  */
 
 class WC_PensoPay_API_Subscription extends WC_PensoPay_API_Transaction
@@ -131,4 +131,44 @@ class WC_PensoPay_API_Subscription extends WC_PensoPay_API_Transaction
 
         return array_key_exists( $action, $allowed_states ) AND in_array( $state, $allowed_states[$action] );
     }
+
+	/**
+	 * get_payments function.
+	 *
+	 * Sends a 'payments' request to the PensoPay API
+	 *
+	 * @access public
+	 *
+	 * @param int $subscription_id
+	 *
+	 * @return object
+	 * @throws PensoPay_API_Exception
+	 */
+	public function get_payments( $subscription_id )
+	{
+		return $this->get( sprintf( '%d/%s', $subscription_id, "payments" ) );
+	}
+
+	/**
+	 * is_authorized function.
+	 *
+	 * Sends a 'payments' request to the PensoPay API
+	 *
+	 * @access public
+	 *
+	 * @param int $subscription_id
+	 *
+	 * @return object
+	 * @throws PensoPay_API_Exception
+	 */
+	public function is_authorized( $subscription_id )
+	{
+		return $this->get( sprintf( '%d', $subscription_id ) )->accepted;
+	}
+
+	public function has_operations()
+	{
+		return isset($this->resource_data) && $this->resource_data instanceof stdClass
+		       && isset($this->resource_data->operations) && count($this->resource_data->operations);
+	}
 }

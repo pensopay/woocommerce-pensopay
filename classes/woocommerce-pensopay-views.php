@@ -23,4 +23,13 @@ class WC_PensoPay_Views
             include $file;
         }
     }
+
+	/**
+	 * @param $path
+	 *
+	 * @return string
+	 */
+	public static function asset_url($path) {
+		return WC_PP()->plugin_url('assets/' . $path);
+	}
 }

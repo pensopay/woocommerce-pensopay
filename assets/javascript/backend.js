@@ -185,4 +185,25 @@
 		});
 	}
 
+	function updateEmbeddedFieldsVisibilityState(embeddedSettingField, generalEmbeddedSettingRows) {
+
+		if( ! embeddedSettingField.is(':checked')) {
+			embeddedSettingField.closest('tr').siblings().fadeOut();
+			generalEmbeddedSettingRows.fadeOut();
+		} else {
+			generalEmbeddedSettingRows.fadeIn();
+		}
+	}
+
+	$(function() {
+		var embeddedSetting = $('#woocommerce_pensopay_pensopay_embedded_payments_enabled');
+		var generalEmbeddedSettingRows = $('#woocommerce_pensopay_pensopay_embedded_autojump').closest('tr');
+
+		updateEmbeddedFieldsVisibilityState(embeddedSetting, generalEmbeddedSettingRows)
+
+		embeddedSetting.on('change', function() {
+			updateEmbeddedFieldsVisibilityState(embeddedSetting, generalEmbeddedSettingRows)
+		})
+	});
+
 })(jQuery);
