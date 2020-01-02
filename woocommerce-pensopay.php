@@ -234,6 +234,7 @@ function init_pensopay_gateway() {
 			add_filter( 'wcs_renewal_order_meta_query', array( $this, 'remove_legacy_transaction_id_meta_query' ), 10 );
 			add_filter( 'woocommerce_subscription_payment_meta', array( $this, 'woocommerce_subscription_payment_meta' ), 10, 2 );
 			add_action( 'woocommerce_subscription_validate_payment_meta_' . $this->id, array( $this, 'woocommerce_subscription_validate_payment_meta', ), 10, 2 );
+			add_action( 'woocommerce_subscriptions_update_payment_via_pay_shortcode', array($this, 'woocommerce_subscriptions_update_payment_via_pay_shortcode'), 10, 3 );
 
 			// Custom bulk actions
 			add_action( 'admin_footer-edit.php', array( $this, 'register_bulk_actions' ) );
@@ -1164,6 +1165,38 @@ function init_pensopay_gateway() {
 									// Write log
 									WC_PensoPay_Callbacks::subscription_authorized( $subscription, $order, $json );
 
+									$subObject = new WC_Subscription($subscription_id);
+                                    // Check if all subscriptions need to be updated
+                                    if ( WC_Subscriptions_Change_Payment_Gateway::will_subscription_update_all_payment_methods( $subObject ) ) {
+                                        WC_Subscriptions_Change_Payment_Gateway::update_all_payment_methods_from_subscription( $subObject, $this->id );
+                                        $subscription_ids = WCS_Customer_Store::instance()->get_users_subscription_ids( $subObject->get_customer_id() );
+
+                                        //These conditions gotta match Woocommerce Subscription module
+                                        foreach ( $subscription_ids as $subscription_id ) {
+                                            // Skip the subscription providing the new payment meta.
+                                            if ($subObject->get_id() == $subscription_id) {
+                                                continue;
+                                            }
+
+                                            $user_subscription = wcs_get_subscription($subscription_id);
+                                            // Skip if subscription's current payment method is not supported
+                                            if (!$user_subscription->payment_method_supports('subscription_cancellation')) {
+                                                continue;
+                                            }
+
+                                            // Skip if there are no remaining payments or the subscription is not current.
+                                            if ($user_subscription->get_time('next_payment') <= 0 || !$user_subscription->has_status(array(
+                                                    'active',
+                                                    'on-hold'
+                                                ))) {
+                                                continue;
+                                            }
+
+                                            do_action( 'woocommerce_scheduled_subscription_payment', $user_subscription->get_id() );
+                                            $user_subscription->add_order_note( __( 'Process renewal order action requested by user payment update.', 'woocommerce-subscriptions' ), false, true );
+                                        }
+                                    }
+
 								} // Regular payment authorization
 								else {
 									WC_PensoPay_Callbacks::payment_authorized( $order, $json );
@@ -1208,6 +1241,34 @@ function init_pensopay_gateway() {
 				$this->log->add( sprintf( __( 'Invalid callback body for order #%s.', 'woo-pensopay' ), $order_number ) );
 			}
 		}
+
+        /**
+         * Don't update the subscription transaction id when mass updating subscriptions.
+         * Callback needs to do this with the actual, new data.
+         *
+         * @param $update
+         * @param $new_payment_method
+         * @param $subscription
+         * @return string
+         */
+        public function woocommerce_subscriptions_update_payment_via_pay_shortcode(
+            $update,
+            $new_payment_method,
+            $subscription = null
+        ) {
+            if ('pensopay' === $new_payment_method) {
+                if (isset( $_POST['update_all_subscriptions_payment_method'] )
+                    && $_POST['update_all_subscriptions_payment_method']) {
+                    if ($subscription) {
+                        $subscription->update_meta_data( '_delayed_update_payment_method_all', $new_payment_method );
+                        $subscription->save();
+                        return false;
+                    }
+                }
+            }
+
+            return $update;
+        }
 
 		/**
 		 * @param WC_PensoPay_Order $order
