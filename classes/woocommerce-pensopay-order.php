@@ -290,11 +290,12 @@ class WC_PensoPay_Order extends WC_Order {
 			);
 		}
 
+        $should_send_address = WC_PensoPay_Helper::option_is_enabled(WC_PP()->s('pensopay_sendaddresses'));
 		$params = array_merge( array(
 			'order_id'         => $this->get_order_number_for_api(),
 			'basket'           => $this->get_transaction_basket_params(),
-			'shipping_address' => $this->get_transaction_shipping_address_params(),
-			'invoice_address'  => $this->get_transaction_invoice_address_params(),
+			'shipping_address' => $should_send_address ? $this->get_transaction_shipping_address_params() : [],
+			'invoice_address'  => $should_send_address ? $this->get_transaction_invoice_address_params() : [],
 			'shipping'         => $this->get_transaction_shipping_params(),
 			'shopsystem'       => $this->get_transaction_shopsystem_params(),
 		), $this->get_custom_variables() );

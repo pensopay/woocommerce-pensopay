@@ -163,6 +163,14 @@ class WC_PensoPay_Settings {
                         'default' => '',
                         'desc_tip' => true,
 					),
+                    'pensopay_sendaddresses' => array(
+                        'title' => __( 'Send customer info to payment gateway', 'woo-pensopay' ),
+                        'type' => 'checkbox',
+                        'label' => __( 'Enable', 'woo-pensopay' ),
+                        'description' => __( 'If enabled, invoice & shipping address info is sent to payment gateway.', 'woo-pensopay' ),
+                        'default' => 'yes',
+                        'desc_tip' => true,
+                    ),
 					'pensopay_iframe' => array(
 						'title' => __( 'Enable IFrame', 'woo-pensopay' ),
 						'type' => 'checkbox',
