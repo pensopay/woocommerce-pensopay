@@ -71,6 +71,27 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	}
 
 	/**
+	 * @param $type
+	 *
+	 * @return mixed|null
+	 * @throws PensoPay_API_Exception
+	 */
+	public function get_last_operation_of_type( $type ) {
+		if ( ! is_object( $this->resource_data ) ) {
+			throw new PensoPay_API_Exception( 'No API payment resource data available.', 0 );
+		}
+		$operations = array_reverse( $this->resource_data->operations );
+
+		foreach ( $operations as $operation ) {
+			if ( $operation->type === $type ) {
+				return $operation;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * is_test function.
 	 *
 	 * Tests if a payment was made in test mode.
@@ -100,10 +121,10 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 * @throws PensoPay_API_Exception
 	 */
 	public function create( WC_PensoPay_Order $order ) {
-		$base_params = array(
+		$base_params = [
 			'currency'      => WC_PP()->get_gateway_currency( $order ),
 			'order_post_id' => $order->get_id(),
-		);
+		];
 
 		$text_on_statement = WC_PP()->s( 'pensopay_text_on_statement' );
 		if ( ! empty( $text_on_statement ) ) {
@@ -138,7 +159,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 
 		$payment_method = strtolower( version_compare( WC_VERSION, '3.0', '<' ) ? $order->payment_method : $order->get_payment_method() );
 
-		$base_params = array(
+		$base_params = [
 			'language'                     => WC_PP()->get_gateway_language(),
 			'currency'                     => WC_PP()->get_gateway_currency( $order ),
 			'callbackurl'                  => WC_PensoPay_Helper::get_callback_url(),
@@ -148,7 +169,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 			'branding_id'                  => WC_PP()->s( 'pensopay_branding_id' ),
 			'google_analytics_tracking_id' => WC_PP()->s( 'pensopay_google_analytics_tracking_id' ),
 			'customer_email'               => $order->get_billing_email(),
-		);
+		];
 
 		$order_params = $order->get_transaction_link_params();
 
@@ -169,10 +190,10 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 * @throws PensoPay_API_Exception
 	 */
 	public function patch_payment( $transaction_id, WC_PensoPay_Order $order ) {
-		$base_params = array(
+		$base_params = [
 			'currency'      => WC_PP()->get_gateway_currency( $order ),
 			'order_post_id' => $order->get_id(),
-		);
+		];
 
 		$text_on_statement = WC_PP()->s( 'pensopay_text_on_statement' );
 
@@ -317,7 +338,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 			$operation = $this->get_last_operation();
 		}
 
-		return $this->resource_data->accepted && $operation->qp_status_code == 20000 && $operation->aq_status_code == 20000;
+		return $this->resource_data->accepted && $operation->pp_status_code == 20000 && $operation->aq_status_code == 20000;
 	}
 
 	/**

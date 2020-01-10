@@ -27,6 +27,26 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.4.2 =
+* Fix: Improvement of WC_PensoPay_Order::get_order_number_for_api to avoid errors if WC_PensoPay_Subscription::get_subscriptions_for_renewal_order returns no subscriptions.
+* Add: MasterCard ID Check logo
+
+= 5.4.1 =
+* Fix: Unspecific CSS handle causing intermittent conflicts.
+
+= 5.4.0 =
+* Fix: MobilePay Checkout - Check for company OR full name before deciding to disable auto-receiving shipping address from MobilePay.
+* Fix: Empty log entries is now fixed
+* Fix: Add instance check in order completion hook to prevent multiple capture calls on each order which should result in better performance.
+* Feature: Persist payment capture errors on order completion to be shown in wp-admin.
+* Feature: Show error alert on manual capture failures from the order transaction box.
+* Feature: Show error alert on refund failures. This also blocks WooCommerce from refunding the order items if the refund fails.
+* Improvement: Pass the order object to woocommerce_pensopay_transaction_params_variables
+* Improvement: Send company name (if available) with shipping_address.name if no firstname/lastname has been set on the order.
+* Improvement: Remove object type casting on woocommerce_pensopay_automatic_shipping_address and woocommerce_pensopay_automatic_billing_address to allow NULL checks in the MP Checkout address saver helper methods.
+* Improvement: Convert all arrays to short syntax
+* Tested with WC 3.8.1
+
 = 5.3.1 =
 * Fix: Fix missing shipping information on MobilePay Checkout orders if no shipping address is specified in the MobilePay app
 * Fix: Bump minimum PHP version to 5.4

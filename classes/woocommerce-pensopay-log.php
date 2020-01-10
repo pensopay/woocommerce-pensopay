@@ -1,4 +1,5 @@
 <?php
+
 /**
  * WC_PensoPay_Log class
  *
@@ -44,77 +45,78 @@ class WC_PensoPay_Log {
 	 *
 	 * @return void
 	 */
-    public function add( $param, $file = null, $line = null )
-    {
-    	$message = '';
+	public function add( $param, $file = null, $line = null ) {
+		if ( ! is_array( $param ) ) {
+			$message = $param;
+		} else {
+			$message = '';
+		}
 
-	    if ($file) {
-		    $message .= sprintf('File: %s -> ', $file);
-	    }
+		if ( $file ) {
+			$message .= sprintf( 'File: %s -> ', $file );
+		}
 
-	    if ($line) {
-			$message .= sprintf('Line: %s -> ', $line);
-	    }
+		if ( $line ) {
+			$message .= sprintf( 'Line: %s -> ', $line );
+		}
 
-        if( is_array( $param ) ) {
-            $message .= print_r( $param, TRUE );
-        }
+		if ( is_array( $param ) ) {
+			$message .= print_r( $param, true );
+		}
 
-        $this->_logger->add( $this->_domain, $message );
-    }
-    
-    
-    /**
-	* clear function.
-	*
-	* Clears the entire log file
-	*
-	* @access public 
-	* @return void
-	*/	
-    public function clear() 
-    {
-        return $this->_logger->clear( $this->_domain );
-    }
- 
-    
-    /**
-	* separator function.
-	*
-	* Inserts a separation line for better overview in the logs.
-	*
-	* @access public 
-	* @return void
-	*/	
-    public function separator() 
-    {
-        $this->add( '--------------------' );  
-    }
+		$this->_logger->add( $this->_domain, $message );
+	}
 
 
-    /**
-	* get_domain function.
-	*
-	* Returns the log text domain
-	*
-	* @access public 
-	* @return string
-	*/	
-    public function get_domain() 
-    {
-    	return $this->_domain;
-    }
+	/**
+	 * clear function.
+	 *
+	 * Clears the entire log file
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function clear() {
+		return $this->_logger->clear( $this->_domain );
+	}
 
-    /**
-     * Returns a link to the log files in the WP backend.
-     */
-    public function get_admin_link() {
-        $log_path = wc_get_log_file_path($this->_domain);
-        $log_path_parts = explode('/', $log_path);
-        return add_query_arg(array(
-            'page' => 'wc-status',
-            'tab' => 'logs',
-            'log_file' => end($log_path_parts)
-        ), admin_url('admin.php'));
-    }
+
+	/**
+	 * separator function.
+	 *
+	 * Inserts a separation line for better overview in the logs.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function separator() {
+		$this->add( '--------------------' );
+	}
+
+
+	/**
+	 * get_domain function.
+	 *
+	 * Returns the log text domain
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function get_domain() {
+		return $this->_domain;
+	}
+
+	/**
+	 * Returns a link to the log files in the WP backend.
+	 */
+	public function get_admin_link() {
+		$log_path       = wc_get_log_file_path( $this->_domain );
+		$log_path_parts = explode( '/', $log_path );
+
+		return add_query_arg( [
+			'page'     => 'wc-status',
+			'tab'      => 'logs',
+			'log_file' => end( $log_path_parts )
+		], admin_url( 'admin.php' ) );
+	}
 }

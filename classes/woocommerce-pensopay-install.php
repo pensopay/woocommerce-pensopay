@@ -14,10 +14,10 @@ class WC_PensoPay_Install
 	/**
 	 * Contains version numbers and the path to the update files.
 	 */
-	private static $updates = array(
+	private static $updates = [
 		'4.3' => 'updates/woocommerce-pensopay-update-4.3.php',
 		'4.6' => 'updates/woocommerce-pensopay-update-4.6.php'
-	);
+	];
 	
 	
 	/**
@@ -153,13 +153,13 @@ class WC_PensoPay_Install
 
         if (!wp_verify_nonce($nonce, 'woocommerce-pensopay-run-upgrader-nonce') && !current_user_can('administrator'))
         {
-            echo json_encode(array('status' => 'error', 'message' => __('You are not authorized to perform this action', 'woo-pensopay') ) );
+            echo json_encode( [ 'status' => 'error', 'message' => __('You are not authorized to perform this action', 'woo-pensopay') ] );
             exit;
         }
 
         self::update();
 
-        echo json_encode(array('status' => 'success'));
+        echo json_encode( [ 'status' => 'success' ] );
 
         exit;
     }

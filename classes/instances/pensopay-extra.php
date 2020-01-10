@@ -23,7 +23,7 @@ class WC_PensoPay_Extra extends WC_PensoPay_Instance {
 		$this->title       = $this->s( 'title' );
 		$this->description = $this->s( 'description' );
 
-		add_filter( 'woocommerce_pensopay_cardtypelock_' . $this->id, array( $this, 'filter_cardtypelock' ) );
+		add_filter( 'woocommerce_pensopay_cardtypelock_' . $this->id, [ $this, 'filter_cardtypelock' ] );
 	}
 
 
@@ -36,49 +36,49 @@ class WC_PensoPay_Extra extends WC_PensoPay_Instance {
 	 * @return array
 	 */
 	public function init_form_fields() {
-		$this->form_fields = array(
-			'enabled'        => array(
+		$this->form_fields = [
+			'enabled'        => [
 				'title'   => __( 'Enable', 'woo-pensopay' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable Extra PensoPay gateway', 'woo-pensopay' ),
 				'default' => 'no'
-			),
-			'_Shop_setup'    => array(
+			],
+			'_Shop_setup'    => [
 				'type'  => 'title',
 				'title' => __( 'Shop setup', 'woo-pensopay' ),
-			),
-			'title'          => array(
+			],
+			'title'          => [
 				'title'       => __( 'Title', 'woo-pensopay' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'woo-pensopay' ),
 				'default'     => __( 'PensoPay', 'woo-pensopay' )
-			),
-			'description'    => array(
+			],
+			'description'    => [
 				'title'       => __( 'Customer Message', 'woo-pensopay' ),
 				'type'        => 'textarea',
 				'description' => __( 'This controls the description which the user sees during checkout.', 'woo-pensopay' ),
 				'default'     => __( 'Pay', 'woo-pensopay' )
-			),
-			'cardtypelock'   => array(
+			],
+			'cardtypelock'   => [
 				'title'       => __( 'Payment methods', 'woo-pensopay' ),
 				'type'        => 'text',
 				'description' => __( 'Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://tech.quickpay.net/appendixes/payment-methods/</b>', 'woo-pensopay' ),
 				'default'     => 'creditcard',
-			),
-			'pensopay_icons' => array(
+			],
+			'pensopay_icons' => [
 				'title'             => __( 'Credit card icons', 'woo-pensopay' ),
 				'type'              => 'multiselect',
 				'description'       => __( 'Choose the card icons you wish to show next to the PensoPay payment option in your shop.', 'woo-pensopay' ),
 				'desc_tip'          => true,
 				'class'             => 'wc-enhanced-select',
 				'css'               => 'width: 450px;',
-				'custom_attributes' => array(
+				'custom_attributes' => [
 					'data-placeholder' => __( 'Select icons', 'woo-pensopay' )
-				),
+				],
 				'default'           => '',
 				'options'           => WC_PensoPay_Settings::get_card_icons(),
-			),
-		);
+			],
+		];
 	}
 
 

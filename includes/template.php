@@ -9,7 +9,7 @@ if ( ! function_exists( 'woocommerce_pensopay_get_template' ) ) {
 	 * @param string $template_path
 	 * @param string $default_path
 	 */
-	function woocommerce_pensopay_get_template( $template_name, $args = array()) {
+	function woocommerce_pensopay_get_template( $template_name, $args = [] ) {
 		$template_path = 'woocommerce-pensopay/';
 		$default_path = WCPP_PATH . 'templates/';
 

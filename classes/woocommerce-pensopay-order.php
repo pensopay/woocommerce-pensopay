@@ -282,23 +282,23 @@ class WC_PensoPay_Order extends WC_Order {
 	public function get_transaction_params() {
 		$is_subscription = $this->contains_subscription() || $this->is_request_to_change_payment() || WC_PensoPay_Subscription::is_subscription( $this->get_id() );
 
-		$params_subscription = array();
+		$params_subscription = [];
 
 		if ( $is_subscription ) {
-			$params_subscription = array(
+			$params_subscription = [
 				'description' => 'woocommerce-subscription',
-			);
+			];
 		}
 
         $should_send_address = WC_PensoPay_Helper::option_is_enabled(WC_PP()->s('pensopay_sendaddresses'));
-		$params = array_merge( array(
+		$params = array_merge( [
 			'order_id'         => $this->get_order_number_for_api(),
 			'basket'           => $this->get_transaction_basket_params(),
 			'shipping_address' => $should_send_address ? $this->get_transaction_shipping_address_params() : [],
 			'invoice_address'  => $should_send_address ? $this->get_transaction_invoice_address_params() : [],
 			'shipping'         => $this->get_transaction_shipping_params(),
 			'shopsystem'       => $this->get_transaction_shopsystem_params(),
-		), $this->get_custom_variables() );
+		], $this->get_custom_variables() );
 
 		return array_merge( $params, $params_subscription );
 	}
@@ -477,7 +477,7 @@ class WC_PensoPay_Order extends WC_Order {
 	 */
 	public function get_transaction_basket_params() {
 		// Contains order items in PensoPay basket format
-		$basket = array();
+		$basket = [];
 
 		foreach ( $this->get_items() as $item_line ) {
 			$basket[] = $this->get_transaction_basket_params_line_helper( $item_line );
@@ -502,29 +502,33 @@ class WC_PensoPay_Order extends WC_Order {
 		//Take only the item rate and round it.
 		$vat_rate = ! empty( $rates ) ? round( array_shift( $rates ) ) : 0;
 
-		$data = array(
+		$data = [
 			'qty'        => $line_item->get_quantity(),
 			'item_no'    => $line_item->get_product_id(),
 			'item_name'  => $line_item->get_name(),
 			'item_price' => wc_get_price_including_tax( $line_item->get_product() ),
 			'vat_rate'   => $vat_rate,
-		);
+		];
 
-		return array(
+		return [
 			'qty'        => $data['qty'],
 			'item_no'    => $data['item_no'], //
 			'item_name'  => esc_attr( $data['item_name'] ),
 			'item_price' => WC_PensoPay_Helper::price_multiply( $data['item_price'] ),
 			'vat_rate'   => $data['vat_rate'] > 0 ? $data['vat_rate'] / 100 : 0 // Basket item VAT rate (ex. 0.25 for 25%)
-		);
+		];
 	}
 
 	public function get_transaction_shipping_address_params() {
-		$shipping_first_name = $this->get_shipping_first_name();
-		$shipping_last_name  = $this->get_shipping_last_name();
+		$shipping_name = trim( $this->get_formatted_shipping_full_name() );
+		$company_name  = $this->get_shipping_company();
 
-		$params = array(
-			'name'            => $shipping_first_name . ' ' . $shipping_last_name,
+		if ( empty ( $shipping_name ) && ! empty( $company_name ) ) {
+			$shipping_name = $company_name;
+		}
+
+		$params = [
+			'name'            => $shipping_name,
 			'street'          => $this->get_shipping_street_name(),
 			'house_number'    => $this->get_shipping_house_number(),
 			'house_extension' => $this->get_shipping_house_extension(),
@@ -535,7 +539,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'phone_number'    => $this->get_billing_phone(),
 			'mobile_number'   => $this->get_billing_phone(),
 			'email'           => $this->get_billing_email(),
-		);
+		];
 
 		return apply_filters( 'woocommerce_pensopay_transaction_params_shipping', $params );
 	}
@@ -562,11 +566,15 @@ class WC_PensoPay_Order extends WC_Order {
 	}
 
 	public function get_transaction_invoice_address_params() {
-		$billing_first_name = $this->get_billing_first_name();
-		$billing_last_name  = $this->get_billing_last_name();
+		$billing_name = trim( $this->get_formatted_billing_full_name() );
+		$company_name = $this->get_billing_company();
 
-		$params = array(
-			'name'            => $billing_first_name . ' ' . $billing_last_name,
+		if ( empty ( $billing_name ) && ! empty( $company_name ) ) {
+			$billing_name = $company_name;
+		}
+
+		$params = [
+			'name'            => $billing_name,
 			'street'          => $this->get_billing_street_name(),
 			'house_number'    => $this->get_billing_house_number(),
 			'house_extension' => $this->get_billing_house_extension(),
@@ -577,7 +585,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'phone_number'    => $this->get_billing_phone(),
 			'mobile_number'   => $this->get_billing_phone(),
 			'email'           => $this->get_billing_email(),
-		);
+		];
 
 		return apply_filters( 'woocommerce_pensopay_transaction_params_invoice', $params );
 	}
@@ -620,24 +628,24 @@ class WC_PensoPay_Order extends WC_Order {
 			$shipping_vat_rate = $shipping_tax / $shipping_total; // Basket item VAT rate (ex. 0.25 for 25%)
 		}
 
-		return apply_filters( 'woocommerce_pensopay_transaction_params_shipping_row', array(
+		return apply_filters( 'woocommerce_pensopay_transaction_params_shipping_row', [
 			'method'          => 'own_delivery',
 			'company'         => $this->get_shipping_method(),
 			'amount'          => WC_PensoPay_Helper::price_multiply( $shipping_incl_vat ),
 			'vat_rate'        => $shipping_vat_rate,
 			'tracking_number' => '',
 			'tracking_url'    => '',
-		) );
+		] );
 	}
 
 	/**
 	 * @return array
 	 */
 	public function get_transaction_shopsystem_params() {
-		$params = array(
-			'name'    => 'WooCommerce',
+		$params = [
+			'name'   => 'WooCommerce',
 			'version' => WCPP_VERSION,
-		);
+		];
 
 		return apply_filters( 'woocommerce_pensopay_transaction_params_shopsystem', $params, $this );
 	}
@@ -653,7 +661,7 @@ class WC_PensoPay_Order extends WC_Order {
 	 */
 	public function get_custom_variables() {
 		$custom_vars_settings = (array) WC_PP()->s( 'pensopay_custom_variables' );
-		$custom_vars          = array();
+		$custom_vars          = [];
 
 		// Single: Order Email
 		if ( in_array( 'customer_email', $custom_vars_settings ) ) {
@@ -698,7 +706,7 @@ class WC_PensoPay_Order extends WC_Order {
 
 		ksort( $custom_vars );
 
-		return array( 'variables' => $custom_vars );
+		return [ 'variables' => $custom_vars ];
 	}
 
 	/**
@@ -738,13 +746,13 @@ class WC_PensoPay_Order extends WC_Order {
 			$amount = $this->get_total();
 		}
 
-		return array(
+		return [
 			'order_id'    => $this->get_order_number_for_api(),
 			'continueurl' => $this->get_continue_url(),
 			'cancelurl'   => $this->get_cancellation_url(),
 			'amount'      => WC_PensoPay_Helper::price_multiply( $amount ),
 			'framed'      => WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))
-		);
+		];
 	}
 
 	/**
@@ -776,10 +784,10 @@ class WC_PensoPay_Order extends WC_Order {
 			return str_replace( '&amp;', '&', $this->get_cancel_order_url() );
 		}
 
-		return add_query_arg( 'key', $this->get_order_key(), add_query_arg( array(
+		return add_query_arg( 'key', $this->get_order_key(), add_query_arg( [
 			'order'                => $this->get_id(),
 			'payment_cancellation' => 'yes',
-		), get_permalink( get_option( 'woocommerce_cart_page_id' ) ) ) );
+		], get_permalink( get_option( 'woocommerce_cart_page_id' ) ) ) );
 	}
 
 	/**
@@ -835,6 +843,7 @@ class WC_PensoPay_Order extends WC_Order {
 	 *
 	 * Checks if the order is paid with the PensoPay module.
 	 *
+	 * @return bool
 	 * @since  4.5.0
 	 * @access public
 	 * @return bool
@@ -842,7 +851,7 @@ class WC_PensoPay_Order extends WC_Order {
 	public function has_pensopay_payment() {
 		$order_id = $this->get_id();
 
-		return in_array( get_post_meta( $order_id, '_payment_method', true ), array(
+		return in_array( get_post_meta( $order_id, '_payment_method', true ), [
 			'bitcoin',
 			'ideal',
 			'klarna',
@@ -856,7 +865,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'trustly',
 			'viabill',
 			'vipps',
-		) );
+		] );
 	}
 
 	/**

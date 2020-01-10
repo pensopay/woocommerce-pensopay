@@ -10,10 +10,11 @@ class WC_Dependencies {
 
 	public static function init() {
 
-		self::$active_plugins = (array) get_option( 'active_plugins', array() );
+		self::$active_plugins = (array) get_option( 'active_plugins', [] );
 
-		if ( is_multisite() )
-			self::$active_plugins = array_merge( self::$active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
+		if ( is_multisite() ) {
+			self::$active_plugins = array_merge( self::$active_plugins, get_site_option( 'active_sitewide_plugins', [] ) );
+		}
 	}
 
 	public static function woocommerce_active_check() {

@@ -58,11 +58,13 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 	 *
 	 * @access public
 	 *
-	 * @param  int $transaction_id
-	 * @param  int $amount
+	 * @param int $transaction_id
+	 * @param \WC_Order $order
+	 * @param int $amount
 	 *
 	 * @return object
 	 * @throws PensoPay_API_Exception
+	 * @throws PensoPay_Exception
 	 */
 	public function capture( $transaction_id, $order, $amount = null ) {
 		// Check if a custom amount ha been set
@@ -71,7 +73,17 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 			$amount = $order->get_total();
 		}
 
-		return $this->post( sprintf( '%d/%s', $transaction_id, "capture" ), array( 'amount' => WC_PensoPay_Helper::price_multiply( $amount ) ) );
+		$this->post( sprintf( '%d/%s', $transaction_id, "capture" ), [ 'amount' => WC_PensoPay_Helper::price_multiply( $amount ) ] );
+
+		if ( ! $capture = $this->get_last_operation_of_type( 'capture' ) ) {
+			throw new PensoPay_Exception( 'No capture operation found: ' . (string) json_encode( $this->resource_data ) );
+		}
+
+		if ( $capture->qp_status_code > 20200 ) {
+			throw new PensoPay_API_Exception( sprintf( 'Capturing payment on order #%s failed. Message: %s', $order->get_id(), $capture->qp_status_msg ) );
+		}
+
+		return $this;
 	}
 
 
@@ -82,7 +94,7 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 	 *
 	 * @access public
 	 *
-	 * @param  int $transaction_id
+	 * @param int $transaction_id
 	 *
 	 * @return void
 	 * @throws PensoPay_API_Exception
@@ -99,12 +111,13 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 	 *
 	 * @access public
 	 *
-	 * @param  int       $transaction_id
-	 * @param  \WC_Order $order
-	 * @param  int       $amount
+	 * @param int $transaction_id
+	 * @param \WC_Order $order
+	 * @param int $amount
 	 *
 	 * @return void
 	 * @throws PensoPay_API_Exception
+	 * @throws PensoPay_Exception
 	 */
 	public function refund( $transaction_id, $order, $amount = null ) {
 		// Check if a custom amount ha been set
@@ -113,7 +126,7 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 			$amount = $order->get_total();
 		}
 
-		if (! $order instanceof WC_PensoPay_Order) {
+		if ( ! $order instanceof WC_PensoPay_Order) {
 			$order = new WC_PensoPay_Order($order->get_id());
 		}
 
@@ -123,10 +136,18 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 		// Select the first item as this should be an actual product and not shipping or similar.
 		$product = reset( $basket_items );
 
-		$this->post( sprintf( '%d/%s', $transaction_id, "refund" ), array(
+		$this->post( sprintf( '%d/%s', $transaction_id, "refund" ), [
 			'amount'   => WC_PensoPay_Helper::price_multiply( $amount ),
 			'vat_rate' => $product['vat_rate'],
-		) );
+		] );
+
+		if ( ! $refund = $this->get_last_operation_of_type( 'refund' ) ) {
+			throw new PensoPay_Exception( 'No refund operation found: ' . (string) json_encode( $this->resource_data ) );
+		}
+
+		if ( $refund->pp_status_code > 20200 ) {
+			throw new PensoPay_API_Exception( sprintf( 'Refunding payment on order #%s failed. Message: %s', $order->get_id(), $refund->pp_status_msg ) );
+		}
 	}
 
 
@@ -137,20 +158,21 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 	 *
 	 * @access public
 	 * @return boolean
+	 * @throws PensoPay_API_Exception
 	 */
 	public function is_action_allowed( $action ) {
 		$state             = $this->get_current_type();
 		$remaining_balance = $this->get_remaining_balance();
 
-		$allowed_states = array(
-			'capture'          => array( 'authorize', 'recurring' ),
-			'cancel'           => array( 'authorize' ),
-			'refund'           => array( 'capture', 'refund' ),
-			'renew'            => array( 'authorize' ),
-			'splitcapture'     => array( 'authorize', 'capture' ),
-			'recurring'        => array( 'subscribe' ),
-			'standard_actions' => array( 'authorize', 'recurring' ),
-		);
+		$allowed_states = [
+			'capture'          => [ 'authorize', 'recurring' ],
+			'cancel'           => [ 'authorize' ],
+			'refund'           => [ 'capture', 'refund' ],
+			'renew'            => [ 'authorize' ],
+			'splitcapture'     => [ 'authorize', 'capture' ],
+			'recurring'        => [ 'subscribe' ],
+			'standard_actions' => [ 'authorize', 'recurring' ],
+		];
 
 		// We wants to still allow captures if there is a remaining balance.
 		if ( 'capture' == $state && $remaining_balance > 0 ) {

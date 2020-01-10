@@ -62,7 +62,7 @@ class WC_PensoPay_Subscription {
         // Complete payment
         $order->payment_complete( $recurring_response->id );
 
-	    // Fallback in case the transaction ID is not properly saved through WC_Order::payment_complete.
+        // Fallback in case the transaction ID is not properly saved through WC_Order::payment_complete.
 	    $order->update_meta_data('_transaction_id', $recurring_response->id);
 	    $order->update_meta_data('_pensopay_transaction_id', $recurring_response->id);
 	    $order->save_meta_data();
@@ -137,7 +137,7 @@ class WC_PensoPay_Subscription {
 			$subscriptions = wcs_get_subscriptions_for_renewal_order( $order );
 			return $single ? end($subscriptions) : $subscriptions;
 		}
-		return array();
+		return [];
 	}
 
 	/**

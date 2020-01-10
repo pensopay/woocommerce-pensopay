@@ -74,6 +74,10 @@
 					that.actionBox.find( '.inside' ).html( newData );
 					that.showLoader( false );
 				} );
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				alert(jqXHR.responseText);
+				that.showLoader( false );
 			}
 		} );
 

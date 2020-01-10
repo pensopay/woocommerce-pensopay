@@ -23,21 +23,21 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 		$this->title       = $this->s( 'title' );
 		$this->description = $this->s( 'description' );
 
-		add_filter( 'woocommerce_pensopay_cardtypelock_' . $this->id, array( $this, 'filter_cardtypelock' ) );
-		add_action( 'woocommerce_after_checkout_validation', array( $this, 'checkout_validation' ), 100, 2 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_filter( 'woocommerce_pensopay_transaction_link_params', array(
+		add_filter( 'woocommerce_pensopay_cardtypelock_' . $this->id, [ $this, 'filter_cardtypelock' ] );
+		add_action( 'woocommerce_after_checkout_validation', [ $this, 'checkout_validation' ], 100, 2 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_filter( 'woocommerce_pensopay_transaction_link_params', [
 			$this,
 			'filter_transaction_link_params'
-		), 10, 3 );
-		add_action( 'woocommerce_pensopay_accepted_callback_before_processing_status_authorize', array(
+		], 10, 3 );
+		add_action( 'woocommerce_pensopay_accepted_callback_before_processing_status_authorize', [
 			$this,
 			'callback_save_address'
-		), 10, 2 );
-		add_action( 'woocommerce_checkout_before_customer_details', array(
+		], 10, 2 );
+		add_action( 'woocommerce_checkout_before_customer_details', [
 			$this,
 			'insert_woocommerce_pensopay_mobilepay_checkout'
-		), 10 );
+		], 10 );
 
 		add_filter( 'woocommerce_update_order_review_fragments', [ $this, 'update_order_review_fragments' ], 10, 1 );
 
@@ -72,7 +72,11 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	private function maybe_disable_automatic_shipping_address_selection( $order ) {
 		$enabled = true;
 
-		if ( empty( $order->get_formatted_shipping_full_name() ) || empty( $order->get_shipping_address_1() ) || empty( $order->get_shipping_postcode() || empty( $order->get_shipping_city() ) ) ) {
+		if (
+			! ( empty( trim( $order->get_formatted_shipping_full_name() ) ) && empty( $order->get_shipping_company() ) )
+			|| ! empty( $order->get_shipping_address_1() )
+			|| ! empty( $order->get_shipping_postcode()
+			            || ! empty( $order->get_shipping_city() ) ) ) {
 			$enabled = false;
 		}
 
@@ -132,7 +136,7 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 			}
 		}
 
-		return apply_filters('woocommerce_pensopay_mobilepay_checkout_checkout_field_label', $field_label, $required_field, $this->checkout_fields);
+		return apply_filters( 'woocommerce_pensopay_mobilepay_checkout_checkout_field_label', $field_label, $required_field, $this->checkout_fields);
 	}
 
 	/**
@@ -148,7 +152,7 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 * @return bool
 	 */
 	public function is_gateway_available() {
-		return array_key_exists($this->id, WC()->payment_gateways->get_available_payment_gateways());
+		return array_key_exists( $this->id, WC()->payment_gateways->get_available_payment_gateways() );
 	}
 
 	/**
@@ -265,6 +269,8 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	/**
 	 * @param WC_Customer|WC_Order $object
 	 * @param                      $address
+	 *
+	 * @throws WC_Data_Exception
 	 */
 	private function set_object_shipping_address( $object, $address ) {
 		if ( ! empty( $address ) && ( is_a( $object, 'WC_Customer' ) || is_a( $object, 'WC_Order' ) ) ) {
@@ -289,6 +295,18 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 * @return object
 	 */
 	public function maybe_modify_object_shipping_address( $shipping_address, $order, $billing_address, $transaction ) {
+
+		/**
+		 * If shipping_address_selection is set to false on the payment link, we will make sure to set the shipping address to NULL.
+		 * This is because the shipping address may be returned either way from MobilePay which will break compatibility with drop point plugins etc.
+		 * This is considered a bug between PensoPay and MobilePay and will hopefully be fixed.
+		 *
+		 * Reported on November 2019-11-28 to SSP.
+		 */
+		if ( isset( $transaction->link, $transaction->link->shipping_address_selection ) && $transaction->link->shipping_address_selection === false ) {
+			$shipping_address = null;
+		}
+
 		if ( $shipping_address !== null ) {
 			$name         = trim( $shipping_address->name );
 			$street       = trim( $shipping_address->street );
@@ -313,37 +331,37 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 * @return array
 	 */
 	public function init_form_fields() {
-		$this->form_fields = array(
-			'enabled'                                          => array(
+		$this->form_fields = [
+			'enabled'                                          => [
 				'title'   => __( 'Enable', 'woo-pensopay' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable MobilePay Checkout payment', 'woo-pensopay' ),
 				'default' => 'no',
-			),
-			'_Shop_setup'                                      => array(
+			],
+			'_Shop_setup'                                      => [
 				'type'  => 'title',
 				'title' => __( 'Shop setup', 'woo-pensopay' ),
-			),
-			'title'                                            => array(
+			],
+			'title'                                            => [
 				'title'       => __( 'Title', 'woo-pensopay' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'woo-pensopay' ),
 				'default'     => __( 'MobilePay Checkout', 'woo-pensopay' ),
-			),
-			'description'                                      => array(
+			],
+			'description'                                      => [
 				'title'       => __( 'Customer Message', 'woo-pensopay' ),
 				'type'        => 'textarea',
 				'description' => __( 'This controls the description which the user sees during checkout.', 'woo-pensopay' ),
 				'default'     => __( 'Fast checkout with your mobile phone. With MobilePay Checkout we will automatically receive your billing- and shipping details from MobilePay and save it on your order.', 'woo-pensopay' ),
-			),
-			'mobilepay_checkout_update_existing_customer_data' => array(
+			],
+			'mobilepay_checkout_update_existing_customer_data' => [
 				'title'       => __( 'MobilePay Checkout - Update Existing Customers', 'woo-pensopay' ),
 				'type'        => 'checkbox',
 				'label'       => __( 'Update Existing Customers Accounts', 'woo-pensopay' ),
 				'description' => __( 'If enabled, and if an exisiting customer is ordering, the plugin will update the address on both order and customer level. This requires that the user is logged in when ordering. Previous orders will NOT be affected.', 'woo-pensopay' ),
 				'default'     => 'yes',
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -363,7 +381,7 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 */
 	public function enqueue_scripts() {
 		if ( $this->is_enabled() && is_checkout() ) {
-			wp_enqueue_script( 'wcpp-mobilepay', plugins_url( '/assets/javascript/mobilepay.js', dirname( __DIR__ ) ), array( 'jquery' ), WC_PensoPay_Helper::static_version(), true );
+			wp_enqueue_script( 'wcpp-mobilepay', plugins_url( '/assets/javascript/mobilepay.js', dirname( __DIR__ ) ), [ 'jquery' ], WC_PensoPay_Helper::static_version(), true );
 		}
 	}
 

@@ -79,14 +79,14 @@ class WC_PensoPay_API_Subscription extends WC_PensoPay_API_Transaction
 
         $order_number = $order->get_order_number_for_api( $is_recurring = TRUE );
 
-    	$request = $this->post( sprintf( '%d/%s?synchronized', $subscription_id, "recurring" ), array(
+    	$request = $this->post( sprintf( '%d/%s?synchronized', $subscription_id, "recurring" ), [
             'amount' => WC_PensoPay_Helper::price_multiply( $amount ),
             'order_id' => sprintf('%s', $order_number ),
             'auto_capture' => $order->get_autocapture_setting(),
             'autofee' => WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_autofee' ) ),
             'text_on_statement' => WC_PP()->s('pensopay_text_on_statement'),
             'order_post_id' => $order->get_id(),
-        ), TRUE );
+	    ], TRUE );
 
         return $request;
     }
@@ -124,10 +124,10 @@ class WC_PensoPay_API_Subscription extends WC_PensoPay_API_Transaction
     {
         $state = $this->get_current_type();
 
-        $allowed_states = array(
-            'cancel' => array( 'authorize' ),
-            'standard_actions' => array( 'authorize' )
-        );
+        $allowed_states = [
+            'cancel' => [ 'authorize' ],
+            'standard_actions' => [ 'authorize' ]
+        ];
 
         return array_key_exists( $action, $allowed_states ) AND in_array( $state, $allowed_states[$action] );
     }

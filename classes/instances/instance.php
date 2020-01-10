@@ -7,10 +7,10 @@ class WC_PensoPay_Instance extends WC_PensoPay {
     public function __construct() {
         parent::__construct();
         
-        $this->supports = array( 
+        $this->supports = [
             'products', 
             'refunds'
-        );
+        ];
     }
     
     public function setup() {
@@ -35,7 +35,7 @@ class WC_PensoPay_Instance extends WC_PensoPay {
     */
     public function init_form_fields()
     {
-        $this->form_fields = array();
+        $this->form_fields = [];
     }
 
     /**
@@ -48,11 +48,11 @@ class WC_PensoPay_Instance extends WC_PensoPay {
     */
     public function admin_options()
     {
-        $main_settings_args = array(
+        $main_settings_args = [
             'page' => 'wc-settings',
             'tab' => 'checkout',
             'section' => 'wc_pensopay'
-        );
+        ];
         echo "<h3>PensoPay - {$this->method_title}, v" . WCPP_VERSION . "</h3>";
         echo "<p>" . sprintf(__('Allows you to receive payments via PensoPay %s.', 'woo-pensopay'), $this->id) . "</p>";
         echo "<p>" . sprintf(__('This module has it\'s main configuration inside the \'PensoPay\' tab.', 'woo-pensopay'), 's') . "</p>";

@@ -9,12 +9,12 @@ class WC_PensoPay_Admin_Orders extends WC_PensoPay_Module {
 	 */
 	public function hooks() {
 		// Custom order actions
-		add_filter( 'woocommerce_order_actions', array( $this, 'admin_order_actions' ), 10, 1 );
-		add_action( 'woocommerce_order_action_pensopay_create_payment_link', array( $this, 'order_action_pensopay_create_payment_link' ), 50, 2 );
-		add_filter( 'bulk_actions-edit-shop_order', array( $this, 'list_bulk_actions' ), 10, 1 );
-		add_filter( 'bulk_actions-edit-shop_subscription', array( $this, 'list_bulk_actions' ), 10, 1 );
-		add_filter( 'handle_bulk_actions-edit-shop_order', array( $this, 'handle_bulk_actions_orders' ), 10, 3 );
-		add_filter( 'handle_bulk_actions-edit-shop_subscription', array( $this, 'handle_bulk_actions_subscriptions' ), 10, 3 );
+		add_filter( 'woocommerce_order_actions', [ $this, 'admin_order_actions' ], 10, 1 );
+		add_action( 'woocommerce_order_action_pensopay_create_payment_link', [ $this, 'order_action_pensopay_create_payment_link' ], 50, 2 );
+		add_filter( 'bulk_actions-edit-shop_order', [ $this, 'list_bulk_actions' ], 10, 1 );
+		add_filter( 'bulk_actions-edit-shop_subscription', [ $this, 'list_bulk_actions' ], 10, 1 );
+		add_filter( 'handle_bulk_actions-edit-shop_order', [ $this, 'handle_bulk_actions_orders' ], 10, 3 );
+		add_filter( 'handle_bulk_actions-edit-shop_subscription', [ $this, 'handle_bulk_actions_subscriptions' ], 10, 3 );
 	}
 
 	/**

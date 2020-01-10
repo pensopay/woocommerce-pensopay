@@ -12,7 +12,7 @@ class WC_PensoPay_Checkout_Frontend extends WC_PensoPay_Module {
 	 * @return mixed
 	 */
 	public function hooks() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'static_files' ) );
+		add_action( 'wp_enqueue_scripts', [ $this, 'static_files' ] );
 		add_filter( 'woocommerce_update_order_review_fragments', [ $this, 'update_order_review_fragments' ], 10, 1 );
 	}
 
@@ -27,14 +27,14 @@ class WC_PensoPay_Checkout_Frontend extends WC_PensoPay_Module {
 	 * Enqueue static files
 	 */
 	public function static_files() {
-		wp_register_script( 'pensopay-embedded-v2',  WC_PP()->plugin_url( '/assets/javascript/pensopay.js' ), array( 'jquery' ), '2.0', true );
-		wp_register_script( 'wcpp-overlay', WC_PP()->plugin_url( '/assets/javascript/overlay.min.js' ), array( 'pensopay-embedded-v2' ), WCPP_VERSION, true );
+		wp_register_script( 'pensopay-embedded-v2',  WC_PP()->plugin_url( '/assets/javascript/pensopay.js' ), [ 'jquery' ], '2.0', true );
+		wp_register_script( 'wcpp-overlay', WC_PP()->plugin_url( '/assets/javascript/overlay.min.js' ), [ 'pensopay-embedded-v2' ], WCPP_VERSION, true );
 
-		wp_localize_script( 'wcpp-overlay', 'wcpp', array(
-			'settings' => array(
+		wp_localize_script( 'wcpp-overlay', 'wcpp', [
+			'settings' => [
 				'autojump' => WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_embedded_autojump' ) ) === 1,
-			),
-		) );
+			],
+		] );
 	}
 
 	/**

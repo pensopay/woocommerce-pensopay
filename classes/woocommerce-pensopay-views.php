@@ -11,7 +11,7 @@ class WC_PensoPay_Views
      * @param string $path
      * @param array $args
      */
-    public static function get_view( $path, $args = array())
+    public static function get_view( $path, $args = [] )
     {
         if (is_array($args) && ! empty($args)) {
             extract($args);

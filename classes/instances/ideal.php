@@ -31,30 +31,30 @@ class WC_PensoPay_iDEAL extends WC_PensoPay_Instance {
      */
     public function init_form_fields()
     {
-        $this->form_fields = array(
-            'enabled' => array(
+        $this->form_fields = [
+            'enabled' => [
                 'title' => __( 'Enable', 'woo-pensopay' ),
                 'type' => 'checkbox',
                 'label' => __( 'Enable iDEAL payment', 'woo-pensopay' ),
                 'default' => 'no'
-            ),
-            '_Shop_setup' => array(
+            ],
+            '_Shop_setup' => [
                 'type' => 'title',
                 'title' => __( 'Shop setup', 'woo-pensopay' ),
-            ),
-            'title' => array(
+            ],
+            'title' => [
                 'title' => __( 'Title', 'woo-pensopay' ),
                 'type' => 'text',
                 'description' => __( 'This controls the title which the user sees during checkout.', 'woo-pensopay' ),
                 'default' => __('iDEAL', 'woo-pensopay')
-            ),
-            'description' => array(
+            ],
+            'description' => [
                 'title' => __( 'Customer Message', 'woo-pensopay' ),
                 'type' => 'textarea',
                 'description' => __( 'This controls the description which the user sees during checkout.', 'woo-pensopay' ),
                 'default' => __('Pay with iDEAL', 'woo-pensopay')
-            ),
-        );
+            ],
+        ];
     }
 
 

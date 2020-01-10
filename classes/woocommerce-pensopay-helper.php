@@ -61,7 +61,7 @@ class WC_PensoPay_Helper {
 		$decimal_separator  = get_option( 'woocommerce_price_decimal_sep' );
 		$thousand_separator = get_option( 'woocommerce_price_thousand_sep' );
 
-		$price = str_replace( array( $thousand_separator, $decimal_separator ), array( '', '.' ), $price );
+		$price = str_replace( [ $thousand_separator, $decimal_separator ], [ '', '.' ], $price );
 
 		return self::price_multiply( $price );
 	}
@@ -89,9 +89,12 @@ class WC_PensoPay_Helper {
 	 */
 	public static function enqueue_javascript_backend() {
 		if ( self::maybe_enqueue_admin_statics() ) {
-			wp_enqueue_script( 'pensopay-backend', plugins_url( '/assets/javascript/backend.js', __DIR__ ), array( 'jquery' ), self::static_version() );
-			wp_localize_script( 'pensopay-backend', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+			wp_enqueue_script( 'pensopay-backend', plugins_url( '/assets/javascript/backend.js', __DIR__ ), [ 'jquery' ], self::static_version() );
+			wp_localize_script( 'pensopay-backend', 'ajax_object', [ 'ajax_url' => admin_url( 'admin-ajax.php' ) ] );
 		}
+
+		wp_enqueue_script( 'pensopay-backend-notices', plugins_url( '/assets/javascript/backend-notices.js', __DIR__ ), [ 'jquery' ], self::static_version() );
+		wp_localize_script( 'pensopay-backend-notices', 'wcppBackendNotices', [ 'flush' => admin_url( 'admin-ajax.php?action=woocommerce_pensopay_flush_runtime_errors' ) ] );
 	}
 
 	/**
@@ -128,7 +131,7 @@ class WC_PensoPay_Helper {
 	 * @return void
 	 */
 	public static function enqueue_stylesheet() {
-		wp_enqueue_style( 'style', plugins_url( '/assets/stylesheets/woocommerce-pensopay.css', __DIR__ ), array(), self::static_version() );
+		wp_enqueue_style( 'woocommere-pensopay-style', plugins_url( '/assets/stylesheets/woocommerce-pensopay.css', __DIR__ ), [], self::static_version() );
 	}
 
 
@@ -171,7 +174,7 @@ class WC_PensoPay_Helper {
 	 * @return string
 	 */
 	public static function get_callback_url( $post_id = null ) {
-		$args = array( 'wc-api' => 'WC_PensoPay' );
+		$args = [ 'wc-api' => 'WC_PensoPay' ];
 
 		if ( $post_id !== null ) {
 			$args['order_post_id'] = $post_id;
@@ -299,7 +302,7 @@ class WC_PensoPay_Helper {
 
 		if ( array_key_exists( $needle, $haystack ) ) {
 
-			$new_array = array();
+			$new_array = [];
 
 			foreach ( $haystack as $key => $value ) {
 
