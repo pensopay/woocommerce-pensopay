@@ -483,7 +483,7 @@ class WC_PensoPay_Order extends WC_Order {
 			$basket[] = $this->get_transaction_basket_params_line_helper( $item_line );
 		}
 
-		return apply_filters( 'woocommerce_pensopay_transaction_params_basket', $basket );
+		return apply_filters( 'woocommerce_pensopay_transaction_params_basket', $basket, $this );
 	}
 
 	/**
