@@ -2,7 +2,7 @@
 Contributors: PensoPay
 Tags: gateway, woo commerce, pensopay, gateway, integration, woocommerce, woocommerce pensopay, payment, payment gateway, psp
 Requires at least: 4.0.0
-Tested up to: 5.3.0
+Tested up to: 5.3.2
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -27,6 +27,16 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.5.1 =
+* Fix: Proper printing of validation errors returned from the API.
+* Improvement: Distinguish between capture exceptions and API exception when adding runtime errors on capture requests.
+* Improvement: Add order ID to API error message on capture errors not caused specifically by the PensoPay_Capture_Exception.
+* Developer: Add PensoPay_Capture_Exception.
+
+= 5.5.0 =
+* Add: Separate PayPal payment instance
+* Improvement: PayPal instance will, by default, strip cart items when sending data to PensoPay.
+
 = 5.4.2 =
 * Fix: Improvement of WC_PensoPay_Order::get_order_number_for_api to avoid errors if WC_PensoPay_Subscription::get_subscriptions_for_renewal_order returns no subscriptions.
 * Add: MasterCard ID Check logo

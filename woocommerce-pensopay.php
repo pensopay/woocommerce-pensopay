@@ -195,6 +195,7 @@ function init_pensopay_gateway() {
 				'klarna'             => 'WC_PensoPay_Klarna',
 				'mobilepay'          => 'WC_PensoPay_MobilePay',
 				'mobilepay-checkout' => 'WC_PensoPay_MobilePay_Checkout',
+				'paypal'             => 'WC_PensoPay_PayPal',
 				'pensopay-extra'     => 'WC_PensoPay_Extra',
 				'resurs'             => 'WC_PensoPay_Resurs',
 				'sofort'             => 'WC_PensoPay_Sofort',
@@ -531,11 +532,14 @@ function init_pensopay_gateway() {
 						throw new PensoPay_API_Exception( sprintf( "Action: \"%s\", is not allowed for order #%d, with type state \"%s\"", $param_action, $order->get_clean_order_number(), $payment->get_current_type() ) );
 					}
 				} catch ( PensoPay_Exception $e ) {
+					echo $e->getMessage();
 					$e->write_to_logs();
+					exit;
 				} catch ( PensoPay_API_Exception $e ) {
+					echo $e->getMessage();
 					$e->write_to_logs();
+					exit;
 				}
-
 			}
 		}
 
@@ -639,10 +643,15 @@ function init_pensopay_gateway() {
 
 								$payment->capture( $transaction_id, $order, $amount );
 							}
-						} catch ( \Exception $e ) {
+						} catch ( PensoPay_Capture_Exception $e ) {
 							woocommerce_pensopay_add_runtime_error_notice( $e->getMessage() );
 							$order->add_order_note( $e->getMessage() );
 							$this->log->add( $e->getMessage() );
+						} catch ( \Exception $e ) {
+							$error = sprintf( 'Unable to capture payment on order #%s. Problem: %s', $order->get_id(), $e->getMessage() );
+							woocommerce_pensopay_add_runtime_error_notice( $error );
+							$order->add_order_note( $error );
+							$this->log->add( $error );
 						}
 					}
 				}

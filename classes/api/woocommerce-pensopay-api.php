@@ -234,15 +234,11 @@ class WC_PensoPay_API
 					$error_messages[] = $errors['message'];
 				}
 
-				if ( ! empty( $errors['errors'] ) ) {
-					foreach ( $errors as $error_field => $error_descriptions ) {
-						$error_entry = "$error_field: ";
-
-						foreach ( $error_descriptions as $error_description ) {
-							$error_entry .= $error_description;
+				if ( ! empty( $errors['errors'] ) && $errors['error_code'] === null ) {
+					foreach ( $errors['errors'] as $field => $field_errors ) {
+						foreach ($field_errors as $field_error) {
+							$error_messages[] = sprintf('- <strong>%s</strong>: %s', $field, $field_error);
 						}
-
-						$error_messages[] = $error_entry;
 					}
 				}
 

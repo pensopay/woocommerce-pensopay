@@ -120,4 +120,7 @@ class PensoPay_API_Exception extends PensoPay_Exception
         
 	}
 }
+
+class PensoPay_Capture_Exception extends PensoPay_API_Exception {}
+
 ?>
