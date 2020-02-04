@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.5.2 =
+* Hotfix for capture button not working on some orders.
+
 = 5.5.1 =
 * Fix: Proper printing of validation errors returned from the API.
 * Improvement: Distinguish between capture exceptions and API exception when adding runtime errors on capture requests.
