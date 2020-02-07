@@ -157,9 +157,9 @@ window.PensoPay = window.PensoPay || {}, window.PensoPay.Embedded = window.Penso
             if (4 === r.readyState) {
                 if (r.status > 399) return n(r.status, r.responseText || r.statusText);
                 var i = JSON.parse(r.responseText);
-                "ok" === i.status ? i.done ? t(i.pp_status_code, i.pp_status_msg) : setTimeout(function () {
+                "ok" === i.status ? i.done ? t(i.qp_status_code, i.qp_status_msg) : setTimeout(function () {
                     a(e, t, n)
-                }, 5e3) : n(i.pp_status_code, i.pp_status_msg)
+                }, 5e3) : n(i.qp_status_code, i.qp_status_msg)
             }
         }, r.send(null)
     };
@@ -290,7 +290,7 @@ window.PensoPay = window.PensoPay || {}, window.PensoPay.Embedded = window.Penso
             i = {cardnumber: n.getCardnumber(), month: a.month, year: a.year, cvd: n.getCVD()}, o = function (e, a, s) {
                 if ("30100" == e) return i.force_3d = "1", void r.authorize(i, o, d, u);
                 var c = t.createElement("INPUT");
-                c.setAttribute("name", "pp_status_code"), c.setAttribute("value", e), c.setAttribute("type", "hidden"), n.form.appendChild(c), n.completed = !0, n.fireEvent("success", n, {
+                c.setAttribute("name", "qp_status_code"), c.setAttribute("value", e), c.setAttribute("type", "hidden"), n.form.appendChild(c), n.completed = !0, n.fireEvent("success", n, {
                     status: e,
                     message: a,
                     raw: s
