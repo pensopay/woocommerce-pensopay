@@ -1872,6 +1872,44 @@ function init_pensopay_gateway() {
 	add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'WC_PensoPay::add_action_links' );
 }
 
+if (!class_exists( 'WC_PensoPay_VirtualTerminal_Payment' )) {
+    require_once WCPP_PATH . 'classes/woocommerce-pensopay-virtualterminal-payment.php';
+}
+
+add_action('admin_menu', function($t) {
+    if (is_admin() && current_user_can('manage_woocommerce')) {
+        add_submenu_page('woo-virtualterminal', __('New Payment', 'woo-pensopay'),
+            __('New Payment', 'woo-pensopay'), 'manage_woocommerce', 'pensopay-virtualterminal-payment', array(
+                WC_PensoPay_VirtualTerminal_Payment::get_instance(),
+                'render'
+            ));
+    }
+}, 90, 1);
+add_action('init', array(WC_PensoPay_VirtualTerminal_Payment::class, 'register_post_types'), 5);
+
+//add_filter('cron_schedules', 'add_penso_cron');
+//function add_penso_cron($schedules)
+//{
+//    $schedules['minute'] = array(
+//        'interval' => 1, //*60
+//        'display' => esc_html__('Every Minute'),
+//    );
+//    return $schedules;
+//}
+
+add_action('pensopay_virtualpayments_update', 'WC_PensoPay_VirtualTerminal_Payment::vterminal_update_payments');
+if (!wp_next_scheduled('pensopay_virtualpayments_update')) {
+    wp_schedule_event(time(), 'daily', 'pensopay_virtualpayments_update');
+}
+
+register_deactivation_hook(__FILE__, 'pensopay_virtualpayments_update_deactivate');
+function pensopay_virtualpayments_update_deactivate()
+{
+    $timestamp = wp_next_scheduled('pensopay_virtualpayments_update');
+    wp_unschedule_event($timestamp, 'pensopay_virtualpayments_update');
+}
+
+
 /**
  * Run installer
  *

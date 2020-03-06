@@ -1,0 +1,74 @@
+label.error {
+    color: red;
+}
+
+label.input-required:after {
+    content: ' *';
+    color: red;
+}
+
+#postbox-container-1 {
+    display: none;
+}
+
+.payment-status {
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 5px 25px rgba(145, 92, 182, .4);
+    color: black;
+    display: block;
+    text-align: center;
+}
+
+.payment-status.red,
+tr.red {
+    background: rgb(255, 40, 0);
+}
+
+.payment-status.yellow,
+tr.yellow {
+    background: rgb(250, 218, 94);
+}
+
+.payment-status.orange,
+tr.orange {
+    background: rgb(255, 102, 0);
+}
+
+.payment-status.green,
+tr.green {
+    background: rgb(57, 255, 20);
+}
+
+table.operations {
+    text-align: center;
+    border: 1px solid grey;
+    padding: 15px;
+    border-spacing: 0;
+    min-width: 400px;
+    width: 100%;
+}
+
+table.operations th,
+table.operations tr,
+table.operations td {
+    text-align: center;
+}
+
+table.operations tr:not(:first-child) {
+    margin-top:5px;
+}
+
+table.operations tr,
+table.operations td {
+    padding: 10px;
+    border-bottom-width: 5px;
+}
+
+.post-type-vterminal_payment .search-box {
+    display: none;
+}
