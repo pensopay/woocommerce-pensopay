@@ -75,6 +75,10 @@
 				return;
 			}
 
+			if ($field.selector === '#billing_phone') {
+				return;
+			}
+
 			if ($field.length && (selectedShippingMethodRequiredFields.length === 0 || selectedShippingMethodRequiredFields.indexOf($field.selector.replace('#', '')) === -1)) {
 				$field.prop('disabled', true);
 
