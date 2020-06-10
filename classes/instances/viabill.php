@@ -4,6 +4,8 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
 
     public $main_settings = NULL;
 
+    protected $_isWdp = false;
+
     public function __construct() {
         parent::__construct();
 
@@ -23,6 +25,9 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
 	    add_filter('woocommerce_cart_totals_order_total_html', [ $this, 'viabill_price_html_cart' ], 10, 1);
 	    add_filter('woocommerce_gateway_method_description', [ $this, 'viabill_payment_method' ], 10, 2);
 	    add_action('woocommerce_checkout_order_review', [ $this, 'viabill_checkout_order_review'], 10, 0);
+	    $that = $this;
+	    add_action('wdp_price_display_init_hooks', static function() use($that) { $that->_isWdp = false; }, 10, 0);
+	    add_action('wdp_price_display_remove_hooks', static function() use($that) { $that->_isWdp = true; }, 10, 0);
     }
 
     public function is_available() {
@@ -105,6 +110,11 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
 	public function viabill_price_html($price, $product)
 	{
         global $woocommerce_loop;
+
+        //Do not show for advanced pricing
+        if ($this->_isWdp) {
+            return '';
+        }
 
         //Frontpage / shop page
 	    if ((is_front_page() || is_shop()) && isset($this->settings['show_pricetag_on_frontpage']) && $this->settings['show_pricetag_on_frontpage'] !== 'yes') {
