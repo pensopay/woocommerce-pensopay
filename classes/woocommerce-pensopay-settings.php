@@ -198,9 +198,9 @@ class WC_PensoPay_Settings {
 				'pensopay_text_on_statement'         => [
 					'title'             => __( 'Text on statement', 'woo-pensopay' ),
 					'type'              => 'text',
-					'description'       => __( 'Text that will be placed on cardholder’s bank statement (MAX 22 ASCII characters and only supported by Clearhaus currently).', 'woo-pensopay' ),
+					'description'       => __( '<b>Note: Only enter a value if required to do so.</b><br/>Text that will be placed on cardholder’s bank statement (MAX 22 ASCII characters and only supported by Clearhaus currently).', 'woo-pensopay' ),
 					'default'           => '',
-					'desc_tip'          => true,
+                    'desc_tip'          => false,
 					'custom_attributes' => [
 						'maxlength' => 22,
 					],
