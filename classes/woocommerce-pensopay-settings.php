@@ -171,14 +171,14 @@ class WC_PensoPay_Settings {
 					'default'     => 'yes',
 					'desc_tip'    => true,
 				],
-				'pensopay_iframe'           => [
-					'title'       => __( 'Enable IFrame', 'woo-pensopay' ),
-					'type'        => 'checkbox',
-					'label'       => __( 'Enable', 'woo-pensopay' ),
-					'description' => __( 'If enabled, payments are made in the shop using an iframe instead of a redirect to pensopay.', 'woo-pensopay' ),
-					'default'     => 'no',
-					'desc_tip'    => true,
-				],
+//				'pensopay_iframe'           => [
+//					'title'       => __( 'Enable IFrame', 'woo-pensopay' ),
+//					'type'        => 'checkbox',
+//					'label'       => __( 'Enable', 'woo-pensopay' ),
+//					'description' => __( 'If enabled, payments are made in the shop using an iframe instead of a redirect to pensopay.', 'woo-pensopay' ),
+//					'default'     => 'no',
+//					'desc_tip'    => true,
+//				],
 				'pensopay_autofee' => [
 					'title'       => __( 'Enable autofee', 'woo-pensopay' ),
 					'type'        => 'checkbox',
