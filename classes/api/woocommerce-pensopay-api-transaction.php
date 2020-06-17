@@ -434,7 +434,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 			return false;
 		}
 
-		$expiration = (int) WC_QP()->s( 'pensopay_caching_expiration' );
+		$expiration = (int) WC_PP()->s( 'pensopay_caching_expiration' );
 
 		if ( ! $expiration ) {
 			$expiration = 7 * DAY_IN_SECONDS;
