@@ -18,6 +18,48 @@ class WC_PensoPay_Helper {
 	const PENSOPAY_VAR_ORDERID = 'order_id';
 	const PENSOPAY_VAR_IFRAMESUCCESS = 'pensoPaySuccess';
 
+    protected static function get_recurring_total($order)
+    {
+        $recurring_total = 0;
+
+        foreach ( wcs_get_subscriptions_for_order( $order, array( 'order_type' => 'parent' ) ) as $subscription ) {
+
+            // Find the total for all recurring items
+            if ( empty( $product_id ) ) {
+                $recurring_total += $subscription->get_total() + $subscription->get_total_discount(); //This behavior changed
+            } else {
+                // We want the discount for a specific item (so we need to find if this subscription contains that item)
+                foreach ( $subscription->get_items() as $line_item ) {
+                    if ( wcs_get_canonical_product_id( $line_item ) == $product_id ) {
+                        $recurring_total += $subscription->get_total() + $subscription->get_total_discount();
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $recurring_total;
+    }
+
+    public static function order_needs_payment( $needs_payment, $order, $valid_order_statuses ) {
+        /**
+         * We need to add an extra step here because of a WC_Subscriptions bug
+         * Basically, we emulate WC_Subscriptions' check with a fix for actual recurring total
+         */
+        if (
+            false === $needs_payment
+            && 0 == $order->get_total()
+            && in_array($order->get_status(), $valid_order_statuses)
+            && wcs_order_contains_subscription($order)
+            && self::get_recurring_total($order) > 0
+            && 'yes' !== get_option(WC_Subscriptions_Admin::$option_prefix . '_turn_off_automatic_payments', 'no')
+        ) {
+            $needs_payment = true;
+        }
+
+        return $needs_payment;
+    }
+
 	public static function viabill_header()
 	{
 		$gateways = WC()->payment_gateways()->get_available_payment_gateways();

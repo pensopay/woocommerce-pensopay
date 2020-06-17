@@ -280,6 +280,9 @@ function init_pensopay_gateway() {
 			add_filter( 'qtranslate_language_detect_redirect', 'WC_PensoPay_Helper::qtranslate_prevent_redirect', 10, 3 );
 			add_filter( 'wpss_misc_form_spam_check_bypass', 'WC_PensoPay_Helper::spamshield_bypass_security_check', - 10, 1 );
 
+			//Needs Payment Subscription Fix
+			add_filter( 'woocommerce_order_needs_payment', 'WC_PensoPay_Helper::order_needs_payment', 10, 3 );
+
 			add_action('wp_head', 'WC_PensoPay_Helper::viabill_header'); //Header JS
 
 			add_filter('query_vars', function($vars) {
