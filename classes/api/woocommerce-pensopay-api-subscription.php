@@ -12,28 +12,26 @@
 
 class WC_PensoPay_API_Subscription extends WC_PensoPay_API_Transaction
 {
-  	/**
-	* __construct function.
-	*
-	* @access public
-	* @return void
-	*/
-    public function __construct( $resource_data = NULL )
-    {
-    	// Run the parent construct
-    	parent::__construct();
+    /**
+     * __construct function.
+     *
+     * @access public
+     * @return void
+     */
+    public function __construct( $resource_data = null ) {
+        // Run the parent construct
+        parent::__construct();
 
-    	// Set the resource data to an object passed in on object instantiation.
-    	// Usually done when we want to perform actions on an object returned from
-    	// the API sent to the plugin callback handler.
-  		if( is_object( $resource_data ) )
-  		{
-  			$this->resource_data = $resource_data;
-  		}
+		// Set the resource data to an object passed in on object instantiation.
+		// Usually done when we want to perform actions on an object returned from
+		// the API sent to the plugin callback handler.
+		if ( is_object( $resource_data ) ) {
+			$this->resource_data = $resource_data;
+		}
 
-    	// Append the main API url
-        $this->api_url .= 'subscriptions/';
-    }
+		// Append the main API url
+		$this->api_url .= 'subscriptions/';
+	}
 
 
    	/**
@@ -52,44 +50,51 @@ class WC_PensoPay_API_Subscription extends WC_PensoPay_API_Transaction
     }
 
 
-   	/**
-	* recurring function.
-	*
-	* Sends a 'recurring' request to the PensoPay API
-	*
-	* @access public
-	* @param  int $transaction_id
-	* @param  int $amount
-	* @return $request
-	* @throws PensoPay_API_Exception
-	*/
-    public function recurring( $subscription_id, $order, $amount = NULL)
-    {
-        // Check if a custom amount ha been set
-        if( $amount === NULL )
-        {
-            // No custom amount set. Default to the order total
-            $amount = WC_Subscriptions_Order::get_recurring_total( $order );
-        }
+	/**
+	 * recurring function.
+	 *
+	 * Sends a 'recurring' request to the PensoPay API
+	 *
+	 * @access public
+	 *
+	 * @param int $transaction_id
+	 * @param int $amount
+	 *
+	 * @return $request
+	 * @throws PensoPay_API_Exception
+	 */
+	public function recurring( $subscription_id, $order, $amount = null ) {
+		// Check if a custom amount ha been set
+		if ( $amount === null ) {
+			// No custom amount set. Default to the order total
+			$amount = WC_Subscriptions_Order::get_recurring_total( $order );
+		}
 
-        if( ! $order instanceof WC_PensoPay_Order ) {
+		if ( ! $order instanceof WC_PensoPay_Order ) {
 			$order_id = $order->get_id();
-            $order = new WC_PensoPay_Order( $order_id );
-        }
+			$order    = new WC_PensoPay_Order( $order_id );
+		}
 
-        $order_number = $order->get_order_number_for_api( $is_recurring = TRUE );
+		$order_number = $order->get_order_number_for_api( $is_recurring = true );
 
-    	$request = $this->post( sprintf( '%d/%s?synchronized', $subscription_id, "recurring" ), [
-            'amount' => WC_PensoPay_Helper::price_multiply( $amount ),
-            'order_id' => sprintf('%s', $order_number ),
-            'auto_capture' => $order->get_autocapture_setting(),
-            'autofee' => WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_autofee' ) ),
-            'text_on_statement' => WC_PP()->s('pensopay_text_on_statement'),
-            'order_post_id' => $order->get_id(),
-	    ], TRUE );
+		$is_synchronized = apply_filters( 'woocommerce_pensopay_set_synchronized_request', true, $subscription_id, $order, $amount );
 
-        return $request;
-    }
+		$request_url = sprintf( '%d/%s?synchronized', $subscription_id, "recurring" );
+		if ( $is_synchronized ) {
+			$request_url .= '?synchronized';
+		}
+
+		$request = $this->post( $request_url, [
+			'amount'            => WC_PensoPay_Helper::price_multiply( $amount ),
+			'order_id'          => sprintf( '%s', $order_number ),
+			'auto_capture'      => $order->get_autocapture_setting(),
+			'autofee'           => WC_PensoPay_Helper::option_is_enabled( WC_QP()->s( 'pensopay_autofee' ) ),
+			'text_on_statement' => WC_QP()->s( 'pensopay_text_on_statement' ),
+			'order_post_id'     => $order->get_id(),
+		], true );
+
+		return $request;
+	}
 
 
   	/**

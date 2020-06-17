@@ -50,8 +50,6 @@ class WC_PensoPay_API
 	 * @return void
 	 */
 	public function __construct( $api_key = null ) {
-		add_action( 'shutdown', [ $this, 'shutdown' ] );
-
 		if ( empty( $api_key ) ) {
 			$this->api_key = WC_PP()->s( 'pensopay_apikey' );
 		} else {
@@ -253,16 +251,20 @@ class WC_PensoPay_API
 
 		// Everything went well, return the resource data object.
 		if ( $return_array ) {
-			return [
+			$return_data = [
 				$this->resource_data,
 				$curl_request_url,
 				$request_form_data,
 				$response_data,
 				curl_getinfo( $this->ch ),
 			];
+		} else {
+			$return_data = $this->resource_data;
 		}
 
-		return $this->resource_data;
+		curl_close( $this->ch );
+
+		return $return_data;
 	}
 
 
@@ -285,38 +287,27 @@ class WC_PensoPay_API
 	 * Create a cURL instance if none exists already
 	 *
 	 * @access public
-	 * @return cURL object
+	 * @return false|resource
 	 */
 	protected function remote_instance( $post_id = null ) {
-		if ( $this->ch === null ) {
-			$this->ch = curl_init();
-			curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, true );
-			curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, false );
-			curl_setopt( $this->ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
-			curl_setopt( $this->ch, CURLOPT_HTTPHEADER, [
-				'Authorization: Basic ' . base64_encode( ':' . $this->api_key ),
-				'Accept-Version: v10',
-				'Accept: application/json',
-				'PensoPay-Callback-Url: ' . ( ! $this->block_callback ) ? WC_PensoPay_Helper::get_callback_url( $post_id ) : null
-			] );
-		}
+		$this->ch = curl_init();
+
+		curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $this->ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
+
+		curl_setopt( $this->ch, CURLINFO_HEADER_OUT, true );
+
+		$callback_url = ! apply_filters( 'woocommerce_pensopay_block_callback', $this->block_callback, $post_id ) ? WC_PensoPay_Helper::get_callback_url( $post_id ) : null;
+
+		curl_setopt( $this->ch, CURLOPT_HTTPHEADER, [
+			'Authorization: Basic ' . base64_encode( ':' . $this->api_key ),
+			'Accept-Version: v10',
+			'Accept: application/json',
+			"QuickPay-Callback-Url: {$callback_url}"
+		] );
 
 		return $this->ch;
-	}
-
-
-	/**
-	 * shutdown function.
-	 *
-	 * Closes the current cURL connection
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function shutdown() {
-		if ( ! empty( $this->ch ) ) {
-			curl_close( $this->ch );
-		}
 	}
 
 	/**

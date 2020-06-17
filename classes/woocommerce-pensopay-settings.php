@@ -114,6 +114,27 @@ class WC_PensoPay_Settings {
 					'show_if_checked' => 'option',
 					'checkboxgroup'   => 'end'
 				],
+
+                '_caching'                    => [
+                    'type'  => 'title',
+                    'title' => __( 'Transaction Cache', 'woo-pensopay' )
+                ],
+                'pensopay_caching_enabled'    => [
+                    'title'       => __( 'Enable Caching', 'woo-pensopay' ),
+                    'type'        => 'checkbox',
+                    'description' => __( 'Caches transaction data to improve application and web-server performance. <strong>Recommended.</strong>', 'woo-pensopay' ),
+                    'default'     => 'yes',
+                    'desc_tip'    => false,
+                ],
+                'pensopay_caching_expiration' => [
+                    'title'       => __( 'Cache Expiration', 'woo-pensopay' ),
+                    'label'       => __( 'Cache Expiration', 'woo-pensopay' ),
+                    'type'        => 'number',
+                    'description' => __( '<strong>Time in seconds</strong> for how long a transaction should be cached. <strong>Default: 604800 (7 days).</strong>', 'woo-pensopay' ),
+                    'default'     => 7 * DAY_IN_SECONDS,
+                    'desc_tip'    => false,
+                ],
+
 				'_Extra_gateway_settings'            => [
 					'type'  => 'title',
 					'title' => __( 'Extra gateway settings', 'woo-pensopay' )
@@ -136,7 +157,7 @@ class WC_PensoPay_Settings {
 						'se'        => 'Swedish'
 					]
 				],
-				'pensopay_currency'                  => [
+				'pensopay_currency'       => [
 					'title'       => __( 'Currency', 'woo-pensopay' ),
 					'description' => __( 'Choose your currency. Please make sure to use the same currency as in your WooCommerce currency settings.', 'woo-pensopay' ),
 					'desc_tip'    => true,
@@ -150,20 +171,20 @@ class WC_PensoPay_Settings {
 						'USD' => 'USD'
 					]
 				],
-				'pensopay_cardtypelock'              => [
+				'pensopay_cardtypelock'   => [
 					'title'       => __( 'Payment methods', 'woo-pensopay' ),
 					'type'        => 'text',
 					'description' => __( 'Default: creditcard. Type in the cards you wish to accept (comma separated). See the valid payment types here: <b>http://tech.quickpay.net/appendixes/payment-methods/</b>', 'woo-pensopay' ),
 					'default'     => 'creditcard',
 				],
-				'pensopay_branding_id'               => [
+				'pensopay_branding_id'    => [
 					'title'       => __( 'Branding ID', 'woo-pensopay' ),
 					'type'        => 'text',
 					'description' => __( 'Leave empty if you have no custom branding options', 'woo-pensopay' ),
 					'default'     => '',
 					'desc_tip'    => true,
 				],
-				'pensopay_sendaddresses'             => [
+				'pensopay_sendaddresses'           => [
 					'title'       => __( 'Send customer info to payment gateway', 'woo-pensopay' ),
 					'type'        => 'checkbox',
 					'label'       => __( 'Enable', 'woo-pensopay' ),
@@ -394,8 +415,17 @@ class WC_PensoPay_Settings {
 		printf( '<a id="wcpp_wiki" class="button button-primary" href="%s" target="_blank">%s</a>', self::get_wiki_link(), __( 'Got problems? Check out the Wiki.', 'woo-pensopay' ) );
 		printf( '<a id="wcpp_logs" class="button" href="%s">%s</a>', WC_PP()->log->get_admin_link(), __( 'View debug logs', 'woo-pensopay' ) );
 		printf( '<button id="wcpp_logs_clear" class="button">%s</button>', __( 'Empty debug logs', 'woo-pensopay' ) );
-		printf( '<br/>' );
-		printf( '<h3 class="wc-settings-sub-title">%s</h3>', __( 'Enable', 'woo-pensopay' ) );
+
+        if ( woocommerce_pensopay_can_user_empty_logs() ) {
+            printf( '<button role="button" id="wcpp_logs_clear" class="wcpp-debug-button button">%s</button>', __( 'Empty debug logs', 'woo-pensopay' ) );
+        }
+
+        if ( woocommerce_pensopay_can_user_flush_cache() ) {
+            printf( '<button role="button" id="wcpp_flush_cache" class="wcpp-debug-button button">%s</button>', __( 'Empty transaction cache', 'woo-pensopay' ) );
+        }
+
+        printf( '<br/>' );
+        printf( '<h3 class="wc-settings-sub-title">%s</h3>', __( 'Enable', 'woo-pensopay' ) );
 	}
 
 	/**

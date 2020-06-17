@@ -211,7 +211,8 @@
 	margin-left: 5px;
 }
 
-#wcpp_wiki, #wcpp_logs {
+
+.button.wcpp-debug-button {
 	margin-right: 5px;
 }
 

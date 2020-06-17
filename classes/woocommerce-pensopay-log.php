@@ -10,15 +10,15 @@
  * @author 		PensoPay
  */
 class WC_PensoPay_Log {
-    
+
     /* The domain handler used to name the log */
     private $_domain = 'woocommerce-pensopay';
-    
-    
+
+
     /* The WC_Logger instance */
     private $_logger;
-    
-    
+
+
     /**
 	* __construct.
 	*

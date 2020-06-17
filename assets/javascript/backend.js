@@ -123,22 +123,38 @@
 		new PensoPayCheckAPIStatus().init();
 		new PensoPayPrivateKey().init();
 
+		function wcppInsertAjaxResponseMessage(response) {
+			if (response.hasOwnProperty('status') && response.status == 'success') {
+				var message = $('<div id="message" class="updated"><p>' + response.message + '</p></div>');
+				message.hide();
+				message.insertBefore($('#wcpp_wiki'));
+				message.fadeIn('fast', function () {
+					setTimeout(function () {
+						message.fadeOut('fast', function () {
+							message.remove();
+						});
+					},5000);
+				});
+			}
+		}
+
         var emptyLogsButton = $('#wcpp_logs_clear');
         emptyLogsButton.on('click', function(e) {
         	e.preventDefault();
+        	emptyLogsButton.prop('disabled', true);
         	$.getJSON(ajaxurl, { action: 'pensopay_empty_logs' }, function (response) {
-        		if (response.hasOwnProperty('status') && response.status == 'success') {
-        			var message = $('<div id="message" class="updated"><p>' + response.message + '</p></div>');
-        			message.hide();
-        			message.insertBefore($('#wcpp_wiki'));
-        			message.fadeIn('fast', function () {
-        				setTimeout(function () {
-        					message.fadeOut('fast', function () {
-        						message.remove();
-        					});
-        				},5000);
-        			});
-        		} 
+				wcppInsertAjaxResponseMessage(response);
+				emptyLogsButton.prop('disabled', false);
+        	});
+        });
+
+        var flushCacheButton = $('#wcpp_flush_cache');
+		flushCacheButton.on('click', function(e) {
+        	e.preventDefault();
+			flushCacheButton.prop('disabled', true);
+        	$.getJSON(ajaxurl, { action: 'pensopay_flush_cache' }, function (response) {
+				wcppInsertAjaxResponseMessage(response);
+				flushCacheButton.prop('disabled', false);
         	});
         });
 	});
@@ -165,18 +181,34 @@
 		this.field.parent().append(this.refresh);
 
 		this.refresh.on('click', function() {
-			self.refresh.addClass('is-loading');
-			$.post(ajaxurl + '?action=pensopay_fetch_private_key', { api_key: self.apiKeyField.val() }, function(response) {
-				if (response.status === 'success') {
-					self.field.val(response.data.private_key);
-				} else {
-					self.flashError(response.message);
-				}
+			if ( ! self.refresh.hasClass('ok')) {
+				self.refresh.addClass('is-loading');
+				$.post(ajaxurl + '?action=pensopay_fetch_private_key', { api_key: self.apiKeyField.val() }, function(response) {
+					if (response.status === 'success') {
+						self.field.val(response.data.private_key);
+						self.refresh.removeClass('refresh').addClass('ok');
+					} else {
+						self.flashError(response.message);
+					}
 
-				self.refresh.removeClass('is-loading');
-			}, 'json');
+					self.refresh.removeClass('is-loading');
+				}, 'json');
+			}
 		});
+
+		this.validatePrivateKey();
 	}
+
+	PensoPayPrivateKey.prototype.validatePrivateKey = function() {
+		var self = this;
+		$.post(ajaxurl + '?action=pensopay_fetch_private_key', { api_key: self.apiKeyField.val() }, function(response) {
+			if (response.status === 'success' && self.field.val() === response.data.private_key) {
+				self.refresh.removeClass('refresh').addClass('ok');
+			}
+
+			self.refresh.fadeIn();
+		}, 'json');
+	};
 
 	PensoPayPrivateKey.prototype.flashError = function (message) {
 		var message = $('<div style="color: red; font-style: italic;"><p style="font-size: 12px;">' + message + '</p></div>');

@@ -174,13 +174,14 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 			do_action( 'woocommerce_pensopay_save_automatic_addresses_before', $order, $billing_address, $shipping_address, $transaction );
 			try {
 				$customer = null;
+                $create_user = apply_filters( 'woocommerce_pensopay_mobilepay_checkout_create_user', wc()->checkout()->is_registration_required(), $order, $transaction );
 
 				if ( ! $order->get_customer_id() ) {
 					$customer_id = wc_create_new_customer( $billing_address->email, $billing_address->email, wp_generate_password() );
 					if ( ! is_wp_error( $customer_id ) ) {
 						$customer = new WC_Customer( $customer_id );
 					}
-				} else if ( $this->s( 'mobilepay_checkout_update_existing_customer_data' ) ) {
+				} else if ( $order->get_customer_id() && $this->s( 'mobilepay_checkout_update_existing_customer_data' ) ) {
 					$customer = new WC_Customer( $order->get_customer_id() );
 				}
 

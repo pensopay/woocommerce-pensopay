@@ -65,6 +65,7 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 	 * @return object
 	 * @throws PensoPay_API_Exception
 	 * @throws PensoPay_Exception
+     * @throws PensoPay_Capture_Exception
 	 */
 	public function capture( $transaction_id, $order, $amount = null ) {
 		// Check if a custom amount ha been set
@@ -80,7 +81,7 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 		}
 
 		if ( $capture->qp_status_code > 20200 ) {
-			throw new PensoPay_API_Exception( sprintf( 'Capturing payment on order #%s failed. Message: %s', $order->get_id(), $capture->qp_status_msg ) );
+			throw new PensoPay_Capture_Exception( sprintf( 'Capturing payment on order #%s failed. Message: %s', $order->get_id(), $capture->qp_status_msg ) );
 		}
 
 		return $this;
@@ -164,9 +165,10 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 		$state             = $this->get_current_type();
 		$remaining_balance = $this->get_remaining_balance();
 
+
 		$allowed_states = [
 			'capture'          => [ 'authorize', 'recurring' ],
-			'cancel'           => [ 'authorize' ],
+			'cancel'           => [ 'authorize', 'recurring' ],
 			'refund'           => [ 'capture', 'refund' ],
 			'renew'            => [ 'authorize' ],
 			'splitcapture'     => [ 'authorize', 'capture' ],
@@ -175,7 +177,7 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 		];
 
 		// We wants to still allow captures if there is a remaining balance.
-		if ( 'capture' == $state && $remaining_balance > 0 ) {
+		if ( 'capture' === $state && $remaining_balance > 0 && $action !== 'cancel' ) {
 			return true;
 		}
 

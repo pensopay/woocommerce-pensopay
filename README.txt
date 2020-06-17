@@ -27,6 +27,33 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.7.0 =
+* Feature: Add callback handler for recurring requests
+* Fix: Stop using WC_Subscriptions_Manager::process_subscription_payment_failure_on_order as this is deprecated.
+* Dev: Make synchronous recurring requests optional with the introduced filter: woocommerce_pensopay_set_synchronized_request
+* Dev: Blocked callbacks for recurring requests are now optional. Can be disabled with the filter: woocommerce_pensopay_block_callback
+
+= 5.6.2 =
+* Fix: Add missing order payment box in backend for fbg1886, ideal, paypal and swish
+
+= 5.6.1 =
+* Fix: MobilePay Checkout not saving address data properly when no customer account was set on the order.
+
+= 5.6.0 =
+* Feature: Add UI setting for enabling/disabling transaction caching
+* Feature: Add UI setting for setting the transaction caching expiration time
+* Feature: Update a cached transaction on accepted callbacks
+* Feature: Add private key validation and success indicator next to the settings field - (requires permissions to read the private key via API)
+* Feature: Add button to flush the transaction cache from inside the plugin settings
+* Fix: Remove "Cancel" transaction on partially captured transactions as this action is not supported
+* Fix: MobilePay Checkout is now only creating users if user registration is required. The behavior can be modified via the filter woocommerce_pensopay_mobilepay_checkout_create_user
+* Fix: Stop performing capture logic on order completion when the orders is not paid with PensoPay
+* Fix: Add permission check on ajax endpoint for clearing logs
+* Fix: WC_PensoPay_Order::get_order_id_from_callback fallback now allows both prefixed and suffixed order numbers
+* Fix: Recurring payments not being cancellable
+* Improvement: Do not reuse cURL instances to avoid problems with some cPanel PHP upgrades where KeepAlive is disabled by default
+* Developer: Add the possibility to hide buttons for clearing logs and transaction cache via filters.
+
 = 5.5.3 =
 * Fix for embedded payments.
 
@@ -66,6 +93,8 @@ General:
 = 5.3.1 =
 * Fix: Fix missing shipping information on MobilePay Checkout orders if no shipping address is specified in the MobilePay app
 * Fix: Bump minimum PHP version to 5.4
+
+= 5.3.0 =
 * Fix: Make .is-loading in backend more specific.
 * Feature: Trustly as separate payment method instance
 * Feature: iDEAL as separate payment method instance
@@ -76,6 +105,8 @@ General:
 * Enhancement: Optimized images for Swish and Resurs.
 * Enhancement: Updates helper texts on embedded window and text_on_statement on the settings page
 * Enhancement: Only load the backend javascripts on relevant pages
+
+= 5.2.0 =
 * Feature: Add support for embedded payments through overlay with Clearhaus
 * Developer: Add action 'woocommerce_pensopay_callback_subscription_authorized' and 'woocommerce_pensopay_callback_payment_authorized' for easier way of handling authorized callbacks for specific transaction types.
 * Remove eDankort

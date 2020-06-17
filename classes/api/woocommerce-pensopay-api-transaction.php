@@ -300,7 +300,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 		$balance = $this->get_balance();
 
 		$authorized_operations = array_filter( $this->resource_data->operations, function ( $operation ) {
-			return 'authorize' === $operation->type;
+			return 'authorize' === $operation->type || 'recurring' === $operation->type;
 		} );
 
 		if ( empty( $authorized_operations ) ) {
@@ -414,7 +414,9 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 * @return boolean
 	 */
 	public static function is_transaction_caching_enabled() {
-		return apply_filters( 'woocommerce_pensopay_transaction_cache_enabled', true );
+		$is_enabled = strtolower( WC_PP()->s( 'pensopay_caching_enabled' ) ) === 'no' ? false : true;
+
+		return apply_filters( 'woocommerce_pensopay_transaction_cache_enabled', $is_enabled );
 	}
 
 	/**
@@ -432,8 +434,14 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 			return false;
 		}
 
+		$expiration = (int) WC_QP()->s( 'pensopay_caching_expiration' );
+
+		if ( ! $expiration ) {
+			$expiration = 7 * DAY_IN_SECONDS;
+		}
+
 		// Cache expiration in seconds
-		$expiration = apply_filters( 'woocommerce_pensopay_transaction_cache_expiration', 7 * DAY_IN_SECONDS );
+		$expiration = apply_filters( 'woocommerce_pensopay_transaction_cache_expiration', $expiration );
 
 		return set_transient( 'wcpp_transaction_' . $this->resource_data->id, json_encode( $this->resource_data ), $expiration );
 	}
