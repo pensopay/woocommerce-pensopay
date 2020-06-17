@@ -27,6 +27,16 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.7.1 =
+* Fix: WC_Subscriptions error with zero checkout amount when using a 100% discount coupon.
+* Fix: Viabill double tag in some cases on product page.
+* Fix: Viabill logo show on order view.
+* Fix: Mobilepay now moves the phone number to the payment window.
+* Feature: Virtual Terminal added. Allows payments from admin now.
+* Feature: Mass Capture
+* Deprecation of iframe in favor of embedded window.
+* Test against latest versions.
+
 = 5.7.0 =
 * Feature: Add callback handler for recurring requests
 * Fix: Stop using WC_Subscriptions_Manager::process_subscription_payment_failure_on_order as this is deprecated.
