@@ -634,8 +634,8 @@ class WC_PensoPay_Order extends WC_Order {
 			'amount'          => WC_PensoPay_Helper::price_multiply( $shipping_incl_vat ),
 			'vat_rate'        => $shipping_vat_rate,
 			'tracking_number' => '',
-			'tracking_url'    => '',
-		] );
+			'tracking_url'    => ''
+		], $this );
 	}
 
 	/**

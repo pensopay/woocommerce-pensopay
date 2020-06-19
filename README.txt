@@ -27,6 +27,10 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.7.2 =
+* Fix: PayPal shipping error
+* Proper version bump.
+
 = 5.7.1 =
 * Fix: WC_Subscriptions error with zero checkout amount when using a 100% discount coupon.
 * Fix: Viabill double tag in some cases on product page.

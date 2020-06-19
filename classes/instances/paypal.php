@@ -19,6 +19,7 @@ class WC_PensoPay_PayPal extends WC_PensoPay_Instance {
 
 		add_filter( 'woocommerce_pensopay_cardtypelock_pensopay_paypal', [ $this, 'filter_cardtypelock' ] );
 		add_filter( 'woocommerce_pensopay_transaction_params_basket', [ $this, 'filter_basket_items' ], 30, 2 );
+		add_filter( 'woocommerce_pensopay_transaction_params_shipping_row', [ $this, 'filter_shipping_row' ], 30, 2 );
 	}
 
 
@@ -99,4 +100,19 @@ class WC_PensoPay_PayPal extends WC_PensoPay_Instance {
 
 		return $icon;
 	}
+
+    /**
+     * This will solve a bug where the basket isn't sent to gateway but shipping is, effectively canceling due to
+     * amount mismatch.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function filter_shipping_row( $data, $order ) {
+        if ( $order->get_payment_method() === $this->id ) {
+            return [];
+        }
+        return $data;
+    }
 }
