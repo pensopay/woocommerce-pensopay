@@ -105,7 +105,7 @@ class WC_PensoPay_VirtualTerminal_Payment
 
         add_action('admin_footer', function() {
             global $post;
-            if ($post->post_type === self::POST_TYPE) {
+            if (is_object($post) && $post->post_type === self::POST_TYPE) {
                 wp_enqueue_script('form_validation', plugins_url('../assets/javascript/jquery.validate.min.js', __FILE__));
                 wp_enqueue_style('vterminal_payment', plugins_url('../assets/stylesheets/vterminal-payment.css', __FILE__));
             }
@@ -309,7 +309,7 @@ class WC_PensoPay_VirtualTerminal_Payment
         }
     }
 
-	public function register_post_types()
+	public static function register_post_types()
     {
         $result = register_post_type(self::POST_TYPE,
             array(
