@@ -27,6 +27,10 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.7.3 =
+* Emergency fixes.
+* Version bump.
+
 = 5.7.2 =
 * Fix: PayPal shipping error
 * Proper version bump.
