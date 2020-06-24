@@ -137,7 +137,7 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 		// Select the first item as this should be an actual product and not shipping or similar.
 		$product = reset( $basket_items );
 
-		$this->post( sprintf( '%d/%s', $transaction_id, "refund" ), [
+		$this->post( sprintf( '%d/%s?synchronized', $transaction_id, "refund" ), [
 			'amount'   => WC_PensoPay_Helper::price_multiply( $amount ),
 			'vat_rate' => $product['vat_rate'],
 		] );
@@ -146,8 +146,10 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 			throw new PensoPay_Exception( 'No refund operation found: ' . (string) json_encode( $this->resource_data ) );
 		}
 
-		if ( $refund->pp_status_code > 20200 ) {
-			throw new PensoPay_API_Exception( sprintf( 'Refunding payment on order #%s failed. Message: %s', $order->get_id(), $refund->pp_status_msg ) );
+		if ( $refund->qp_status_code > 20200 ) {
+		    $msg = sprintf( 'Refunding payment on order #%s failed. Message: %s', $order->get_id(), $refund->qp_status_msg );
+		    $order->add_order_note($msg);
+			throw new PensoPay_API_Exception( $msg );
 		}
 	}
 

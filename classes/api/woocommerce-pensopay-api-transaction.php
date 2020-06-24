@@ -338,7 +338,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 			$operation = $this->get_last_operation();
 		}
 
-		return $this->resource_data->accepted && $operation->pp_status_code == 20000 && $operation->aq_status_code == 20000;
+		return $this->resource_data->accepted && $operation->qp_status_code == 20000 && $operation->aq_status_code == 20000;
 	}
 
 	/**
