@@ -451,13 +451,21 @@ function init_pensopay_gateway() {
 		 *
 		 * @return mixed
 		 */
-		public function s( $key, $default = null ) {
-			if ( isset( $this->settings[ $key ] ) ) {
-				return $this->settings[ $key ];
-			}
-
-			return apply_filters( 'woocommerce_pensopay_get_setting_' . $key, ! is_null( $default ) ? $default : '', $this );
-		}
+        public function s( $key, $default = null ) {
+            // Add WPML compatibility through getoption instead of local $this
+            if ($key === 'pensopay_apikey') {
+                $data = get_option('woocommerce_pensopay_settings');
+                return $data['pensopay_apikey'];
+            }
+            if ($key === 'pensopay_privatekey') {
+                $data = get_option('woocommerce_pensopay_settings');
+                return $data['pensopay_privatekey'];
+            }
+            if ( isset( $this->settings[ $key ] ) ) {
+                return $this->settings[ $key ];
+            }
+            return apply_filters( 'woocommerce_pensopay_get_setting' . $key, $default !== null ? $default : '', $this );
+        }
 
 		/**
 		 * Hook used to display admin notices

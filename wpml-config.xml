@@ -4,6 +4,8 @@
             <key name="title"/>
             <key name="description"/>
             <key name="checkout_button_text"/>
+            <key name="pensopay_apikey"/>
+            <key name="pensopay_privatekey"/>
         </key>
     </admin-texts>
 </wpml-config>
