@@ -76,7 +76,7 @@
             </div>
 		</div>
 		<div class="wcpp-modal-disclaimer">
-			<span><?php _e('Secure payment by', 'woo-pensopay') ?> </span> <img src="<?php esc_attr_e( WC_PensoPay_Views::asset_url( 'images/pensopay.svg' ) ); ?>" />
+			<span><?=  apply_filters('woocommerce_pensopay_payment_overlay__pay', __( 'Secure payment by', 'woo-pensopay' ) ) ?> </span> <img src="<?php esc_attr_e( WC_PensoPay_Views::asset_url( 'images/pensopay.svg' ) ); ?>" />
 		</div>
 	</div>
 </div>
