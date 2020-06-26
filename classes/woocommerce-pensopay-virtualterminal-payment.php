@@ -535,8 +535,10 @@ class WC_PensoPay_VirtualTerminal_Payment
 
     public function cancel()
     {
-        $api_transaction = new WC_PensoPay_API_Payment();
-        $api_transaction->cancel($this->get_post_data('reference_id'));
+        try {
+            $api_transaction = new WC_PensoPay_API_Payment();
+            $api_transaction->cancel($this->get_post_data('reference_id'));
+        } catch (\Exception $e) {}
         $this->update_from_remote();
         return $this;
     }

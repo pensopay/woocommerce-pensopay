@@ -109,7 +109,7 @@ class WC_PensoPay_API_Subscription extends WC_PensoPay_API_Transaction
 	*/
     public function cancel( $subscription_id )
     {
-    	$this->post( sprintf( '%d/%s', $subscription_id, "cancel" ) );
+    	$this->post( sprintf( '%d/%s', $subscription_id, 'cancel') );
     }
 
 

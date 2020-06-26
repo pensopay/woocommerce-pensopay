@@ -37,6 +37,7 @@ class WC_PensoPay_Settings {
 					'title'       => __( 'Api User key', 'woo-pensopay' ) . self::get_required_symbol(),
 					'type'        => 'text',
 					'description' => __( 'Your API User\'s key. Create a separate API user in the "Users" tab inside the PensoPay manager.', 'woo-pensopay' ),
+                    'default'     => __( '', 'woo-pensopay' ),
 					'desc_tip'    => true,
 				],
 				'pensopay_privatekey'                => [
@@ -304,6 +305,14 @@ class WC_PensoPay_Settings {
 					'default'     => 'yes',
 					'desc_tip'    => false,
 				],
+                'pensopay_orders_order_cancel_transaction' => [
+                    'title'       => __( 'Cancel Transaction on Order Cancellation', 'woo-pensopay' ),
+                    'type'        => 'checkbox',
+                    'label'       => __( 'Enable', 'woo-pensopay' ),
+                    'description' => __( 'If enabled, will attempt to cancel the transaction on the gateway when the order is cancelled.', 'woo-pensopay' ),
+                    'default'     => 'no',
+                    'desc_tip'    => false,
+                ],
 
 				'CustomVariables'           => [
 					'type'  => 'title',

@@ -88,20 +88,30 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 	}
 
 
-	/**
-	 * cancel function.
-	 *
-	 * Sends a 'cancel' request to the PensoPay API
-	 *
-	 * @access public
-	 *
-	 * @param int $transaction_id
-	 *
-	 * @return void
-	 * @throws PensoPay_API_Exception
-	 */
+    /**
+     * cancel function.
+     *
+     * Sends a 'cancel' request to the PensoPay API
+     *
+     * @access public
+     *
+     * @param int $transaction_id
+     *
+     * @return void
+     * @throws PensoPay_API_Exception
+     * @throws PensoPay_Exception
+     */
 	public function cancel( $transaction_id ) {
-		$this->post( sprintf( '%d/%s', $transaction_id, "cancel" ) );
+		$this->post( sprintf( '%d/%s?synchronized', $transaction_id, 'cancel') );
+
+        if ( ! $cancellation = $this->get_last_operation_of_type( 'cancel' ) ) {
+            throw new PensoPay_Exception( 'No cancellation operation found: ' . (string) json_encode( $this->resource_data ) );
+        }
+
+        if ( $cancellation->qp_status_code > 20200 ) {
+            $msg = sprintf( 'Cancellation of payment for transaction #%s failed. Message: %s', $transaction_id, $cancellation->qp_status_msg );
+            throw new PensoPay_API_Exception( $msg );
+        }
 	}
 
 

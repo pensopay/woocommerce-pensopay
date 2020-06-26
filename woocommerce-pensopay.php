@@ -283,6 +283,10 @@ function init_pensopay_gateway() {
 			//Needs Payment Subscription Fix
 			add_filter( 'woocommerce_order_needs_payment', 'WC_PensoPay_Helper::order_needs_payment', 10, 3 );
 
+			//Cancel transaction on order cancel (if setting enabled)
+            add_action('woocommerce_order_status_changed', [$this, 'transaction_cancel_on_order_cancel'], 10, 3);
+
+
 			add_action('wp_head', 'WC_PensoPay_Helper::viabill_header'); //Header JS
 
 			add_filter('query_vars', function($vars) {
@@ -465,6 +469,48 @@ function init_pensopay_gateway() {
                 return $this->settings[ $key ];
             }
             return apply_filters( 'woocommerce_pensopay_get_setting' . $key, $default !== null ? $default : '', $this );
+        }
+
+        public function transaction_cancel_on_order_cancel($order_id, $status, $newStatus)
+        {
+            global $sitepress;
+            $order = wc_get_order( $order_id );
+            if ($order) {
+                if ($newStatus === 'cancelled' && $status !== 'cancelled' && !$order->get_meta('_pensopay_tried_cancel')) {
+                    if ($this->s('pensopay_orders_order_cancel_transaction') === 'yes') {
+                        try {
+                            $data = $order->get_data();
+                            $transactionId = isset($data['transaction_id']) ? $data['transaction_id'] : false;
+                            if ($transactionId) {
+                                if (function_exists('icl_translate') && $sitepress) {
+                                    $order_lang = $order->get_meta('wpml_language');
+                                    $currentLanguage = $sitepress->get_current_language();
+                                    if ($currentLanguage !== $order_lang) {
+                                        $sitepress->switch_lang($order_lang);
+                                    }
+                                }
+
+                                $order->add_meta_data('_pensopay_tried_cancel', '1', true);
+                                $order->save_meta_data();
+                                $api_transaction = new WC_PensoPay_API_Payment();
+                                $api_transaction->cancel($transactionId);
+                                $order->add_order_note('Cancelled transaction #' . $transactionId);
+                            }
+                        } catch (\Exception $e) {
+                            if ($order) {
+                                $order->add_order_note($e->getMessage());
+                            }
+                        } finally {
+                            if (function_exists('icl_translate') && $sitepress && isset($currentLanguage) && isset($order_lang)) {
+                                $order_lang = $data['wpml_language'];
+                                if ($currentLanguage !== $order_lang) {
+                                    $sitepress->switch_lang($currentLanguage);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 		/**
@@ -1107,7 +1153,9 @@ function init_pensopay_gateway() {
 					$subscription->get( $transaction_id );
 
 					if ( $subscription->is_action_allowed( 'cancel' ) ) {
-						$subscription->cancel( $transaction_id );
+					    try {
+                            $subscription->cancel($transaction_id);
+                        } catch (\Exception $e) {}
 					}
 				}
 			} catch ( PensoPay_Exception $e ) {
