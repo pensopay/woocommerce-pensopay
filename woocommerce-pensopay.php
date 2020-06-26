@@ -286,8 +286,10 @@ function init_pensopay_gateway() {
 			//Cancel transaction on order cancel (if setting enabled)
             add_action('woocommerce_order_status_changed', [$this, 'transaction_cancel_on_order_cancel'], 10, 3);
 
+            //Translations for emails
+            add_filter( 'determine_locale', 'WC_PensoPay_Helper::determine_locale', 10, 1 );
 
-			add_action('wp_head', 'WC_PensoPay_Helper::viabill_header'); //Header JS
+            add_action('wp_head', 'WC_PensoPay_Helper::viabill_header'); //Header JS
 
 			add_filter('query_vars', function($vars) {
 				$vars = array_merge($vars, [WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPAY, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECANCEL, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMEPOLL, WC_PensoPay_Helper::PENSOPAY_VAR_ORDERID, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMECONTINUE, WC_PensoPay_Helper::PENSOPAY_VAR_IFRAMESUCCESS]);

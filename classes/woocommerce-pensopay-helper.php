@@ -187,6 +187,39 @@ class WC_PensoPay_Helper {
 		load_plugin_textdomain( 'woo-pensopay', false, dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/' );
 	}
 
+	public static function determine_locale($locale)
+    {
+        if (isset($_POST['wc_order_action']) && $_POST['wc_order_action'] === 'pensopay_create_payment_link') {
+            $post = $_POST['post_ID'];
+            if ($post) {
+                $lang = self::get_language_from_request_meta();
+                if ($lang) {
+                    switch ($lang) {
+                        case 'da':
+                            $locale = 'da_DK';
+                            break;
+                        default:
+                            $locale = 'en_US';
+                            break;
+                    }
+                }
+            }
+        }
+        return $locale;
+    }
+
+    public static function get_language_from_request_meta()
+    {
+        if (isset($_POST['meta']) && is_array($_POST['meta'])) {
+            foreach ($_POST['meta'] as $meta) {
+                if (isset($meta['key']) && $meta['key'] === 'wpml_language' && isset($meta['value']) && !empty($meta['value'])) {
+                    return $meta['value'];
+                }
+            }
+        }
+        return false;
+    }
+
 
 	/**
 	 * option_is_enabled function.
