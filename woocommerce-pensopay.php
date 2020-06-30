@@ -475,22 +475,16 @@ function init_pensopay_gateway() {
 
         public function transaction_cancel_on_order_cancel($order_id, $status, $newStatus)
         {
-            global $sitepress;
             $order = wc_get_order( $order_id );
             if ($order) {
                 if ($newStatus === 'cancelled' && $status !== 'cancelled' && !$order->get_meta('_pensopay_tried_cancel')) {
                     if ($this->s('pensopay_orders_order_cancel_transaction') === 'yes') {
                         try {
+                            $originalLanguage = false;
                             $data = $order->get_data();
                             $transactionId = isset($data['transaction_id']) ? $data['transaction_id'] : false;
                             if ($transactionId) {
-                                if (function_exists('icl_translate') && $sitepress) {
-                                    $order_lang = $order->get_meta('wpml_language');
-                                    $currentLanguage = $sitepress->get_current_language();
-                                    if ($currentLanguage !== $order_lang) {
-                                        $sitepress->switch_lang($order_lang);
-                                    }
-                                }
+                                $originalLanguage = $this->maybe_change_language($order);
 
                                 $order->add_meta_data('_pensopay_tried_cancel', '1', true);
                                 $order->save_meta_data();
@@ -503,11 +497,8 @@ function init_pensopay_gateway() {
                                 $order->add_order_note($e->getMessage());
                             }
                         } finally {
-                            if (function_exists('icl_translate') && $sitepress && isset($currentLanguage) && isset($order_lang)) {
-                                $order_lang = $data['wpml_language'];
-                                if ($currentLanguage !== $order_lang) {
-                                    $sitepress->switch_lang($currentLanguage);
-                                }
+                            if ($originalLanguage) {
+                                $this->maybe_restore_language($originalLanguage);
                             }
                         }
                     }
@@ -780,6 +771,7 @@ function init_pensopay_gateway() {
 		 */
 		public function process_payment( $order_id ) {
 			$order = new WC_PensoPay_Order( $order_id );
+            $originalLanguage = $this->maybe_change_language($order);
 
 			if ( 'pensopay' === $this->id && WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_embedded_payments_enabled' ) ) ) {
 
@@ -788,11 +780,13 @@ function init_pensopay_gateway() {
 					$redirect = add_query_arg( 'pensopay_change_payment_method', $_REQUEST['woocommerce_change_payment'], $redirect );
 				}
 
+				$this->maybe_restore_language($originalLanguage);
 				return [
 					'result'   => 'success',
 					'redirect' => $redirect
 				];
 			} else {
+                $this->maybe_restore_language($originalLanguage);
 				return $this->prepare_external_window_payment( $order );
 			}
 		}
@@ -860,6 +854,7 @@ function init_pensopay_gateway() {
 		public function process_pre_order_payments( $order ) {
 			// Set order object
 			$order = new WC_PensoPay_Order( $order );
+            $originalLanguage = $this->maybe_change_language($order);
 
 			// Get transaction ID
 			$transaction_id = $order->get_transaction_id();
@@ -888,9 +883,9 @@ function init_pensopay_gateway() {
 				} catch ( PensoPay_API_Exception $e ) {
 					$this->log->add( sprintf( "Could not process pre-order payment for order: #%s with transaction id: %s. Transaction not found. Exception: %s", $order->get_clean_order_number(), $transaction_id, $e->getMessage() ) );
 				}
-
 			}
-		}
+            $this->maybe_restore_language($originalLanguage);
+        }
 
 		/**
 		 * Process refunds
@@ -906,7 +901,9 @@ function init_pensopay_gateway() {
 			try {
 				$order = new WC_PensoPay_Order( $order_id );
 
-				$transaction_id = $order->get_transaction_id();
+				$originalLanguage = $this->maybe_change_language($order);
+
+                $transaction_id = $order->get_transaction_id();
 
 				// Check if there is a transaction ID
 				if ( ! $transaction_id ) {
@@ -928,14 +925,14 @@ function init_pensopay_gateway() {
 
 				// Perform a refund API request
 				$payment->refund( $transaction_id, $order, $amount );
-
+                $this->maybe_restore_language($originalLanguage);
 				return true;
 			} catch ( PensoPay_Exception $e ) {
 				$e->write_to_logs();
-
+                $this->maybe_restore_language($originalLanguage);
 				return new WP_Error( 'pensopay_refund_error', $e->getMessage() );
 			}
-		}
+        }
 
 		/**
 		 * Clear cart in case its not already done.
@@ -993,6 +990,8 @@ function init_pensopay_gateway() {
 				$order = new WC_PensoPay_Order( $order );
 			}
 
+            $originalLanguage = $this->maybe_change_language($order);
+
 			$response = null;
 			try {
 				// Block the callback
@@ -1003,7 +1002,7 @@ function init_pensopay_gateway() {
 
 				if ( ! $response->accepted ) {
 					if ( $response->state === 'pending' && strpos( $request_url, 'synchronized' ) === false ) {
-						// Payment is still pending and is not ready to be handled.. Wait for callback and skip processing on our end for now.
+                        // Payment is still pending and is not ready to be handled.. Wait for callback and skip processing on our end for now.
 						return $response;
 					} else {
 						throw new PensoPay_Exception( "Recurring payment not accepted by acquirer." );
@@ -1036,7 +1035,7 @@ function init_pensopay_gateway() {
 				// Write debug information to the logs
 				$e->write_to_logs();
 			}
-
+            $this->maybe_restore_language($originalLanguage);
 			return $response;
 		}
 
@@ -1477,9 +1476,13 @@ function init_pensopay_gateway() {
 			if ( $transaction_id && $order->has_pensopay_payment() ) {
 				$state = null;
 				try {
+                    $originalLanguage = $this->maybe_change_language($order);
+
 					$transaction = new WC_PensoPay_API_Payment();
 					$transaction->get( $transaction_id );
 					$transaction->cache_transaction();
+
+                    $this->maybe_restore_language($originalLanguage);
 
 					$state = $transaction->get_state();
 
@@ -1656,7 +1659,7 @@ function init_pensopay_gateway() {
 			global $post, $woocommerce;
 
 			$order = new WC_PensoPay_Order( $post->ID );
-
+            $originalLanguage = false;
 			// Show transaction ID on the overview
 			if ( ( $post->post_type == 'shop_order' && $column == 'pensopay_transaction_info' ) || ( $post->post_type == 'shop_subscription' && $column == 'order_title' ) ) {
 				// Insert transaction id and payment status if any
@@ -1671,10 +1674,14 @@ function init_pensopay_gateway() {
 							$transaction = new WC_PensoPay_API_Payment();
 						}
 
+                        $originalLanguage = $this->maybe_change_language($order);
+
 						// Get transaction data
 						$transaction->maybe_load_transaction_from_cache( $transaction_id );
 
-						if ( $order->subscription_is_renewal_failure() ) {
+                        $this->maybe_restore_language($originalLanguage);
+
+                        if ( $order->subscription_is_renewal_failure() ) {
 							$status = __( 'Failed renewal', 'woo-pensopay' );
 						} else {
 							$status = $transaction->get_current_type();
@@ -1694,8 +1701,9 @@ function init_pensopay_gateway() {
 					$this->log->add( sprintf( 'Order list: #%s - %s', $order->get_id(), $e->getMessage() ) );
 				} catch ( PensoPay_Exception $e ) {
 					$this->log->add( sprintf( 'Order list: #%s - %s', $order->get_id(), $e->getMessage() ) );
-				}
-
+				} finally {
+                    $this->maybe_restore_language($originalLanguage);
+                }
 			}
 		}
 
@@ -1865,6 +1873,32 @@ function init_pensopay_gateway() {
 
 		}
 
+		public function maybe_change_language($order)
+        {
+            global $sitepress;
+
+            if (function_exists('icl_translate') && $sitepress) {
+                $restoreLang = null;
+                $order_lang = $order->get_meta('wpml_language');
+                $currentLanguage = $sitepress->get_current_language();
+                if ($currentLanguage !== $order_lang) {
+                    $sitepress->switch_lang($order_lang);
+                    return $currentLanguage;
+                }
+            }
+            return false;
+        }
+
+        public function maybe_restore_language($language)
+        {
+            global $sitepress;
+
+            if (function_exists('icl_translate') && $sitepress) {
+                if ($language) {
+                    $sitepress->switch_lang($language);
+                }
+            }
+        }
 
 		/**
 		 *

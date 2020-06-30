@@ -290,7 +290,8 @@ class WC_PensoPay_API
 	 * @return false|resource
 	 */
 	protected function remote_instance( $post_id = null ) {
-		$this->ch = curl_init();
+        $this->api_key = WC_PP()->s( 'pensopay_apikey' );
+        $this->ch = curl_init();
 
 		curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, false );
