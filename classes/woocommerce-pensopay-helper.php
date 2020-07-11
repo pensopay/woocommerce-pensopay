@@ -132,7 +132,7 @@ class WC_PensoPay_Helper {
 	public static function enqueue_javascript_backend() {
 //		if ( self::maybe_enqueue_admin_statics() ) { -- buggy conditional
 			wp_enqueue_script( 'pensopay-backend', plugins_url( '/assets/javascript/backend.js', __DIR__ ), [ 'jquery' ], self::static_version() );
-			wp_localize_script( 'pensopay-backend', 'ajax_object', [ 'ajax_url' => admin_url( 'admin-ajax.php' ) ] );
+//			wp_localize_script( 'pensopay-backend', 'ajax_object', [ 'ajax_url' => admin_url( 'admin-ajax.php' ) ] );
 //		}
 
 		wp_enqueue_script( 'pensopay-backend-notices', plugins_url( '/assets/javascript/backend-notices.js', __DIR__ ), [ 'jquery' ], self::static_version() );
