@@ -27,6 +27,10 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.7.4 =
+* Tested up to 4.3.0
+* Version bump
+
 = 5.7.3 =
 * Emergency fixes.
 * Version bump.
