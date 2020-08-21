@@ -27,8 +27,8 @@ class WC_PensoPay_Checkout_Frontend extends WC_PensoPay_Module {
 	 * Enqueue static files
 	 */
 	public function static_files() {
-		wp_register_script( 'pensopay-embedded-v2',  WC_PP()->plugin_url( '/assets/javascript/pensopay.js' ), [ 'jquery' ], '2.0', true );
-		wp_register_script( 'wcpp-overlay', WC_PP()->plugin_url( '/assets/javascript/overlay.min.js' ), [ 'pensopay-embedded-v2' ], WCPP_VERSION, true );
+		wp_register_script( 'pensopay-embedded-v2',  WC_PP()->plugin_url( '/assets/javascript/pensopay.js?v=3' ), [ 'jquery' ], '2.0', true );
+		wp_register_script( 'wcpp-overlay', WC_PP()->plugin_url( '/assets/javascript/overlay.min.js?v=3' ), [ 'pensopay-embedded-v2' ], WCPP_VERSION, true );
 
 		wp_localize_script( 'wcpp-overlay', 'wcpp', [
 			'settings' => [
@@ -85,6 +85,11 @@ class WC_PensoPay_Checkout_Frontend extends WC_PensoPay_Module {
 			'close_redirect'          => apply_filters( 'woocommerce_pensopay_overlay_close_redirect', wp_get_referer(), $order )
 		], $args );
 
+//		$inst = WC_PensoPay::get_instance();
+//		$lang = $inst->maybe_change_language($order);
 		WC_PensoPay_Views::get_view( 'checkout/payment-overlay.php', apply_filters( 'woocommerce_pensopay_overlay_form_for_order_arguments', $args, $order_id ) );
+//		if ($lang) {
+//            $inst->maybe_restore_language($lang);
+//        }
 	}
 }

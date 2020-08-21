@@ -2,7 +2,7 @@
 Contributors: PensoPay
 Tags: gateway, woo commerce, pensopay, gateway, integration, woocommerce, woocommerce pensopay, payment, payment gateway, psp
 Requires at least: 4.0.0
-Tested up to: 5.3.2
+Tested up to: 5.5
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -27,6 +27,12 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.7.5 =
+* Validation problems when using MobilePay Checkout due to new validation error code grouping on WC
+* Added Klarna Payments
+* Renamed Virtual Terminal menu item and changed its position to a lower place.
+* Fixed an error where Virtual Terminal payments would not obey the language option.
+
 = 5.7.4 =
 * Tested up to 4.3.0
 * Version bump

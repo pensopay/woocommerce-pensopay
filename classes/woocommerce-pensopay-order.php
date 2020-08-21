@@ -17,7 +17,13 @@ class WC_PensoPay_Order extends WC_Order {
 	/** */
 	const META_FAILED_PAYMENT_COUNT = '_pensopay_failed_payment_count';
 
-	/**
+	public function __construct($order = 0)
+    {
+        parent::__construct($order);
+        add_filter( 'woocommerce_pensopay_transaction_params_basket', [ $this, 'klarna_payments_shipping_fix' ], 10, 2 );
+    }
+
+    /**
 	 * get_order_id_from_callback function.
 	 *
 	 * Returns the order ID based on the ID retrieved from the PensoPay callback.
@@ -628,15 +634,51 @@ class WC_PensoPay_Order extends WC_Order {
 			$shipping_vat_rate = $shipping_tax / $shipping_total; // Basket item VAT rate (ex. 0.25 for 25%)
 		}
 
-		return apply_filters( 'woocommerce_pensopay_transaction_params_shipping_row', [
-			'method'          => 'own_delivery',
-			'company'         => $this->get_shipping_method(),
-			'amount'          => WC_PensoPay_Helper::price_multiply( $shipping_incl_vat ),
-			'vat_rate'        => $shipping_vat_rate,
-			'tracking_number' => '',
-			'tracking_url'    => ''
-		], $this );
+		$result = apply_filters( 'woocommerce_pensopay_transaction_params_shipping_row', [
+            'method'          => 'own_delivery',
+            'company'         => $this->get_shipping_method(),
+            'amount'          => WC_PensoPay_Helper::price_multiply( $shipping_incl_vat ),
+            'vat_rate'        => $shipping_vat_rate,
+            'tracking_number' => '',
+            'tracking_url'    => ''
+        ], $this );
+
+		if ($this->get_payment_method() === 'klarna-payments') {
+		    unset($result['amount']); //QP says this does not work atm
+        }
+
+		return $result;
 	}
+
+    /**
+     * What this does essentially is add the shipping line as a basket line since there's a problem
+     * with the QP Gateway preventing us from adding that amount in its proper place.
+     */
+	public function klarna_payments_shipping_fix($basket, $obj)
+    {
+        if ($this->get_payment_method() !== 'klarna-payments' || in_array('shipping', array_column($basket, 'item_no'), false)) {
+            return $basket;
+        }
+
+        $shipping_tax      = $this->get_shipping_tax();
+        $shipping_total    = $this->get_shipping_total();
+        $shipping_incl_vat = $shipping_total;
+        $shipping_vat_rate = 0;
+
+        if ( $shipping_tax && $shipping_total ) {
+            $shipping_incl_vat += $shipping_tax;
+            $shipping_vat_rate = $shipping_tax / $shipping_total; // Basket item VAT rate (ex. 0.25 for 25%)
+        }
+
+        $basket[] = [
+            'qty'        => 1,
+            'item_no'    => 'shipping',
+            'item_name'  => 'Shipping',
+            'item_price' => WC_PensoPay_Helper::price_multiply( $shipping_incl_vat ),
+            'vat_rate'   => $shipping_vat_rate
+        ];
+        return $basket;
+    }
 
 	/**
 	 * @return array
@@ -857,6 +899,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'fbg1886',
 			'ideal',
 			'klarna',
+			'klarna-payments',
 			'pensopay',
 			'mobilepay',
 			'mobilepay_checkout',

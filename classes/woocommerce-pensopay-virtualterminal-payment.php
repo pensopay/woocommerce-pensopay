@@ -322,7 +322,7 @@ class WC_PensoPay_VirtualTerminal_Payment
                     'view_item'             => __('View Virtual Payment'),
                     'view_items'            => __('View Virtual Payments'),
                     'search_items'          => __('Search Virtual Payments'),
-                    'all_items'             => __('All Virtual Payments'),
+                    'all_items'             => __('PensoPay - Virtual Terminal'),
                     'not_found'             => __('No virtual payments found.')
                 ),
                 'public' => true,
@@ -587,7 +587,7 @@ class WC_PensoPay_VirtualTerminal_Payment
         $payment_method = 'pensopay';
 
         $base_params = [
-            'language'                     => $this->get_post_data('locale_code'),
+            'language'                     => array_shift(explode('_', $this->get_post_data('locale_code'))),
             'amount'                       => $this->get_post_data('amount') * 100,
             'currency'                     => $this->get_post_data('currency'),
             'callbackurl'                  => WC_PensoPay_Helper::get_callback_url(),

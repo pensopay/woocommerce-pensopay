@@ -3,21 +3,21 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 5.7.4
+ * Version: 5.7.5
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
  * Author URI: https://pensopay.com/
  * Wiki: https://pensopay.zendesk.com/hc/da
  * WC requires at least: 3.0.0
- * WC tested up to: 4.3.0
+ * WC tested up to: 4.4.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '5.7.4' );
+define( 'WCPP_VERSION', '5.7.5' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -195,6 +195,7 @@ function init_pensopay_gateway() {
 				'fbg1886'            => 'WC_PensoPay_FBG1886',
 				'ideal'              => 'WC_PensoPay_iDEAL',
 				'klarna'             => 'WC_PensoPay_Klarna',
+				'klarna-payments'    => 'WC_PensoPay_Klarna_Payments',
 				'mobilepay'          => 'WC_PensoPay_MobilePay',
 				'mobilepay-checkout' => 'WC_PensoPay_MobilePay_Checkout',
 				'paypal'             => 'WC_PensoPay_PayPal',
@@ -2013,7 +2014,7 @@ add_action('admin_menu', function($t) {
             ));
     }
 }, 90, 1);
-add_action('init', array(WC_PensoPay_VirtualTerminal_Payment::class, 'register_post_types'), 5);
+add_action('init', array(WC_PensoPay_VirtualTerminal_Payment::class, 'register_post_types'), 9);
 
 //add_filter('cron_schedules', 'add_penso_cron');
 //function add_penso_cron($schedules)
@@ -2035,6 +2036,15 @@ function pensopay_virtualpayments_update_deactivate()
 {
     $timestamp = wp_next_scheduled('pensopay_virtualpayments_update');
     wp_unschedule_event($timestamp, 'pensopay_virtualpayments_update');
+}
+
+if ( function_exists('icl_object_id') ) {
+    add_filter( 'woocommerce_pensopay_language', 'tk_woocommerce_pensopay_language', 99);
+}
+
+function tk_woocommerce_pensopay_language() {
+    // Get WPML language code and use for pensopay default language
+    return ICL_LANGUAGE_CODE;
 }
 
 

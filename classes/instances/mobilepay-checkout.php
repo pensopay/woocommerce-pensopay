@@ -93,7 +93,22 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	public function checkout_validation( $data, $errors ) {
 
 		if ( strtolower( $data['payment_method'] ) === $this->id ) {
-			$errors->remove( 'required-field' );
+
+			$is_at_least_wc_4_3_0 = version_compare( wc()->version, '4.3', '>=' );
+
+			// Below WC 4.3 all validation errors were grouped to a single required-field code. From 4.3 WC sets a code per field.
+			if ( $is_at_least_wc_4_3_0 ) {
+				$error_codes = $errors->get_error_codes();
+				if ( ! empty( $error_codes ) ) {
+					foreach ( $error_codes as $error_code ) {
+						if ( preg_match( '/_required$/', $error_code ) ) {
+							$errors->remove( $error_code );
+						}
+					}
+				}
+			} else {
+				$errors->remove( 'required-field' );
+			}
 
 			if ( ! empty( $data['shipping_method'] ) ) {
 				$shipping_rate_required_fields = $this->get_shipping_rate_required_address_fields();
@@ -101,8 +116,13 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 				foreach ( $data['shipping_method'] as $shipping_method_id ) {
 					if ( array_key_exists( $shipping_method_id, $shipping_rate_required_fields ) && ! empty( $shipping_rate_required_fields[ $shipping_method_id ] ) ) {
 						foreach ( $shipping_rate_required_fields[ $shipping_method_id ] as $required_field ) {
-							$field_label = $this->get_checkout_field_label_by_id( $required_field );
-							$errors->add( 'required-field', apply_filters( 'woocommerce_checkout_required_field_notice', sprintf( __( '%s is a required field.', 'woocommerce' ), '<strong>' . esc_html( $field_label ) . '</strong>' ), $field_label ) );
+							$field_label   = $this->get_checkout_field_label_by_id( $required_field );
+							$error_message = apply_filters( 'woocommerce_checkout_required_field_notice', sprintf( __( '%s is a required field.', 'woocommerce' ), '<strong>' . esc_html( $field_label ) . '</strong>' ), $field_label );
+							if ( $is_at_least_wc_4_3_0 ) {
+								$errors->add( $required_field . '_required', $error_message );
+							} else {
+								$errors->add( 'required-field', $error_message );
+							}
 						}
 					}
 				}
@@ -176,7 +196,7 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 				$customer = null;
                 $create_user = apply_filters( 'woocommerce_pensopay_mobilepay_checkout_create_user', wc()->checkout()->is_registration_required(), $order, $transaction );
 
-				if ( ! $order->get_customer_id() ) {
+				if ( ! $order->get_customer_id() && $create_user ) {
 					$customer_id = wc_create_new_customer( $billing_address->email, $billing_address->email, wp_generate_password() );
 					if ( ! is_wp_error( $customer_id ) ) {
 						$customer = new WC_Customer( $customer_id );
