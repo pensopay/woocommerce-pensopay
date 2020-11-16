@@ -42,19 +42,21 @@ class WC_PensoPay_Helper {
     }
 
     public static function order_needs_payment( $needs_payment, $order, $valid_order_statuses ) {
-        /**
-         * We need to add an extra step here because of a WC_Subscriptions bug
-         * Basically, we emulate WC_Subscriptions' check with a fix for actual recurring total
-         */
-        if (
-            false === $needs_payment
-            && 0 == $order->get_total()
-            && in_array($order->get_status(), $valid_order_statuses)
-            && wcs_order_contains_subscription($order)
-            && self::get_recurring_total($order) > 0
-            && 'yes' !== get_option(WC_Subscriptions_Admin::$option_prefix . '_turn_off_automatic_payments', 'no')
-        ) {
-            $needs_payment = true;
+        if (function_exists( 'wcs_order_contains_subscription') ) {
+            /**
+             * We need to add an extra step here because of a WC_Subscriptions bug
+             * Basically, we emulate WC_Subscriptions' check with a fix for actual recurring total
+             */
+            if (
+                false === $needs_payment
+                && 0 == $order->get_total()
+                && in_array($order->get_status(), $valid_order_statuses)
+                && wcs_order_contains_subscription($order)
+                && self::get_recurring_total($order) > 0
+                && 'yes' !== get_option(WC_Subscriptions_Admin::$option_prefix . '_turn_off_automatic_payments', 'no')
+            ) {
+                $needs_payment = true;
+            }
         }
 
         return $needs_payment;
