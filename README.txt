@@ -27,7 +27,7 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
-= 5.7.6 =
+= 5.7.7 =
 * Klarna Payments gateway shipping restore
 
 = 5.7.6 =
