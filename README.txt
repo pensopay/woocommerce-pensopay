@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.7.6 =
+* Klarna Payments gateway shipping restore
+
 = 5.7.5 =
 * Validation problems when using MobilePay Checkout due to new validation error code grouping on WC
 * Added Klarna Payments
