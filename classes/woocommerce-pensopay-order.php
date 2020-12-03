@@ -506,7 +506,8 @@ class WC_PensoPay_Order extends WC_Order {
 			'qty'        => $line_item->get_quantity(),
 			'item_no'    => $line_item->get_product_id(),
 			'item_name'  => $line_item->get_name(),
-			'item_price' => wc_get_price_including_tax( $line_item->get_product() ),
+			'item_price' => $line_item->get_total(),
+//			'item_price' => wc_get_price_including_tax( $line_item->get_product() ),
 			'vat_rate'   => $vat_rate,
 		];
 
