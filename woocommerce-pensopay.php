@@ -1209,18 +1209,18 @@ function init_pensopay_gateway() {
 
 			// Instantiate payment object
 			$payment = new WC_PensoPay_API_Payment( $json );
+            if ( $payment->is_authorized_callback( $request_body ) ) {
+                // Fetch order number;
+                $order_number = WC_PensoPay_Order::get_order_id_from_callback( $json );
 
-			// Fetch order number;
-			$order_number = WC_PensoPay_Order::get_order_id_from_callback( $json );
+                // Fetch subscription post ID if present
+                $subscription_id = WC_PensoPay_Order::get_subscription_id_from_callback( $json );
 
-			// Fetch subscription post ID if present
-			$subscription_id = WC_PensoPay_Order::get_subscription_id_from_callback( $json );
+                if ( ! empty( $subscription_id ) ) {
+                    $subscription = new WC_PensoPay_Order( $subscription_id );
+                }
 
-			if ( ! empty( $subscription_id ) ) {
-				$subscription = new WC_PensoPay_Order( $subscription_id );
-			}
 
-			if ( $payment->is_authorized_callback( $request_body ) ) {
 				// Instantiate order object
 				$order = wc_get_order( $order_number );
 
