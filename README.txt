@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.8.0 =
+* Fix pricing calculation for Klarna Payments and proper 'basket' for QP. Accounts for discounts too.
+
 = 5.7.9 =
 * Validate callback sooner
 
