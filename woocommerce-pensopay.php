@@ -198,6 +198,7 @@ function init_pensopay_gateway() {
 				'klarna-payments'    => 'WC_PensoPay_Klarna_Payments',
 				'mobilepay'          => 'WC_PensoPay_MobilePay',
 				'mobilepay-checkout' => 'WC_PensoPay_MobilePay_Checkout',
+				'mobilepay-subscriptions' => 'WC_PensoPay_MobilePay_Subscriptions',
 				'paypal'             => 'WC_PensoPay_PayPal',
 				'pensopay-extra'     => 'WC_PensoPay_Extra',
 				'resurs'             => 'WC_PensoPay_Resurs',
@@ -246,7 +247,8 @@ function init_pensopay_gateway() {
 			// WooCommerce Pre-Orders
 			add_action( 'wc_pre_orders_process_pre_order_completion_payment_' . $this->id, [ $this, 'process_pre_order_payments' ] );
 
-			if ( is_admin() ) {
+            add_action( 'wp_enqueue_scripts', 'WC_PensoPay_Helper::enqueue_front_stylesheet' );
+            if ( is_admin() ) {
 				add_action( 'admin_enqueue_scripts', 'WC_PensoPay_Helper::enqueue_stylesheet' );
 				add_action( 'admin_enqueue_scripts', 'WC_PensoPay_Helper::enqueue_javascript_backend' );
 				add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'process_admin_options' ] );
@@ -698,6 +700,8 @@ function init_pensopay_gateway() {
 					$transaction_id = $order->get_transaction_id();
 					$payment        = new WC_PensoPay_API_Payment();
 
+					$preventComplete = WC_PensoPay_Helper::option_is_enabled( $this->s( 'pensopay_preventcompleteoncapturefail' ) );
+
 					// Check if there is a transaction ID
 					if ( $transaction_id ) {
 						try {
@@ -718,11 +722,17 @@ function init_pensopay_gateway() {
 							woocommerce_pensopay_add_runtime_error_notice( $e->getMessage() );
 							$order->add_order_note( $e->getMessage() );
 							$this->log->add( $e->getMessage() );
+							if ($preventComplete) {
+							    throw $e;
+                            }
 						} catch ( \Exception $e ) {
 							$error = sprintf( 'Unable to capture payment on order #%s. Problem: %s', $order->get_id(), $e->getMessage() );
 							woocommerce_pensopay_add_runtime_error_notice( $error );
 							$order->add_order_note( $error );
 							$this->log->add( $error );
+                            if ($preventComplete) {
+                                throw $e;
+                            }
 						}
 					}
 				}

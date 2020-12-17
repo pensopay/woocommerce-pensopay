@@ -179,6 +179,17 @@ class WC_PensoPay_Helper {
 	}
 
 
+    /**
+     * enqueue_front_stylesheet function
+     *
+     * @access public statuc
+     * @return void
+     */
+    public static function enqueue_front_stylesheet() {
+        wp_enqueue_style( 'woocommerce-pensopay-style', plugins_url( '/assets/stylesheets/embedded.css', __DIR__ ), [], self::static_version() );
+    }
+
+
 	/**
 	 * load_i18n function.
 	 *

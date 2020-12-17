@@ -216,6 +216,14 @@ class WC_PensoPay_Settings {
 					'default'     => 'no',
 					'desc_tip'    => true,
 				],
+                'pensopay_preventcompleteoncapturefail'         => [
+                    'title'       => __( 'Prevent status change to complete if capture fails', 'woo-pensopay' ),
+                    'type'        => 'checkbox',
+                    'label'       => __( 'Enable', 'woo-pensopay' ),
+                    'description' => __( 'When enabled an order will be prevented from being set to "Complete" if the capture for that order fails. Used only in conjuction with Capture on Complete.', 'woo-pensopay' ),
+                    'default'     => 'no',
+                    'desc_tip'    => true,
+                ],
 				'pensopay_text_on_statement'         => [
 					'title'             => __( 'Text on statement', 'woo-pensopay' ),
 					'type'              => 'text',

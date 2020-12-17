@@ -53,7 +53,7 @@
 
 					<div class="wcpp-card-row">
 						<div class="form-row wcpp-card-column is-exp">
-							<label class="woocommerce-form__label"><?php echo apply_filters('woocommerce_pensopay_payment_overlay_label__expdate', __( 'Expiration Month/Year', 'woo-pensopay' ) ); ?></label>
+							<label class="woocommerce-form__label"><?php echo apply_filters('woocommerce_pensopay_payment_overlay_label__expdate', __( 'Expiration Date', 'woo-pensopay' ) ); ?></label>
 							<input class="input-text wcpp-input" type="tel" tabindex="2" maxlength="7" placeholder="<?php _e('MM / YY', 'woo-pensopay') ?>" autocomplete="off" data-pensopay="expiration">
 						</div>
 						<div class="form-row wcpp-card-column is-cvd">
@@ -62,7 +62,7 @@
 						</div>
 					</div>
 				</div>
-				<button class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button wcpp-btn--checkout alt" type="submit" tabindex="4">
+				<button class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button wcpp-btn--checkout alt btnpenso-pay" type="submit" tabindex="4">
 					<span><?php echo apply_filters('woocommerce_pensopay_payment_overlay__pay', __( 'Pay', 'woo-pensopay' ) ); ?></span>
 				</button>
 			</form>
