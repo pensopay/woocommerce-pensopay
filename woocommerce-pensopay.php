@@ -285,6 +285,7 @@ function init_pensopay_gateway() {
 
 			//Needs Payment Subscription Fix
 			add_filter( 'woocommerce_order_needs_payment', 'WC_PensoPay_Helper::order_needs_payment', 10, 3 );
+			add_filter( 'woocommerce_valid_order_statuses_for_payment', 'WC_PensoPay_Helper::valid_statuses_payment', 10, 2 );
 
 			//Cancel transaction on order cancel (if setting enabled)
             add_action('woocommerce_order_status_changed', [$this, 'transaction_cancel_on_order_cancel'], 10, 3);
@@ -700,8 +701,6 @@ function init_pensopay_gateway() {
 					$transaction_id = $order->get_transaction_id();
 					$payment        = new WC_PensoPay_API_Payment();
 
-					$preventComplete = WC_PensoPay_Helper::option_is_enabled( $this->s( 'pensopay_preventcompleteoncapturefail' ) );
-
 					// Check if there is a transaction ID
 					if ( $transaction_id ) {
 						try {
@@ -722,17 +721,11 @@ function init_pensopay_gateway() {
 							woocommerce_pensopay_add_runtime_error_notice( $e->getMessage() );
 							$order->add_order_note( $e->getMessage() );
 							$this->log->add( $e->getMessage() );
-							if ($preventComplete) {
-							    throw $e;
-                            }
 						} catch ( \Exception $e ) {
 							$error = sprintf( 'Unable to capture payment on order #%s. Problem: %s', $order->get_id(), $e->getMessage() );
 							woocommerce_pensopay_add_runtime_error_notice( $error );
 							$order->add_order_note( $error );
 							$this->log->add( $error );
-                            if ($preventComplete) {
-                                throw $e;
-                            }
 						}
 					}
 				}
@@ -1243,7 +1236,7 @@ function init_pensopay_gateway() {
 
 				// Is the transaction accepted and approved by QP / Acquirer?
 				// Did we find an order?
-				if ( $json->accepted && $order ) {
+				if ( $json->accepted && $order && in_array($transaction->qp_status_code, [WC_PensoPay_VirtualTerminal_Payment::STATUS_APPROVED, WC_PensoPay_VirtualTerminal_Payment::STATUS_3D_SECURE_REQUIRED], false) ) {
 					// Overwrite the order object to inherit specific PensoPay logic
 					$order = new WC_PensoPay_Order( $order->get_id() );
 
@@ -1353,6 +1346,7 @@ function init_pensopay_gateway() {
 							$order->update_status( 'failed' );
 						}
 					}
+					$order->save();
 				}
 			} else {
 				$this->log->add( sprintf( __( 'Invalid callback body for order #%s.', 'woo-pensopay' ), $order_number ) );

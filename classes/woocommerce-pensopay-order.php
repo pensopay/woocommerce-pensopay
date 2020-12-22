@@ -903,7 +903,12 @@ class WC_PensoPay_Order extends WC_Order {
 		$transaction_id = get_post_meta( $order_id, '_pensopay_transaction_id', true );
 		if ( empty( $transaction_id ) ) {
 
-			$transaction_id = parent::get_transaction_id( $context );
+            $ids = get_post_meta( $order_id, '_transaction_id', false );
+		    if (is_array($ids)) {
+		        $transaction_id = end($ids);
+            } else { //A bit overkill, but let it default to what it was
+                $transaction_id = parent::get_transaction_id($context);
+            }
 
 			if ( empty( $transaction_id ) ) {
 				// Search for original transaction ID. The transaction might be temporarily removed by

@@ -62,6 +62,14 @@ class WC_PensoPay_Helper {
         return $needs_payment;
     }
 
+    public static function valid_statuses_payment( $statuses, $order )
+    {
+        if (class_exists( 'Build_Your_Own_Subscription') && WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_subscriptionsaddonorderstatusfix' ))) {
+            $statuses = array_merge($statuses, ['on-hold', 'processing']);
+        }
+        return $statuses;
+    }
+
 	public static function viabill_header()
 	{
 		$gateways = WC()->payment_gateways()->get_available_payment_gateways();

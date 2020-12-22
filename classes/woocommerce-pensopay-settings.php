@@ -208,19 +208,22 @@ class WC_PensoPay_Settings {
 					'default'     => 'no',
 					'desc_tip'    => true,
 				],
-				'pensopay_captureoncomplete'         => [
-					'title'       => __( 'Capture on complete', 'woo-pensopay' ),
-					'type'        => 'checkbox',
-					'label'       => __( 'Enable', 'woo-pensopay' ),
-					'description' => __( 'When enabled pensopay payments will automatically be captured when order state is set to "Complete".', 'woo-pensopay' ),
-					'default'     => 'no',
-					'desc_tip'    => true,
-				],
                 'pensopay_preventcompleteoncapturefail'         => [
                     'title'       => __( 'Prevent status change to complete if capture fails', 'woo-pensopay' ),
                     'type'        => 'checkbox',
                     'label'       => __( 'Enable', 'woo-pensopay' ),
                     'description' => __( 'When enabled an order will be prevented from being set to "Complete" if the capture for that order fails. Used only in conjuction with Capture on Complete.', 'woo-pensopay' ),
+                    'default'     => 'no',
+                    'desc_tip'    => true,
+                ],
+                'pensopay_subscriptionsaddonorderstatusfix'         => [
+                    'title'       => __( 'Subscriptions for WooCommerce fix.<br /><b><u>Please read Tooltip</u></b>', 'woo-pensopay' ),
+                    'type'        => 'checkbox',
+                    'label'       => __( 'Enable', 'woo-pensopay' ),
+                    'description' => __('Check this ONLY if you have the "Subscriptions Add-on for WooCommerce" module, if you are encountering issues with subscription products not going to the payment page.
+                                        <br />This will add the order statuses the module uses to the needs_payment list.
+                                        <br />Disclaimer: This may cause conflicts with modules depending on what the payment order statuses are. Use at your own risk!',
+                                    'woo-pensopay'),
                     'default'     => 'no',
                     'desc_tip'    => true,
                 ],
