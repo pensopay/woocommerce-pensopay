@@ -42,6 +42,10 @@ class WC_PensoPay_Order extends WC_Order {
 			if ($result) {
 				return $result;
 			}
+            $result = $wpdb->get_var("SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'PENSOPAY_PAYMENT_ID' AND meta_value = '{$callback_data->id}' ORDER BY meta_id DESC LIMIT 1");
+			if ($result) {
+			    return $result;
+            }
 		}
 
 		// Fallback
@@ -904,7 +908,7 @@ class WC_PensoPay_Order extends WC_Order {
 		if ( empty( $transaction_id ) ) {
 
             $ids = get_post_meta( $order_id, '_transaction_id', false );
-		    if (is_array($ids)) {
+		    if (is_array($ids) && !empty($ids)) {
 		        $transaction_id = end($ids);
             } else { //A bit overkill, but let it default to what it was
                 $transaction_id = parent::get_transaction_id($context);

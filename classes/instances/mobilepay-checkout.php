@@ -187,7 +187,8 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 * @param object $transaction
 	 */
 	public function callback_save_address( $order, $transaction ) {
-		if ( $transaction->variables->payment_method === $this->id && $this->is_enabled() ) {
+	    //$transaction->variables->PhoneNumberValidationStatus -- this is to account for quickpay's overnight logic change in mbpc
+		if ( ($transaction->variables->payment_method === $this->id || !empty($transaction->variables->PhoneNumberValidationStatus)) && $this->is_enabled() ) {
 			$billing_address  = (object) apply_filters( 'woocommerce_pensopay_automatic_billing_address', ! empty( $transaction->invoice_address ) ? $transaction->invoice_address : null, $order, $transaction );
 			$shipping_address = (object) apply_filters( 'woocommerce_pensopay_automatic_shipping_address', ! empty( $transaction->shipping_address ) ? $transaction->shipping_address : null, $order, $billing_address, $transaction );
 
