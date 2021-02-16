@@ -27,6 +27,17 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.8.2 =
+* Fix MobilePay Subscriptions.
+* MBP Subscriptions now only show if a subscription product is involved.
+
+= 5.8.1 =
+* Fix Callback issue that doesn't check for true transaction status.
+* Added a possible fix for an issue of getting the proper transaction ID when multiple exist.
+* Added an opt-in option that allows people with the "Subscriptions Add-on for WooCommerce" to properly checkout.
+* Initial support for MobilePay Subscriptions
+* Little embedded window styling
+
 = 5.8.0 =
 * Fix pricing calculation for Klarna Payments and proper 'basket' for QP. Accounts for discounts too.
 

@@ -84,6 +84,10 @@ class WC_PensoPay_API_Subscription extends WC_PensoPay_API_Transaction
 			$request_url .= '?synchronized';
 		}
 
+        $NewDate = new DateTime();
+        $NewDate->add(new DateInterval('P2D'));
+        $duedate = $NewDate->format('Y-m-d');
+
 		$request = $this->post( $request_url, [
 			'amount'            => WC_PensoPay_Helper::price_multiply( $amount ),
 			'order_id'          => sprintf( '%s', $order_number ),
@@ -91,6 +95,8 @@ class WC_PensoPay_API_Subscription extends WC_PensoPay_API_Transaction
 			'autofee'           => WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_autofee' ) ),
 			'text_on_statement' => WC_PP()->s( 'pensopay_text_on_statement' ),
 			'order_post_id'     => $order->get_id(),
+            'description'       => 'Order Subscription',
+            'due_date'          => $duedate
 		], true );
 
 		return $request;

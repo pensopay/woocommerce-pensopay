@@ -17,6 +17,19 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 		$this->title       = $this->s( 'title' );
 		$this->description = $this->s( 'description' );
 
+        $this->supports = [
+            'subscriptions',
+            'subscription_cancellation',
+            'subscription_reactivation',
+            'subscription_suspension',
+            'subscription_amount_changes',
+            'subscription_date_changes',
+            'subscription_payment_method_change_admin',
+            'subscription_payment_method_change_customer',
+            'refunds',
+            'multiple_subscriptions'
+        ];
+
 		add_filter( 'woocommerce_pensopay_cardtypelock_mobilepay_subscriptions', [ $this, 'filter_cardtypelock' ] );
 	}
 
@@ -55,6 +68,22 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 		];
 	}
 
+    public function is_available() {
+	    $is_available = parent::is_available();
+
+        if( !$is_available || !class_exists( 'WC_Subscriptions_Product' )) {
+            return $is_available;
+        }
+
+        $bFound = false;
+        foreach (WC()->cart->get_cart() as $item) {
+            if (WC_Subscriptions_Product::is_subscription( $item['data']->get_id() )) {
+                $bFound = true;
+            }
+        }
+
+        return $bFound;
+    }
 
 	/**
 	 * filter_cardtypelock function.
