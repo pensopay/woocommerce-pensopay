@@ -71,7 +71,7 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
     public function is_available() {
 	    $is_available = parent::is_available();
 
-        if( !$is_available || !class_exists( 'WC_Subscriptions_Product' )) {
+        if( !$is_available || !class_exists( 'WC_Subscriptions_Product' ) || !is_checkout()) {
             return $is_available;
         }
 
