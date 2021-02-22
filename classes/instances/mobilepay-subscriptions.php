@@ -10,7 +10,7 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 		// Get gateway variables
 		$this->id = 'mobilepay-subscriptions';
 
-		$this->method_title = 'PensoPay - MobilePay Subscriptions';
+		$this->method_title = 'PensoPay - MobilePay Subscriptions | Currently in BETA! Not suggested for live stores';
 
 		$this->setup();
 
