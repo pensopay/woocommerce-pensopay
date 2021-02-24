@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.8.3 =
+* Re-add "Capture on complete" option
+
 = 5.8.2 =
 * Fix MobilePay Subscriptions.
 * MBP Subscriptions now only show if a subscription product is involved.
