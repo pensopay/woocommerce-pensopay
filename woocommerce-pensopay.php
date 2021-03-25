@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 5.8.3
+ * Version: 5.8.4
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '5.8.3' );
+define( 'WCPP_VERSION', '5.8.4' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -777,22 +777,8 @@ function init_pensopay_gateway() {
 			$order = new WC_PensoPay_Order( $order_id );
             $originalLanguage = $this->maybe_change_language($order);
 
-			if ( 'pensopay' === $this->id && WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_embedded_payments_enabled' ) ) ) {
-
-				$redirect = $order->get_checkout_payment_url( true );
-				if ( ! empty( $_REQUEST['woocommerce_change_payment'] ) ) {
-					$redirect = add_query_arg( 'pensopay_change_payment_method', $_REQUEST['woocommerce_change_payment'], $redirect );
-				}
-
-				$this->maybe_restore_language($originalLanguage);
-				return [
-					'result'   => 'success',
-					'redirect' => $redirect
-				];
-			} else {
-                $this->maybe_restore_language($originalLanguage);
-				return $this->prepare_external_window_payment( $order );
-			}
+            $this->maybe_restore_language($originalLanguage);
+            return $this->prepare_external_window_payment( $order );
 		}
 
 		/**

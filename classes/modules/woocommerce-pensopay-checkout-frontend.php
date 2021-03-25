@@ -41,7 +41,7 @@ class WC_PensoPay_Checkout_Frontend extends WC_PensoPay_Module {
 	 * @return bool
 	 */
 	public static function is_embedded_payment_enabled() {
-		return WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_embedded_payments_enabled' ) ) === 1;
+	    return false;
 	}
 
 	/**

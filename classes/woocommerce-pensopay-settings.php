@@ -91,30 +91,6 @@ class WC_PensoPay_Settings {
 					'default'     => 'no',
 					'desc_tip'    => true,
 				],
-				'_Embedded_payments'                 => [
-					'type'  => 'title',
-					'title' => __( 'Embedded payments', 'woo-pensopay' )
-				],
-				'pensopay_embedded_payments_enabled' => [
-					'title'           => __( 'Enable', 'woo-pensopay' ),
-					'type'            => 'checkbox',
-					'description'     => __( 'Allows the customer to pay safely directly on your website without redirecting the customer to the PensoPay payment window. <b>Works with Clearhaus only!</b>', 'woo-pensopay' ),
-					'default'         => 'no',
-					'desc_tip'        => false,
-					'checkboxgroup'   => 'start',
-					'shop_if_checked' => 'option'
-				],
-				'pensopay_embedded_autojump'         => [
-					'title'           => __( 'Autojump', 'woo-pensopay' ),
-					'label'           => __( 'Enable', 'woo-pensopay' ),
-					'type'            => 'checkbox',
-					'description'     => __( 'Automatically jump to the next field when the customer types in card information.', 'woo-pensopay' ),
-					'default'         => 'no',
-					'desc_tip'        => false,
-					'show_if_checked' => 'option',
-					'checkboxgroup'   => 'end'
-				],
-
                 '_caching'                    => [
                     'type'  => 'title',
                     'title' => __( 'Transaction Cache', 'woo-pensopay' )
