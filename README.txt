@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 5.8.5 =
+* Fix issue with basket lines and VAT
+
 = 5.8.4 =
 * Remove embedded payments due to PSD2 issues
 

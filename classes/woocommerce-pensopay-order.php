@@ -496,32 +496,36 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @return array
 	 */
 	private function get_transaction_basket_params_line_helper( $line_item ) {
-		// Before WC 3.0
-		/**
-		 * @var WC_Order_Item_Product $line_item
-		 */
-		$taxes = WC_Tax::get_rates( $line_item->get_tax_class() );
-		//Get rates of the product
-		$rates = array_shift( $taxes );
-		//Take only the item rate and round it.
-		$vat_rate = ! empty( $rates ) ? round( array_shift( $rates ) ) : 0;
+        // Before WC 3.0
+        /**
+         * @var WC_Order_Item_Product $line_item
+         */
 
-		$data = [
-			'qty'        => $line_item->get_quantity(),
-			'item_no'    => $line_item->get_product_id(),
-			'item_name'  => $line_item->get_name(),
-			'item_price' => ($line_item->get_total('edit') / $line_item->get_quantity()) + ($line_item->get_total_tax('edit') / $line_item->get_quantity()),
-//			'item_price' => wc_get_price_including_tax( $line_item->get_product() ),
-			'vat_rate'   => $vat_rate,
-		];
+        $vat_rate = 0;
 
-		return [
-			'qty'        => $data['qty'],
-			'item_no'    => $data['item_no'], //
-			'item_name'  => esc_attr( $data['item_name'] ),
-			'item_price' => WC_PensoPay_Helper::price_multiply( $data['item_price'] ),
-			'vat_rate'   => $data['vat_rate'] > 0 ? $data['vat_rate'] / 100 : 0 // Basket item VAT rate (ex. 0.25 for 25%)
-		];
+        if ( wc_tax_enabled() ) {
+            $taxes = WC_Tax::get_rates( $line_item->get_tax_class() );
+            //Get rates of the product
+            $rates = array_shift( $taxes );
+            //Take only the item rate and round it.
+            $vat_rate = ! empty( $rates ) && wc_tax_enabled() ? round( array_shift( $rates ) ) : 0;
+        }
+
+        $data = [
+            'qty'        => $line_item->get_quantity(),
+            'item_no'    => $line_item->get_product_id(),
+            'item_name'  => $line_item->get_name(),
+            'item_price' => (float) ( $line_item->get_total() + $line_item->get_total_tax() ) / $line_item->get_quantity(),
+            'vat_rate'   => $vat_rate,
+        ];
+
+        return [
+            'qty'        => $data['qty'],
+            'item_no'    => $data['item_no'], //
+            'item_name'  => esc_attr( $data['item_name'] ),
+            'item_price' => WC_PensoPay_Helper::price_multiply( $data['item_price'], $this->get_currency() ),
+            'vat_rate'   => $data['vat_rate'] > 0 ? $data['vat_rate'] / 100 : 0 // Basket item VAT rate (ex. 0.25 for 25%)
+        ];
 	}
 
 	public function get_transaction_shipping_address_params() {
