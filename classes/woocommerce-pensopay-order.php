@@ -872,7 +872,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'pensopay',
 			'mobilepay',
 			'mobilepay_checkout',
-			'paypal',
+			'pensopay_paypal',
 			'pensopay',
 			'pensopay-extra',
 			'resurs',
