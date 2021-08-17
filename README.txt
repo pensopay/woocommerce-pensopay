@@ -27,7 +27,42 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
-= 5.8.6 = 
+= 6.2.0 =
+* Remove: Bitcoin through Coinify
+
+= 6.1.0 =
+* Feature: New setting 'Cancel payments on order cancellation' allows merchants to automatically cancel payments when an order is cancelled. Disabled by default.
+* Fix: Orders with multiple subscriptions didn't get the subscription transaction stored on every subscription.
+
+= 6.0.3 =
+* Fix: Danish translations not being loaded when enabled.
+* Fix: Balance with decimals were incorrectly shown on "Capture Full Amount" button
+* Fix: Bump 'tested with' versions
+
+= 6.0.2 =
+* Fix: Setting "Complete renewal orders" triggered on regular orders as well when enabled.
+
+= 6.0.1 =
+* Fix: Callbacks not being properly handled for non-subscription transactions
+
+= 6.0.0 =
+* Feature: MobilePay Subscriptions gateway.
+* Feature: New setting 'Complete order on capture callbacks' - Completes an order when a callback regarding a captured payment is received from QuickPay.
+* Feature: Add support for WCML country specific gateways added in WCML 4.10 (https://wpml.org/announcements/2020/08/wcml-4-10-currencies-and-payment-options-based-on-location/)
+* Change: Recurring payments are no longer synchronized due to ?synchronization being deprecated.
+* Fix: Undefined property: stdClass::$payment_method in WC_PensoPay_MobilePay_Checkout::callback_save_address
+* Fix: Hide balance amount field when payment cannot be captured
+* Fix: Show MobilePay logo as "Method" in the order list
+* Breaking Change: Embedded / Overlay payments have been removed due to PSD2. Contact support@pensopay.com for questions regarding this decision.
+* Developer: Add filter woocommerce_pensopay_create_recurring_payment_data
+* Developer: Add filter woocommerce_pensopay_create_recurring_payment_data_{payment_gateway_id}
+* Developer: Add filter woocommerce_pensopay_callback_payment_authorized_complete_payment
+* Developer: Removed WC_PensoPay_Subscription::process_recurring_response as the logic has been refactored into hooks and callback handlers.
+
+= 5.8.7 =
+* Add Anyday split
+
+= 5.8.6 =
 * Fix as issue where paypal payments couldn't be processed
 
 = 5.8.5 =

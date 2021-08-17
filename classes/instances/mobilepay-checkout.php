@@ -26,18 +26,9 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 		add_filter( 'woocommerce_pensopay_cardtypelock_' . $this->id, [ $this, 'filter_cardtypelock' ] );
 		add_action( 'woocommerce_after_checkout_validation', [ $this, 'checkout_validation' ], 100, 2 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_filter( 'woocommerce_pensopay_transaction_link_params', [
-			$this,
-			'filter_transaction_link_params'
-		], 10, 3 );
-		add_action( 'woocommerce_pensopay_accepted_callback_before_processing_status_authorize', [
-			$this,
-			'callback_save_address'
-		], 10, 2 );
-		add_action( 'woocommerce_checkout_before_customer_details', [
-			$this,
-			'insert_woocommerce_pensopay_mobilepay_checkout'
-		], 10 );
+		add_filter( 'woocommerce_pensopay_transaction_link_params', [ $this, 'filter_transaction_link_params'], 10, 3 );
+		add_action( 'woocommerce_pensopay_accepted_callback_before_processing_status_authorize', [$this, 'callback_save_address'], 10, 2 );
+		add_action( 'woocommerce_checkout_before_customer_details', [ $this, 'insert_woocommerce_pensopay_mobilepay_checkout'], 10 );
 
 		add_filter( 'woocommerce_update_order_review_fragments', [ $this, 'update_order_review_fragments' ], 10, 1 );
 
@@ -156,7 +147,7 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 			}
 		}
 
-		return apply_filters( 'woocommerce_pensopay_mobilepay_checkout_checkout_field_label', $field_label, $required_field, $this->checkout_fields);
+		return apply_filters( 'woocommerce_pensopay_mobilepay_checkout_checkout_field_label', $field_label, $required_field, $this->checkout_fields );
 	}
 
 	/**
@@ -188,13 +179,13 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 */
 	public function callback_save_address( $order, $transaction ) {
 	    //$transaction->variables->PhoneNumberValidationStatus -- this is to account for quickpay's overnight logic change in mbpc
-		if ( ($transaction->variables->payment_method === $this->id || !empty($transaction->variables->PhoneNumberValidationStatus)) && $this->is_enabled() ) {
-			$billing_address  = (object) apply_filters( 'woocommerce_pensopay_automatic_billing_address', ! empty( $transaction->invoice_address ) ? $transaction->invoice_address : null, $order, $transaction );
-			$shipping_address = (object) apply_filters( 'woocommerce_pensopay_automatic_shipping_address', ! empty( $transaction->shipping_address ) ? $transaction->shipping_address : null, $order, $billing_address, $transaction );
+        if ( isset($transaction->variables->payment_method) && $transaction->variables->payment_method === $this->id && $this->is_enabled() ) {
+            $billing_address  = apply_filters( 'woocommerce_pensopay_automatic_billing_address', ! empty( $transaction->invoice_address ) ? $transaction->invoice_address : null, $order, $transaction );
+            $shipping_address = apply_filters( 'woocommerce_pensopay_automatic_shipping_address', ! empty( $transaction->shipping_address ) ? $transaction->shipping_address : null, $order, $billing_address, $transaction );
 
 			do_action( 'woocommerce_pensopay_save_automatic_addresses_before', $order, $billing_address, $shipping_address, $transaction );
 			try {
-				$customer = null;
+				$customer    = null;
                 $create_user = apply_filters( 'woocommerce_pensopay_mobilepay_checkout_create_user', wc()->checkout()->is_registration_required(), $order, $transaction );
 
 				if ( ! $order->get_customer_id() && $create_user ) {

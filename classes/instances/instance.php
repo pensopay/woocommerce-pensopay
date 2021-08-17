@@ -2,7 +2,7 @@
 
 class WC_PensoPay_Instance extends WC_PensoPay {
     
-    public $main_settings = NULL;
+    public $main_settings = null;
     
     public function __construct() {
         parent::__construct();
@@ -39,27 +39,31 @@ class WC_PensoPay_Instance extends WC_PensoPay {
     }
 
     /**
-    * admin_options function.
-    *
     * Prints the admin settings form
     *
     * @access public
     * @return string
     */
-    public function admin_options()
+    public function generate_settings_html( $form_fields = [], $echo = true )
     {
         $main_settings_args = [
-            'page' => 'wc-settings',
-            'tab' => 'checkout',
+            'page'    => 'wc-settings',
+            'tab'     => 'checkout',
             'section' => 'wc_pensopay'
         ];
-        echo "<h3>PensoPay - {$this->method_title}, v" . WCPP_VERSION . "</h3>";
-        echo "<p>" . sprintf(__('Allows you to receive payments via PensoPay %s.', 'woo-pensopay'), $this->id) . "</p>";
-        echo "<p>" . sprintf(__('This module has it\'s main configuration inside the \'PensoPay\' tab.', 'woo-pensopay'), 's') . "</p>";
-        echo "<p>" . sprintf(__('Click <a href="%s">here</a> to access the main configuration.', 'woo-pensopay'), add_query_arg( $main_settings_args, admin_url('admin.php'))) . "</p>";
-        echo "<table class=\"form-table\">";
-                    $this->generate_settings_html();
-        echo "</table";
+
+        $html = "<h3>PensoPay - {$this->method_title}, v" . WCPP_VERSION . "</h3>";
+        $html .= "<p>" . sprintf( __( 'Allows you to receive payments via PensoPay %s.', 'woo-pensopay' ), $this->id ) . "</p>";
+        $html .= "<p>" . sprintf( __( 'This module has it\'s main configuration inside the \'PensoPay\' tab.', 'woo-pensopay' ), 's' ) . "</p>";
+        $html .= "<p>" . sprintf( __( 'Click <a href="%s">here</a> to access the main configuration.', 'woo-pensopay' ), add_query_arg( $main_settings_args, admin_url( 'admin.php') ) ) . "</p>";
+
+        $html .= get_parent_class( get_parent_class( get_parent_class( $this ) ) )::generate_settings_html( $form_fields, $echo );
+
+        if ( $echo ) {
+            echo $html; // WPCS: XSS ok.
+        } else {
+            return $html;
+        }
     }
   
     /**
@@ -72,13 +76,13 @@ class WC_PensoPay_Instance extends WC_PensoPay {
     * @access public
     * @return string
     */
-    public function s( $key, $default = NULL )
+    public function s( $key, $default = null )
     {
-        if( isset( $this->settings[$key] ) ) {
+        if ( isset( $this->settings[$key] ) ) {
             return $this->settings[$key];
         }
         
-        if( isset( $this->main_settings[$key] ) ) {
+        if ( isset( $this->main_settings[$key] ) ) {
             return $this->main_settings[$key];
         }
 
@@ -96,11 +100,18 @@ class WC_PensoPay_Instance extends WC_PensoPay {
     */	
     public function apply_gateway_icons( $icon, $id ) {
 
-        if($id == $this->id) {
+        if ( $id == $this->id ) {
             $icons_maxheight = $this->gateway_icon_size();
-            $icon .= $this->gateway_icon_create(strtolower($this->id), $icons_maxheight);
+            $icon           .= $this->gateway_icon_create( strtolower( $this->id ), $icons_maxheight );
         }
 
         return $icon;
+    }
+
+    /**
+     * @return string|string[]
+     */
+    protected function get_sanitized_method_title() {
+        return str_replace( 'PensoPay - ', '', $this->method_title );
     }
 }

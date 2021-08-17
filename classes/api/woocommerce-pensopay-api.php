@@ -9,14 +9,13 @@
  * @author 		PensoPay
  */
 
-class WC_PensoPay_API
-{
+class WC_PensoPay_API {
 
 	/**
 	 * Contains cURL instance
 	 * @access protected
 	 */
-	protected $ch;
+    protected $ch;
 
 
 	/**
@@ -36,12 +35,6 @@ class WC_PensoPay_API
 	 * @var null
 	 */
 	protected $api_key = null;
-
-	/**
-	 * @var bool
-	 */
-	public $block_callback = false;
-
 
 	/**
 	 * __construct function.
@@ -77,7 +70,9 @@ class WC_PensoPay_API
 			return false;
 		}
 
-		return hash_hmac( 'sha256', $response_body, WC_PP()->s( 'pensopay_privatekey' ) ) == $_SERVER["HTTP_QUICKPAY_CHECKSUM_SHA256"];
+		$hash = hash_hmac( 'sha256', $response_body, WC_PP()->s( 'pensopay_privatekey' ) );
+
+		return hash_equals($_SERVER["HTTP_QUICKPAY_CHECKSUM_SHA256"], $hash);
 	}
 
 
@@ -290,7 +285,6 @@ class WC_PensoPay_API
 	 * @return false|resource
 	 */
 	protected function remote_instance( $post_id = null ) {
-        $this->api_key = WC_PP()->s( 'pensopay_apikey' );
         $this->ch = curl_init();
 
 		curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, true );
@@ -299,7 +293,7 @@ class WC_PensoPay_API
 
 		curl_setopt( $this->ch, CURLINFO_HEADER_OUT, true );
 
-		$callback_url = ! apply_filters( 'woocommerce_pensopay_block_callback', $this->block_callback, $post_id ) ? WC_PensoPay_Helper::get_callback_url( $post_id ) : null;
+		$callback_url = ! apply_filters( 'woocommerce_pensopay_block_callback', false, $post_id ) ? WC_PensoPay_Helper::get_callback_url( $post_id ) : null;
 
 		curl_setopt( $this->ch, CURLOPT_HTTPHEADER, [
 			'Authorization: Basic ' . base64_encode( ':' . $this->api_key ),

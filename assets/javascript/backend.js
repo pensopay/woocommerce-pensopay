@@ -104,7 +104,7 @@
 	};
 
 	PensoPayCheckAPIStatus.prototype.insertIndicator = function () {
-		this.indicator.insertAfter(this.apiSettingsField);
+		this.indicator.insertAfter(this.apiSettingsField.hide().fadeIn());
 	};
 
 	PensoPayCheckAPIStatus.prototype.pingAPI = function () {
@@ -178,7 +178,7 @@
 
 	PensoPayPrivateKey.prototype.init = function () {
 		var self = this;
-		this.field.parent().append(this.refresh);
+		this.field.parent().append(this.refresh.hide());
 
 		this.refresh.on('click', function() {
 			if ( ! self.refresh.hasClass('ok')) {

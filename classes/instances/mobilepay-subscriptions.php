@@ -4,6 +4,8 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 
 	public $main_settings = null;
 
+    const instance_id = 'mobilepay-subscriptions';
+
 	public function __construct() {
 		parent::__construct();
 

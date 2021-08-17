@@ -156,10 +156,11 @@
 
 .pp-balance {
 	margin-bottom: 0;
+	height: 20px;
 }
 
-.pp-balance.last {
-	margin-bottom: 5px;
+.pp-balance + li:not(.pp-balance) {
+	margin-top: 5px;
 }
 
 .pp-balance:after {
@@ -209,8 +210,8 @@
 	top: 3px;
 	position: relative;
 	margin-left: 5px;
+	min-height: auto;
 }
-
 
 .button.wcpp-debug-button {
 	margin-right: 5px;
@@ -238,7 +239,7 @@
 }
 .wcpp_api_indicator.refresh {
 	cursor: pointer;
-	top: -3px;
+	top: -4px;
 	background-image: url(../images/icons/refresh.png);
 }
 

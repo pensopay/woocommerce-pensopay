@@ -100,3 +100,13 @@ function woocommerce_pensopay_get_order( $order ) {
 
 	return $order;
 }
+
+/**
+ * Returns the locale used in the payment window
+ * @return string
+ */
+function woocommerce_pensopay_get_language() {
+    list( $language ) = explode( '_', get_locale() );
+
+    return apply_filters( 'woocommerce_pensopay_language', $language );
+}

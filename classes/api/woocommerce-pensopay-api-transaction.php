@@ -122,7 +122,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 */
 	public function create( WC_PensoPay_Order $order ) {
 		$base_params = [
-			'currency'      => WC_PP()->get_gateway_currency( $order ),
+			'currency'      => $order->get_currency(),
 			'order_post_id' => $order->get_id(),
 		];
 
@@ -135,9 +135,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 
 		$params = array_merge( $base_params, $order_params );
 
-		$payment = $this->post( '/', $params );
-
-		return $payment;
+        return $this->post( '/', $params );
 	}
 
 	/**
@@ -161,7 +159,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 
 		$base_params = [
 			'language'                     => WC_PP()->get_gateway_language(),
-			'currency'                     => WC_PP()->get_gateway_currency( $order ),
+			'currency'                     => $order->get_currency(),
 			'callbackurl'                  => WC_PensoPay_Helper::get_callback_url(),
 			'autocapture'                  => WC_PensoPay_Helper::option_is_enabled( $order->get_autocapture_setting() ),
 			'autofee'                      => WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_autofee' ) ),
@@ -177,9 +175,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 
 		$params = apply_filters( 'woocommerce_pensopay_transaction_link_params', $merged_params, $order, $payment_method );
 
-		$payment_link = $this->put( sprintf( '%d/link', $transaction_id ), $params );
-
-		return $payment_link;
+        return $this->put( sprintf( '%d/link', $transaction_id ), $params );
 	}
 
 	/**
@@ -191,7 +187,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 */
 	public function patch_payment( $transaction_id, WC_PensoPay_Order $order ) {
 		$base_params = [
-			'currency'      => WC_PP()->get_gateway_currency( $order ),
+			'currency'      => $order->get_currency(),
 			'order_post_id' => $order->get_id(),
 		];
 
@@ -205,9 +201,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 
 		$params = array_merge( $base_params, $order_params );
 
-		$payment = $this->patch( sprintf( '/%s', $transaction_id ), $params );
-
-		return $payment;
+        return $this->patch( sprintf( '/%s', $transaction_id ), $params );
 	}
 
 	/**
@@ -237,7 +231,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 * @since  4.5.0
 	 */
 	public function get_formatted_balance() {
-		return WC_PensoPay_Helper::price_normalize( $this->get_balance() );
+		return WC_PensoPay_Helper::price_normalize( $this->get_balance(), $this->get_currency() );
 	}
 
 	/**
@@ -284,8 +278,22 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 * @since  4.5.0
 	 */
 	public function get_formatted_remaining_balance() {
-		return WC_PensoPay_Helper::price_normalize( $this->get_remaining_balance() );
+		return WC_PensoPay_Helper::price_normalize( $this->get_remaining_balance(), $this->get_currency() );
 	}
+
+    /**
+     * @return float|int|mixed|null
+     * @throws PensoPay_API_Exception
+     */
+    public function get_remaining_balance_as_float() {
+        $remaining_balance = $this->get_remaining_balance();
+
+        if ( $remaining_balance > 0 && WC_PensoPay_Helper::is_currency_using_decimals( $this->get_currency() ) ) {
+            return $remaining_balance / 100;
+        }
+
+        return $remaining_balance;
+    }
 
 	/**
 	 * get_remaining_balance function
@@ -319,6 +327,19 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 
 		return $remaining;
 	}
+
+    /**
+     * @return string|null
+     */
+    public function get_acquirer() {
+        $acquirer = null;
+
+        if ( is_object( $this->resource_data ) && isset( $this->resource_data->acquirer ) ) {
+            $acquirer = $this->resource_data->acquirer;
+        }
+
+        return $acquirer;
+    }
 
 	/**
 	 * Checks if either a specific operation or the last operation was successful.

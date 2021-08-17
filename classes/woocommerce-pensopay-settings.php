@@ -477,7 +477,7 @@ class WC_PensoPay_Settings {
 	 * @return string
 	 */
 	public static function get_wiki_link() {
-		return 'https://pensopay.zendesk.com/hc/da';
+		return 'https://help.pensopay.com';
 	}
 
 	/**

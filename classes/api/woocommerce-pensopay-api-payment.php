@@ -74,7 +74,7 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 			$amount = $order->get_total();
 		}
 
-		$this->post( sprintf( '%d/%s', $transaction_id, "capture" ), [ 'amount' => WC_PensoPay_Helper::price_multiply( $amount ) ] );
+		$this->post( sprintf( '%d/%s', $transaction_id, "capture" ), [ 'amount' => WC_PensoPay_Helper::price_multiply( $amount, $order->get_currency() ) ] );
 
 		if ( ! $capture = $this->get_last_operation_of_type( 'capture' ) ) {
 			throw new PensoPay_Exception( 'No capture operation found: ' . (string) json_encode( $this->resource_data ) );
@@ -138,7 +138,7 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 		}
 
 		if ( ! $order instanceof WC_PensoPay_Order) {
-			$order = new WC_PensoPay_Order($order->get_id());
+			$order = new WC_PensoPay_Order( $order->get_id() );
 		}
 
 		// Get all basket items
@@ -147,8 +147,8 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 		// Select the first item as this should be an actual product and not shipping or similar.
 		$product = reset( $basket_items );
 
-		$this->post( sprintf( '%d/%s?synchronized', $transaction_id, "refund" ), [
-			'amount'   => WC_PensoPay_Helper::price_multiply( $amount ),
+		$this->post( sprintf( '%d/%s', $transaction_id, "refund" ), [
+			'amount'   => WC_PensoPay_Helper::price_multiply( $amount, $order->get_currency() ),
 			'vat_rate' => $product['vat_rate'],
 		] );
 
@@ -187,6 +187,11 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 			'recurring'        => [ 'subscribe' ],
 			'standard_actions' => [ 'authorize', 'recurring' ],
 		];
+
+        // MP Subscription payments cannot be manually captured as they are automatically captured on the due date.
+        if ( 'mobilepaysubscriptions' === $this->get_acquirer() && $action === 'capture' ) {
+            return false;
+        }
 
 		// We wants to still allow captures if there is a remaining balance.
 		if ( 'capture' === $state && $remaining_balance > 0 && $action !== 'cancel' ) {

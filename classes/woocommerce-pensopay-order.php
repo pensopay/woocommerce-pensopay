@@ -255,7 +255,7 @@ class WC_PensoPay_Order extends WC_Order {
 		$renewal_failure = false;
 
 		if ( WC_PensoPay_Subscription::plugin_is_active() ) {
-			$renewal_failure = ( WC_PensoPay_Subscription::is_renewal( $this ) AND $this->get_status() == 'failed' );
+			$renewal_failure = ( WC_PensoPay_Subscription::is_renewal( $this ) && $this->get_status() == 'failed' );
 		}
 
 		return $renewal_failure;
@@ -391,7 +391,7 @@ class WC_PensoPay_Order extends WC_Order {
 			else if ( WC_PensoPay_Subscription::cart_contains_failed_renewal_order_payment() ) {
 				// Get the last one and base the transaction on it.
 				$subscription = WC_PensoPay_Subscription::get_subscriptions_for_renewal_order( $this->id, true );
-				$order_number .= sprintf( '-%d', $subscription->get_failed_payment_count() );
+                $order_number .= sprintf( '-%d', $subscription ? $subscription->get_failed_payment_count() : time() );
 			}
 			// FIXME: This is for backwards compatability only. Before 4.5.6 orders were not set to 'FAILED' when a recurring payment failed.
 			// FIXME: To allow customers to pay the outstanding, we must append a value to the order number to avoid errors with duplicate order numbers in the API.
@@ -550,7 +550,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'email'           => $this->get_billing_email(),
 		];
 
-		return apply_filters( 'woocommerce_pensopay_transaction_params_shipping', $params );
+		return apply_filters( 'woocommerce_pensopay_transaction_params_shipping', $params, $this );
 	}
 
 	/**
@@ -596,7 +596,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'email'           => $this->get_billing_email(),
 		];
 
-		return apply_filters( 'woocommerce_pensopay_transaction_params_invoice', $params );
+		return apply_filters( 'woocommerce_pensopay_transaction_params_invoice', $params, $this );
 	}
 
 	/**
@@ -640,7 +640,7 @@ class WC_PensoPay_Order extends WC_Order {
 		$result = apply_filters( 'woocommerce_pensopay_transaction_params_shipping_row', [
             'method'          => 'own_delivery',
             'company'         => $this->get_shipping_method(),
-            'amount'          => WC_PensoPay_Helper::price_multiply( $shipping_incl_vat ),
+            'amount'          => WC_PensoPay_Helper::price_multiply( $shipping_incl_vat, $this->get_currency() ),
             'vat_rate'        => $shipping_vat_rate,
             'tracking_number' => '',
             'tracking_url'    => ''
@@ -713,7 +713,7 @@ class WC_PensoPay_Order extends WC_Order {
 
 		$custom_vars['payment_method'] = $this->get_payment_method();
 
-		$custom_vars = apply_filters( 'woocommerce_pensopay_transaction_params_variables', $custom_vars );
+		$custom_vars = apply_filters( 'woocommerce_pensopay_transaction_params_variables', $custom_vars, $this );
 
 		ksort( $custom_vars );
 
@@ -761,7 +761,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'order_id'    => $this->get_order_number_for_api(),
 			'continueurl' => $this->get_continue_url(),
 			'cancelurl'   => $this->get_cancellation_url(),
-			'amount'      => WC_PensoPay_Helper::price_multiply( $amount ),
+			'amount'      => WC_PensoPay_Helper::price_multiply( $amount, $this->get_currency() ),
 			'framed'      => WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))
 		];
 	}
@@ -823,22 +823,23 @@ class WC_PensoPay_Order extends WC_Order {
 		$order_items = $this->get_items( 'line_item' );
 
 		// Loop through the order items
-		foreach ( $order_items as $order_item ) {
-			// Get the product
-			$product = $this->get_product_from_item( $order_item );
-
-			// Is this product virtual?
-			if ( $product->is_virtual() ) {
-				$has_virtual_products = true;
-			} // This was a non-virtual product.
-			else {
-				$has_nonvirtual_products = true;
-			}
-		}
+        foreach ( $order_items as $order_item ) {
+            // Get the product
+            if ( is_callable( array( $order_item, 'get_product' ) ) ) {
+                $product = $order_item->get_product();
+                // Is this product virtual?
+                if ( $product->is_virtual() ) {
+                    $has_virtual_products = true;
+                } // This was a non-virtual product.
+                else {
+                    $has_nonvirtual_products = true;
+                }
+            }
+        }
 
 		// If the order contains both virtual and nonvirtual products,
 		// we use the 'pensopay_autopay' as the option of choice.
-		if ( $has_virtual_products AND $has_nonvirtual_products ) {
+		if ( $has_virtual_products && $has_nonvirtual_products ) {
 			return $autocapture_default;
 		} // Or check if the order contains virtual products only
 		else if ( $has_virtual_products ) {
@@ -863,7 +864,6 @@ class WC_PensoPay_Order extends WC_Order {
 		$order_id = $this->get_id();
 
 		return in_array( get_post_meta( $order_id, '_payment_method', true ), [
-			'bitcoin',
 			'ideal',
 			'fbg1886',
 			'ideal',
@@ -872,6 +872,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'pensopay',
 			'mobilepay',
 			'mobilepay_checkout',
+            'mobilepay-subscriptions',
 			'pensopay_paypal',
 			'pensopay',
 			'pensopay-extra',

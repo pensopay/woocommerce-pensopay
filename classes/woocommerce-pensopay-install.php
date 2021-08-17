@@ -23,12 +23,12 @@ class WC_PensoPay_Install
 	/**
 	 * Updates the version. 
 	 * 
-	 * @param string $version = NULL - The version number to update to
+	 * @param string $version = null - The version number to update to
 	 */
-	private static function update_db_version( $version = NULL )
+	private static function update_db_version( $version = null )
 	{
 		delete_option( 'woocommerce_pensopay_version' );
-		add_option( 'woocommerce_pensopay_version', $version === NULL ? WCPP_VERSION : $version );
+		add_option( 'woocommerce_pensopay_version', $version === null ? WCPP_VERSION : $version );
 	}
 	
 	
@@ -39,7 +39,7 @@ class WC_PensoPay_Install
 	 */
 	public static function get_db_version() 
 	{
-		return get_option( 'woocommerce_pensopay_version', TRUE );
+		return get_option( 'woocommerce_pensopay_version', 0 );
 	}
 	
 	
@@ -50,8 +50,8 @@ class WC_PensoPay_Install
 	 */
 	public static function is_first_install() 
 	{
-		$settings = get_option( 'woocommerce_pensopay_settings', FALSE );
-		return $settings === FALSE;
+		$settings = get_option( 'woocommerce_pensopay_settings', false );
+		return $settings === false;
 	}
 	
 	
@@ -75,7 +75,7 @@ class WC_PensoPay_Install
         self::start_maintenance_mode();
 
 		foreach ( self::$updates as $version => $updater ) {
-			if ( self::is_update_required($version) ) {
+			if ( self::is_update_required( $version ) ) {
 				include( $updater );
 				self::update_db_version( $version );
 			}
@@ -92,17 +92,19 @@ class WC_PensoPay_Install
      * @param null $version
      * @return mixed
      */
-	public static function is_update_required( $version = NULL )
+	public static function is_update_required( $version = null )
     {
-        $version = self::get_db_version();
+        if ( $version === null ) {
+            $version = self::get_db_version();
+        }
 
-        foreach( self::$updates as $update_version => $update_file ) {
-            if (version_compare($version, $update_version, '<')) {
-                return TRUE;
+        foreach ( self::$updates as $update_version => $update_file ) {
+            if ( version_compare( $version, $update_version, '<' ) ) {
+                return true;
             }
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
@@ -111,7 +113,7 @@ class WC_PensoPay_Install
      */
     public static function is_in_maintenance_mode()
     {
-        return get_option( 'woocommerce_pensopay_maintenance', FALSE );
+        return get_option( 'woocommerce_pensopay_maintenance', false );
     }
 
     /**
@@ -119,7 +121,7 @@ class WC_PensoPay_Install
      */
     public static function start_maintenance_mode()
     {
-        add_option('woocommerce_pensopay_maintenance', TRUE, '', 'yes');
+        add_option( 'woocommerce_pensopay_maintenance', true, '', 'yes' );
     }
 
     /**
@@ -127,7 +129,7 @@ class WC_PensoPay_Install
      */
     public static function stop_maintenance_mode()
     {
-        delete_option('woocommerce_pensopay_maintenance');
+        delete_option( 'woocommerce_pensopay_maintenance' );
     }
 
     /**
@@ -135,11 +137,11 @@ class WC_PensoPay_Install
      */
     public static function show_update_warning()
     {
-        if (self::is_update_required()) {
-            if (!self::is_in_maintenance_mode()) {
-                WC_PensoPay_Views::get_view('html-notice-update.php');
+        if ( self::is_update_required() ) {
+            if ( ! self::is_in_maintenance_mode() ) {
+                WC_PensoPay_Views::get_view( 'html-notice-update.php' );
             } else {
-                WC_PensoPay_Views::get_view('html-notice-upgrading.php');
+                WC_PensoPay_Views::get_view( 'html-notice-upgrading.php' );
             }
         }
     }

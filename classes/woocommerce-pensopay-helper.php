@@ -81,25 +81,35 @@ class WC_PensoPay_Helper {
 	/**
 	 * price_normalize function.
 	 *
-	 * Returns the price with decimals. 1010 returns as 10.10.
+	 * Returns the price with decimals if currency is using them. 1010 returns as 10.10.
 	 *
 	 * @access public static
 	 *
 	 * @param $price
+     * @param $currency
 	 *
 	 * @return float
 	 */
-	public static function price_normalize( $price ) {
-		return number_format( $price / 100, 2, wc_get_price_decimal_separator(), '' );
+	public static function price_normalize( $price, $currency ) {
+        if ( self::is_currency_using_decimals( $currency ) ) {
+            return number_format( $price / 100, 2, wc_get_price_decimal_separator(), '' );
+        }
+
+        return $price;
 	}
 
 	/**
 	 * @param $price
+     * @param $currency
 	 *
 	 * @return string
 	 */
-	public static function price_multiplied_to_float( $price ) {
-		return number_format( $price / 100, 2, '.', '' );
+	public static function price_multiplied_to_float( $price, $currency ) {
+        if ( self::is_currency_using_decimals( $currency ) ) {
+            return number_format( $price / 100, 2, '.', '' );
+        }
+
+        return $price;
 	}
 
 	/**
@@ -109,13 +119,13 @@ class WC_PensoPay_Helper {
 	 *
 	 * @return int
 	 */
-	public static function price_custom_to_multiplied( $price ) {
-		$decimal_separator  = get_option( 'woocommerce_price_decimal_sep' );
-		$thousand_separator = get_option( 'woocommerce_price_thousand_sep' );
+	public static function price_custom_to_multiplied( $price, $currency ) {
+        $decimal_separator  = get_option( 'woocommerce_price_decimal_sep' );
+        $thousand_separator = get_option( 'woocommerce_price_thousand_sep' );
 
-		$price = str_replace( [ $thousand_separator, $decimal_separator ], [ '', '.' ], $price );
+        $price = str_replace( [ $thousand_separator, $decimal_separator ], [ '', '.' ], $price );
 
-		return self::price_multiply( $price );
+        return self::price_multiply( $price, $currency );
 	}
 
 	/**
@@ -129,9 +139,44 @@ class WC_PensoPay_Helper {
 	 *
 	 * @return integer
 	 */
-	public static function price_multiply( $price ) {
-		return number_format( $price * 100, 0, '', '' );
-	}
+    public static function price_multiply( $price, $currency = null ) {
+        if ( $currency && self::is_currency_using_decimals( $currency ) ) {
+            return number_format( $price * 100, 0, '', '' );
+        }
+
+        return $price;
+    }
+
+    /**
+     * Determine if currency is using decimals
+     *
+     * @param $currency
+     *
+     * @return bool
+     */
+    public static function is_currency_using_decimals( $currency ) {
+        $non_decimal_currencies = [
+            'BIF',
+            'CLP',
+            'DJF',
+            'GNF',
+            'ISK',
+            'JPY',
+            'KMF',
+            'KRW',
+            'PYG',
+            'RWF',
+            'UGX',
+            'UYI',
+            'VND',
+            'VUV',
+            'XAF',
+            'XOF',
+            'XPF',
+        ];
+
+        return ! in_array( strtoupper( $currency ), $non_decimal_currencies, true );
+    }
 
 	/**
 	 * enqueue_javascript_backend function.
@@ -140,10 +185,10 @@ class WC_PensoPay_Helper {
 	 * @return void
 	 */
 	public static function enqueue_javascript_backend() {
-//		if ( self::maybe_enqueue_admin_statics() ) { -- buggy conditional
+		if ( self::maybe_enqueue_admin_statics() ) {
 			wp_enqueue_script( 'pensopay-backend', plugins_url( '/assets/javascript/backend.js', __DIR__ ), [ 'jquery' ], self::static_version() );
-//			wp_localize_script( 'pensopay-backend', 'ajax_object', [ 'ajax_url' => admin_url( 'admin-ajax.php' ) ] );
-//		}
+			wp_localize_script( 'pensopay-backend', 'ajax_object', [ 'ajax_url' => admin_url( 'admin-ajax.php' ) ] );
+		}
 
 		wp_enqueue_script( 'pensopay-backend-notices', plugins_url( '/assets/javascript/backend-notices.js', __DIR__ ), [ 'jquery' ], self::static_version() );
 		wp_localize_script( 'pensopay-backend-notices', 'wcppBackendNotices', [ 'flush' => admin_url( 'admin-ajax.php?action=woocommerce_pensopay_flush_runtime_errors' ) ] );
@@ -305,29 +350,31 @@ class WC_PensoPay_Helper {
 	 *
 	 */
 	public static function get_payment_type_logo( $payment_type ) {
-		$logos = [
-			'american-express' => 'americanexpress.svg',
-			'dankort'          => 'dankort.svg',
-			'diners'           => 'diners.svg',
-			'edankort'         => 'edankort.png',
-			'fbg1886'          => 'forbrugsforeningen.svg',
-			'jcb'              => 'jcb.svg',
-			'maestro'          => 'maestro.svg',
-			'mastercard'       => 'mastercard.svg',
-			'mastercard-debet' => 'mastercard.svg',
-			'mobilepay'        => 'mobilepay.svg',
-			'visa'             => 'visa.svg',
-			'visa-electron'    => 'visaelectron.png',
-			'paypal'           => 'paypal.svg',
-			'sofort'           => 'sofort.svg',
-			'viabill'          => 'viabill.svg',
-			'klarna'           => 'klarna.svg',
-			'bank-axess'       => 'bankaxess.svg',
-			'unionpay'         => 'unionpay.svg',
-			'cirrus'           => 'cirrus.svg',
-			'ideal'            => 'ideal.svg',
-			'vipps'            => 'vipps.png',
-		];
+        $logos = [
+            'american-express'        => 'americanexpress.svg',
+            'dankort'                 => 'dankort.svg',
+            'diners'                  => 'diners.svg',
+            'edankort'                => 'edankort.png',
+            'fbg1886'                 => 'forbrugsforeningen.svg',
+            'jcb'                     => 'jcb.svg',
+            'maestro'                 => 'maestro.svg',
+            'mastercard'              => 'mastercard.svg',
+            'mastercard-debet'        => 'mastercard.svg',
+            'mobilepay'               => 'mobilepay.svg',
+            'mobilepaysubscriptions'  => 'mobilepay.svg',
+            'mobilepay-subscriptions' => 'mobilepay.svg',
+            'visa'                    => 'visa.svg',
+            'visa-electron'           => 'visaelectron.png',
+            'paypal'                  => 'paypal.svg',
+            'sofort'                  => 'sofort.svg',
+            'viabill'                 => 'viabill.svg',
+            'klarna'                  => 'klarna.svg',
+            'bank-axess'              => 'bankaxess.svg',
+            'unionpay'                => 'unionpay.svg',
+            'cirrus'                  => 'cirrus.svg',
+            'ideal'                   => 'ideal.svg',
+            'vipps'                   => 'vipps.png',
+        ];
 
 		if ( array_key_exists( trim( $payment_type ), $logos ) ) {
 			return WC_PP()->plugin_url( 'assets/images/cards/' . $logos[ $payment_type ] );

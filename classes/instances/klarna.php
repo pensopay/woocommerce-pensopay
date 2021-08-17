@@ -68,6 +68,6 @@ class WC_PensoPay_Klarna extends WC_PensoPay_Instance {
      */
     public function filter_cardtypelock( )
     {
-        return 'klarna';
+        return 'klarna-payments';
     }
 }

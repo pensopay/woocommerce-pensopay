@@ -26,11 +26,15 @@ class WC_PensoPay_Callbacks {
 				WC_PP()->log->add( __( 'An error occured while setting transaction id: %d on order %s. %s', $transaction->id, $order->get_id(), $e->getMessage() ) );
 			}
 			WC_Pre_Orders_Order::mark_order_as_pre_ordered( $order );
-		} // Regular product
-		else {
-			// Register the payment on the order
-			$order->payment_complete( $transaction->id );
-		}
+		}  /**
+         * Regular product
+         * -> Mark the payment as complete if the payment is not a scheduled payment from MobilePay Subscriptions. Scheduled payments can still fail even when authorized,
+         * so we should wait marking the payment as complete until the capture
+         */
+        else if ( apply_filters( 'woocommerce_pensopay_callback_payment_authorized_complete_payment', $order->get_payment_method() !== WC_PensoPay_MobilePay_Subscriptions::instance_id, $order, $transaction ) ) {
+            // Register the payment on the order
+            $order->payment_complete( $transaction->id );
+        }
 
 		// Write a note to the order history
 		$order->note( sprintf( __( 'Payment authorized. Transaction ID: %s', 'woo-pensopay' ), $transaction->id ) );
@@ -40,6 +44,26 @@ class WC_PensoPay_Callbacks {
 
 		do_action( 'woocommerce_pensopay_callback_payment_authorized', $order, $transaction );
 	}
+
+    /**
+     * Triggered when a capture callback is received
+     *
+     * @param WC_PensoPay_Order $order
+     * @param stdClass $transaction
+     */
+    public static function payment_captured( $order, $transaction ) {
+        $capture_note = __( 'Payment captured.', 'woo-pensopay' );
+
+        $complete = WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_complete_on_capture' ) ) && ! $order->has_status( 'completed' );
+
+        if ( apply_filters( 'woocommerce_pensopay_complete_order_on_capture', $complete, $order, $transaction ) ) {
+            $order->update_status( 'completed', $capture_note );
+        } else {
+            $order->note( $capture_note );
+        }
+
+        do_action( 'woocommerce_pensopay_callback_payment_captured', $order, $transaction );
+    }
 
 	/**
 	 * @param WC_PensoPay_Order $subscription
@@ -56,11 +80,9 @@ class WC_PensoPay_Callbacks {
 		$subscription_initial_payment = $parent_order->get_total();
 
 		// Mark the payment as complete
-		//$subscription->set_transaction_id($json->id);
 		// Temporarily save the transaction ID on a custom meta row to avoid empty values in 3.0.
 		update_post_meta( $subscription->get_id(), '_pensopay_transaction_id', $transaction->id );
 
-		//$subscription->payment_complete($json->id);
 		$subscription->set_transaction_order_id( $transaction->order_id );
 
 		// Only make an instant payment if there is an initial payment
@@ -112,6 +134,8 @@ class WC_PensoPay_Callbacks {
 		try {
 			if ( ! empty( $transaction->id ) ) {
 				$order->set_transaction_id( $transaction->id );
+                $order->update_meta_data( '_pensopay_transaction_id', $transaction->id );
+                $order->save_meta_data();
 				$order->save();
 			}
 		} catch ( WC_Data_Exception $e ) {
