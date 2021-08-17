@@ -869,6 +869,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'ideal',
 			'klarna',
 			'klarna-payments',
+			'anyday-split',
 			'pensopay',
 			'mobilepay',
 			'mobilepay_checkout',
