@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '5.8.4' );
+define( 'WCPP_VERSION', '6.2.0' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -201,6 +201,7 @@ function init_pensopay_gateway() {
 				'ideal'              => 'WC_PensoPay_iDEAL',
 				'klarna'             => 'WC_PensoPay_Klarna',
 				'klarna-payments'    => 'WC_PensoPay_Klarna_Payments',
+				'anyday'             => 'WC_PensoPay_Anyday',
 				'mobilepay'          => 'WC_PensoPay_MobilePay',
 				'mobilepay-checkout' => 'WC_PensoPay_MobilePay_Checkout',
 				'mobilepay-subscriptions' => 'WC_PensoPay_MobilePay_Subscriptions',
