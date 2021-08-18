@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '6.2.0' );
+define( 'WCPP_VERSION', '6.2.1' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -237,6 +237,7 @@ function init_pensopay_gateway() {
 			add_action( 'woocommerce_receipt_' . $this->id, [ $this, 'receipt_page' ] );
 			add_action( 'woocommerce_order_status_completed', [ $this, 'woocommerce_order_status_completed' ] );
 			add_action( 'in_plugin_update_message-woocommerce-pensopay/woocommerce-pensopay.php', [ __CLASS__, 'in_plugin_update_message' ] );
+            add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'process_admin_options' ] );
 
             // WooCommerce Subscriptions hooks/filters
             if ( $this->supports( 'subscriptions' ) ) {
@@ -263,7 +264,6 @@ function init_pensopay_gateway() {
 
                 add_action( 'admin_enqueue_scripts', 'WC_PensoPay_Helper::enqueue_stylesheet' );
                 add_action( 'admin_enqueue_scripts', 'WC_PensoPay_Helper::enqueue_javascript_backend' );
-                add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'process_admin_options' ] );
                 add_action( 'wp_ajax_pensopay_manual_transaction_actions', [ $this, 'ajax_pensopay_manual_transaction_actions' ] );
                 add_action( 'wp_ajax_pensopay_empty_logs', [ $this, 'ajax_empty_logs' ] );
                 add_action( 'wp_ajax_pensopay_flush_cache', [ $this, 'ajax_flush_cache' ] );

@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 6.2.1 =
+* Fix issue where settings would not be saved
+
 = 6.2.0 =
 * Remove: Bitcoin through Coinify
 
