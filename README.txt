@@ -2,7 +2,7 @@
 Contributors: PensoPay
 Tags: gateway, woo commerce, pensopay, gateway, integration, woocommerce, woocommerce pensopay, payment, payment gateway, psp
 Requires at least: 4.0.0
-Tested up to: 5.6.1
+Tested up to: 6.0
 Stable tag: trunk
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -27,6 +27,36 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 6.3.0 =
+* Fix: Rely on auto_capture_at instead of due_date for MPS payments
+* Fix: Enhance the way auto_capture_at is calculated. It now relies on the timezone used in WordPress but can be changed with the filter woocommerce_pensopay_mps_timezone
+* Feat: MobilePay Subscriptions - setting added to control status transition when a payment agreement is cancelled outside WooCommerce.
+* Dev: add filter woocommerce_pensopay_mps_cancelled_from_status
+* Dev: add filter woocommerce_pensopay_mps_cancel_agreement_status_options
+* Fix: Bump tested with WC version to 6.6
+* Fix: Bump tested with WP version to 6.0
+* Feat: Anyday - hide gateway if currency is not DKK and if cart total is not within 300 - 30.000
+* Fix: Remove VISA Electron card logo
+* Feat: Add Google Pay as payment gateway
+* Fix: Adjust SVG icons for Paypal, Apple Pay and Klarna to show properly in Safari
+* Feat: Add Apple Pay gateway - works only in Safari.
+* Fix: MobilePay Subscription gateway is now available when using the "Change Payment" option from the account page.
+* Feat: Show a more user-friendly error message when payments fail in the callback handler.
+* Dev: Add new filter woocommerce_pensopay_checkout_gateway_icon
+* Dev: Add WC_PensoPay_Countries::getAlpha2FromAlpha3
+* Fix: Use alpha2 country code instead of alpha3 country code in MP Checkout callbacks
+* Fix: Modify force checkout logic used for MobilePay Checkout to enhance theme support.
+* Fix: WC_PensoPay_API_Transaction::get_brand removes prefixed penso_ when fallback to variables.
+* Fix: Refund now supports location header to avoid wrong response messages when capturing Klarna and Anyday payments.
+* Fix: Capture now supports location header to avoid wrong response messages when capturing Klarna and Anyday payments.
+* Dev: Add filter woocommerce_pensopay_transaction_params
+* Dev: Add filter woocommerce_pensopay_transaction_params_description
+* Feat: MobilePay Checkout now automatically ticks the terms and condition field during checkout.
+* Fix: PHP8 compatability
+* Fix: WC_PensoPay_API_Transaction::get_brand now falls back to variables.payment_methods sent from the shop if brand is empty on metadata.
+* Feature: Anyday split payments as payment gateway.
+* Feature: MobilePay Checkout now shows the description as copy in checkout/mobilepay-checkout.php by default which makes it easier by merchants to adjust their communication.
+
 = 6.2.1 =
 * Fix issue where settings would not be saved
 
