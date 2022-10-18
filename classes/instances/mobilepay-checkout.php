@@ -16,7 +16,7 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 		// Get gateway variables
 		$this->id = 'mobilepay_checkout';
 
-		$this->method_title = 'PensoPay - MobilePay Checkout';
+		$this->method_title = 'Pensopay - MobilePay Checkout';
 
 		$this->setup();
 
@@ -155,7 +155,9 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 */
 	public function insert_woocommerce_pensopay_mobilepay_checkout() {
 		if ( $this->is_gateway_available() ) {
-			woocommerce_pensopay_get_template( 'checkout/mobilepay-checkout.php' );
+			woocommerce_pensopay_get_template( 'checkout/mobilepay-checkout.php', [
+                'text' => $this->description,
+            ] );
 		}
 	}
 
@@ -178,7 +180,6 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 * @param object $transaction
 	 */
 	public function callback_save_address( $order, $transaction ) {
-	    //$transaction->variables->PhoneNumberValidationStatus -- this is to account for quickpay's overnight logic change in mbpc
         if ( isset($transaction->variables->payment_method) && $transaction->variables->payment_method === $this->id && $this->is_enabled() ) {
             $billing_address  = apply_filters( 'woocommerce_pensopay_automatic_billing_address', ! empty( $transaction->invoice_address ) ? $transaction->invoice_address : null, $order, $transaction );
             $shipping_address = apply_filters( 'woocommerce_pensopay_automatic_shipping_address', ! empty( $transaction->shipping_address ) ? $transaction->shipping_address : null, $order, $billing_address, $transaction );
@@ -229,7 +230,7 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 			$object->set_billing_address_1( $this->get_formatted_address( $address ) );
 			$object->set_billing_address_2( $address->att );
 			$object->set_billing_phone( $address->phone_number );
-			$object->set_billing_country( $address->country_code );
+			$object->set_billing_country( WC_PensoPay_Countries::getAlpha3FromAlpha2( $address->country_code ) );
 			$object->set_billing_company( $address->company_name );
 			$object->set_billing_city( $address->city );
 			$object->set_billing_postcode( $address->zip_code );
@@ -291,7 +292,7 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 			$object->set_shipping_last_name( $this->get_last_name( $address->name ) );
 			$object->set_shipping_address_1( $this->get_formatted_address( $address ) );
 			$object->set_shipping_address_2( $address->att );
-			$object->set_shipping_country( $address->country_code );
+			$object->set_shipping_country( WC_PensoPay_Countries::getAlpha3FromAlpha2( $address->country_code ) );
 			$object->set_shipping_company( $address->company_name );
 			$object->set_shipping_city( $address->city );
 			$object->set_shipping_postcode( $address->zip_code );

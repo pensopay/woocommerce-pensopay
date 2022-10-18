@@ -10,7 +10,7 @@ class WC_PensoPay_Klarna_Payments extends WC_PensoPay_Instance {
         // Get gateway variables
         $this->id = 'klarna-payments';
 
-        $this->method_title = 'PensoPay - Klarna Payments';
+        $this->method_title = 'Pensopay - Klarna Payments';
 
         $this->setup();
 

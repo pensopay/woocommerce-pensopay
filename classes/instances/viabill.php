@@ -12,7 +12,7 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
         // Get gateway variables
         $this->id = 'viabill';
 
-        $this->method_title = 'PensoPay - ViaBill';
+        $this->method_title = 'Pensopay - ViaBill';
 
         $this->setup();
 

@@ -218,7 +218,17 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 			throw new PensoPay_API_Exception( 'No API payment resource data available.', 0 );
 		}
 
-		return $this->resource_data->metadata->brand;
+        if ( ! empty( $this->resource_data->metadata->brand ) ) {
+            return $this->resource_data->metadata->brand;
+        }
+
+        if ( ! empty( $this->resource_data->variables->payment_method ) ) {
+            return str_replace( 'pensopay_', '', $this->resource_data->variables->payment_method );
+        }
+
+        if ( ! empty( $this->resource_data->link->payment_methods ) ) {
+            return $this->resource_data->link->payment_methods;
+        }
 	}
 
 	/**

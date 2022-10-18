@@ -10,7 +10,7 @@ class WC_PensoPay_Vipps extends WC_PensoPay_Instance {
 		// Get gateway variables
 		$this->id = 'vipps';
 
-		$this->method_title = 'PensoPay - Vipps';
+		$this->method_title = 'Pensopay - Vipps';
 
 		$this->setup();
 

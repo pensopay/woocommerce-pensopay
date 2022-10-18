@@ -52,9 +52,9 @@ class WC_PensoPay_Instance extends WC_PensoPay {
             'section' => 'wc_pensopay'
         ];
 
-        $html = "<h3>PensoPay - {$this->method_title}, v" . WCPP_VERSION . "</h3>";
-        $html .= "<p>" . sprintf( __( 'Allows you to receive payments via PensoPay %s.', 'woo-pensopay' ), $this->id ) . "</p>";
-        $html .= "<p>" . sprintf( __( 'This module has it\'s main configuration inside the \'PensoPay\' tab.', 'woo-pensopay' ), 's' ) . "</p>";
+        $html = "<h3>Pensopay - {$this->method_title}, v" . WCPP_VERSION . "</h3>";
+        $html .= "<p>" . sprintf( __( 'Allows you to receive payments via Pensopay %s.', 'woo-pensopay' ), $this->id ) . "</p>";
+        $html .= "<p>" . sprintf( __( 'This module has it\'s main configuration inside the \'Pensopay\' tab.', 'woo-pensopay' ), 's' ) . "</p>";
         $html .= "<p>" . sprintf( __( 'Click <a href="%s">here</a> to access the main configuration.', 'woo-pensopay' ), add_query_arg( $main_settings_args, admin_url( 'admin.php') ) ) . "</p>";
 
         $html .= get_parent_class( get_parent_class( get_parent_class( $this ) ) )::generate_settings_html( $form_fields, $echo );
@@ -112,6 +112,6 @@ class WC_PensoPay_Instance extends WC_PensoPay {
      * @return string|string[]
      */
     protected function get_sanitized_method_title() {
-        return str_replace( 'PensoPay - ', '', $this->method_title );
+        return str_replace( 'Pensopay - ', '', $this->method_title );
     }
 }

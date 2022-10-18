@@ -3,21 +3,21 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 6.2.0
+ * Version: 6.3.0
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
  * Author URI: https://pensopay.com/
  * Wiki: https://pensopay.zendesk.com/hc/da
  * WC requires at least: 3.0.0
- * WC tested up to: 5.1.0
+ * WC tested up to: 6.6
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '6.2.1' );
+define( 'WCPP_VERSION', '6.3.0' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -28,7 +28,7 @@ add_action( 'plugins_loaded', 'init_pensopay_gateway', 0 );
  */
 function wc_pensopay_woocommerce_inactive_notice() {
 	$class    = 'notice notice-error';
-	$headline = __( 'WooCommerce PensoPay requires WooCommerce to be active.', 'woo-pensopay' );
+	$headline = __( 'WooCommerce Pensopay requires WooCommerce to be active.', 'woo-pensopay' );
 	$message  = __( 'Go to the plugins page to activate WooCommerce', 'woo-pensopay' );
 	printf( '<div class="%1$s"><h2>%2$s</h2><p>%3$s</p></div>', $class, $headline, $message );
 }
@@ -197,11 +197,13 @@ function init_pensopay_gateway() {
 		 */
 		public static function get_gateway_instances() {
 			return [
+				'anyday'             => 'WC_PensoPay_Anyday',
+                'apple-pay'          => 'WC_PensoPay_Apple_Pay',
 				'fbg1886'            => 'WC_PensoPay_FBG1886',
+                'google-pay'         => 'WC_PensoPay_Google_Pay',
 				'ideal'              => 'WC_PensoPay_iDEAL',
 				'klarna'             => 'WC_PensoPay_Klarna',
 				'klarna-payments'    => 'WC_PensoPay_Klarna_Payments',
-				'anyday'             => 'WC_PensoPay_Anyday',
 				'mobilepay'          => 'WC_PensoPay_MobilePay',
 				'mobilepay-checkout' => 'WC_PensoPay_MobilePay_Checkout',
 				'mobilepay-subscriptions' => 'WC_PensoPay_MobilePay_Subscriptions',
@@ -934,11 +936,11 @@ function init_pensopay_gateway() {
 			}
         }
 
-		/**
-		 * Clear cart in case its not already done.
-		 *
-		 * @return [type] [description]
-		 */
+        /**
+         * Clear cart in case its not already done.
+         *
+         * @return void
+         */
 		public function thankyou_page() {
 			global $woocommerce;
 			$woocommerce->cart->empty_cart();
@@ -951,7 +953,11 @@ function init_pensopay_gateway() {
 		 * Runs every time a scheduled renewal of a subscription is required
 		 *
 		 * @access public
-		 * @return The API response
+         *
+         * @param $amount_to_charge
+         * @param \WC_Order $renewal_order
+         *
+		 * @return stdClass
 		 */
 		public function scheduled_subscription_payment( $amount_to_charge, $renewal_order ) {
             if ( $renewal_order->get_payment_method() === $this->id ) {
@@ -1223,13 +1229,15 @@ function init_pensopay_gateway() {
 							// Cancel callbacks are currently not supported by the PensoPay API
 							//
 							case 'cancel' :
+                                if ( ! empty( $subscription_id ) && isset( $subscription ) ) {
+                                    do_action( 'woocommerce_pensopay_callback_subscription_cancelled', $subscription, $order, $transaction, $json );
+                                }
 								// Write a note to the order history
 								$order->note( __( 'Payment cancelled.', 'woo-pensopay' ) );
 								break;
 
 							case 'capture' :
-								// Write a note to the order history
-								$order->note( __( 'Payment captured.', 'woo-pensopay' ) );
+                                WC_PensoPay_Callbacks::payment_captured( $order, $json );
 								break;
 
 							case 'refund' :
@@ -1305,10 +1313,11 @@ function init_pensopay_gateway() {
 					$this->log->add( sprintf( __( 'PensoPay status message: %s.', 'woo-pensopay' ), $transaction->qp_status_msg ) );
 					$this->log->add( sprintf( __( 'Acquirer status code: %s', 'woo-pensopay' ), $transaction->aq_status_code ) );
 					$this->log->add( sprintf( __( 'Acquirer status message: %s', 'woo-pensopay' ), $transaction->aq_status_msg ) );
+					$this->log->add( sprintf( __( 'Data: %s', 'woo-quickpay' ), $request_body ) );
 					$this->log->separator();
 
                     if ( $order && ( $transaction->type === 'recurring' || 'rejected' !== $json->state ) ) {
-                        $order->update_status( 'failed', sprintf( 'Payment failed: <br />%s', $request_body ) );
+                        $order->update_status( 'failed', sprintf( 'Payment failed <br />Pensopay Message: %s<br />Acquirer Message: %s', $transaction->qp_status_msg, $transaction->aq_status_msg ) );
                     }
 				}
 			} else {
@@ -1377,7 +1386,7 @@ function init_pensopay_gateway() {
          */
 		public function generate_settings_html( $form_fields = array(), $echo = true ) {
 			$html  = "<h3>PensoPay - {$this->id}, v" . WCPP_VERSION . "</h3>";
-			$html .= "<p>" . __( 'Allows you to receive payments via PensoPay.', 'woo-pensopay' ) . "</p>";
+			$html .= "<p>" . __( 'Allows you to receive payments via Pensopay.', 'woo-pensopay' ) . "</p>";
 
 			WC_PensoPay_Settings::clear_logs_section();
 
@@ -1716,8 +1725,12 @@ function init_pensopay_gateway() {
 		 * @return string
 		 */
 		protected function gateway_icon_create( $icon, $max_height ) {
+            $icon = str_replace( 'pensopay_', '', $icon );
+
+            $icon = apply_filters( 'woocommerce_pensopay_checkout_gateway_icon', $icon );
+
 			if ( file_exists( __DIR__ . '/assets/images/cards/' . $icon . '.svg' ) ) {
-				$icon_url = $icon_url = WC_HTTPS::force_https_url( plugin_dir_url( __FILE__ ) . 'assets/images/cards/' . $icon . '.svg' );
+				$icon_url = WC_HTTPS::force_https_url( plugin_dir_url( __FILE__ ) . 'assets/images/cards/' . $icon . '.svg' );
 			} else {
 				$icon_url = WC_HTTPS::force_https_url( plugin_dir_url( __FILE__ ) . 'assets/images/cards/' . $icon . '.png' );
 			}
@@ -1866,7 +1879,7 @@ function init_pensopay_gateway() {
 		public static function in_plugin_update_message( $args ) {
 			$transient_name = 'wcPp_upgrade_notice_' . $args['Version'];
 			if ( false === ( $upgrade_notice = get_transient( $transient_name ) ) ) {
-				$response = wp_remote_get( 'https://plugins.svn.wordpress.org/woocommerce-pensopay/trunk/README.txt' );
+				$response = wp_remote_get( 'https://plugins.svn.wordpress.org/woo-pensopay/trunk/README.txt' );
 
 				if ( ! is_wp_error( $response ) && ! empty( $response['body'] ) ) {
 					$upgrade_notice = self::parse_update_notice( $response['body'] );

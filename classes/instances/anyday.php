@@ -10,13 +10,14 @@ class WC_PensoPay_Anyday extends WC_PensoPay_Instance {
         // Get gateway variables
         $this->id = 'anyday-split';
 
-        $this->method_title = 'PensoPay - Anyday';
+        $this->method_title = 'Pensopay - Anyday';
 
         $this->setup();
 
         $this->title = $this->s('title');
         $this->description = $this->s('description');
 
+        add_filter( 'woocommerce_available_payment_gateways', [ $this, 'should_disable_gateway' ] );
         add_filter( 'woocommerce_pensopay_cardtypelock_anyday-split', [ $this, 'filter_cardtypelock' ] );
     }
 
@@ -69,5 +70,26 @@ class WC_PensoPay_Anyday extends WC_PensoPay_Instance {
     public function filter_cardtypelock( )
     {
         return 'anyday-split';
+    }
+
+
+    /**
+     * Determine if gateway should be disabled
+     *
+     * @param $gateways
+     * @return void
+     */
+    public function should_disable_gateway( $gateways ) {
+        if ( isset( $gateways[ $this->id ] ) && is_checkout() && ( $cart = WC()->cart ) ) {
+            $cart_total = (float) $cart->get_total( 'edit' );
+            $cart_min   = 1;
+            $cart_max   = 30000;
+
+            if ( ! ( $cart_total >= $cart_min && $cart_total <= $cart_max ) || 'DKK' !== strtoupper( get_woocommerce_currency() ) ) {
+                unset( $gateways[ $this->id ] );
+            }
+        }
+
+        return $gateways;
     }
 }

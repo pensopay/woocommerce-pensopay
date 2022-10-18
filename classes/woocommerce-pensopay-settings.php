@@ -168,14 +168,6 @@ class WC_PensoPay_Settings {
 					'default'     => 'yes',
 					'desc_tip'    => true,
 				],
-//				'pensopay_iframe'           => [
-//					'title'       => __( 'Enable IFrame', 'woo-pensopay' ),
-//					'type'        => 'checkbox',
-//					'label'       => __( 'Enable', 'woo-pensopay' ),
-//					'description' => __( 'If enabled, payments are made in the shop using an iframe instead of a redirect to pensopay.', 'woo-pensopay' ),
-//					'default'     => 'no',
-//					'desc_tip'    => true,
-//				],
 				'pensopay_autofee' => [
 					'title'       => __( 'Enable autofee', 'woo-pensopay' ),
 					'type'        => 'checkbox',
@@ -191,6 +183,13 @@ class WC_PensoPay_Settings {
 					'description' => __( 'When enabled pensopay payments will automatically be captured when order state is set to "Complete".', 'woo-pensopay' ),
 					'default'     => 'no',
 					'desc_tip'    => true,
+				],
+				'pensopay_complete_on_capture'          => [
+					'title'       => __( 'Complete order on capture callbacks', 'woo-quickpay' ),
+					'type'        => 'checkbox',
+					'label'       => __( 'Enable', 'woo-quickpay' ),
+					'description' => __( 'When enabled, an order will be automatically completed when capture callbacks are sent to WooCommerce. Callbacks are sent by Pensopay when the payment is captured from either the shop or the Pensopay manager. Keep disabled to manually complete orders. ', 'woo-pensopay' ),
+					'default'     => 'no',
 				],
                 'pensopay_preventcompleteoncapturefail'         => [
                     'title'       => __( 'Prevent status change to complete if capture fails', 'woo-pensopay' ),
@@ -353,6 +352,7 @@ class WC_PensoPay_Settings {
 		return [
 			'apple-pay'             => 'Apple Pay',
 			'dankort'               => 'Dankort',
+			'google-pay'			=> 'Google Pay',
 			'visa'                  => 'Visa',
 			'visaelectron'          => 'Visa Electron',
 			'visa-verified'         => 'Verified by Visa',
@@ -378,7 +378,6 @@ class WC_PensoPay_Settings {
 			'bankaxess'             => 'BankAxess',
 			'vipps'                 => 'Vipps',
 			'swish'                 => 'Swish',
-			'bitcoin'               => 'Bitcoin',
 			'trustly'               => 'Trustly',
 			'paysafecard'           => 'Paysafe Card',
 		];

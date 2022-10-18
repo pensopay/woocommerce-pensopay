@@ -10,7 +10,7 @@ class WC_PensoPay_Swish extends WC_PensoPay_Instance {
         // Get gateway variables
         $this->id = 'swish';
 
-        $this->method_title = 'PensoPay - Swish';
+        $this->method_title = 'Pensopay - Swish';
 
         $this->setup();
 

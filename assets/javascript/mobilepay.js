@@ -50,6 +50,7 @@
 				// Then disable either all or non-required fields
 				WCPP_MPCheckout.performActionOnFields(WCPP_MPCheckout.disableField);
 				$body.trigger('wcpp_mobilepay_fields_disabled');
+				WCPP_MPCheckout.tickTerms();
 			} else {
 				WCPP_MPCheckout.removeHiddenCountryField();
 				WCPP_MPCheckout.performActionOnFields(WCPP_MPCheckout.enableField);
@@ -72,10 +73,6 @@
 		 */
 		disableField: function ($field) {
 			if (  ! togglableCheckoutFields ) {
-				return;
-			}
-
-			if ($field.selector === '#billing_phone') {
 				return;
 			}
 
@@ -152,6 +149,9 @@
 				callback($('#' + fieldSelector));
 			} )
 		},
+		tickTerms: function() {
+			$('[name="terms"]').prop('checked', true).change();
+		},
 		/**
 		 * Sets the billing country to DK
 		 */
@@ -167,7 +167,9 @@
 		forceCheckout(e) {
 			e.preventDefault();
 			var $form = $('form.checkout');
-			$form.find('[name="payment_method"][value="mobilepay_checkout"]').prop('checked', true).change();
+			$form.find('[name="payment_method"][value="mobilepay_checkout"]').prop('checked', true);
+			$form.find('[name="payment_method"]').change();
+			WCPP_MPCheckout.tickTerms();
 			$form.submit();
 		},
 		/**
@@ -205,7 +207,6 @@
 		$body.on('change', '[name="payment_method"]', WCPP_MPCheckout.toggleCheckoutFields);
 		$body.on('updated_checkout', WCPP_MPCheckout.toggleCheckoutFields);
 		$body.on('click', '.mobilepay-checkout--force', WCPP_MPCheckout.forceCheckout);
-		//WCPP_MPCheckout.toggleCheckoutFields();
 
 		$body.trigger('wcpp_mobilepay_init');
 	});

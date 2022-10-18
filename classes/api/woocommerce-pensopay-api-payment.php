@@ -30,7 +30,7 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 		}
 
 		// Append the main API url
-		$this->api_url = $this->api_url . 'payments/';
+		$this->api_url .= 'payments/';
 	}
 
 
@@ -52,9 +52,9 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 
 
 	/**
-	 * capture function.
+	 * Capture function.
 	 *
-	 * Sends a 'capture' request to the PensoPay API
+	 * Sends a 'capture' request to the Pensopay API
 	 *
 	 * @access public
 	 *
@@ -74,24 +74,55 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 			$amount = $order->get_total();
 		}
 
-		$this->post( sprintf( '%d/%s', $transaction_id, "capture" ), [ 'amount' => WC_PensoPay_Helper::price_multiply( $amount, $order->get_currency() ) ] );
+		$request = $this->post( sprintf( '%d/%s', $transaction_id, "capture" ), [ 'amount' => WC_PensoPay_Helper::price_multiply( $amount, $order->get_currency() ) ], true );
 
-		if ( ! $capture = $this->get_last_operation_of_type( 'capture' ) ) {
-			throw new PensoPay_Exception( 'No capture operation found: ' . (string) json_encode( $this->resource_data ) );
-		}
+        $this->check_last_operation_of_type_with_location_fallback( 'capture', $order, $request );
 
-		if ( $capture->qp_status_code > 20200 ) {
-			throw new PensoPay_Capture_Exception( sprintf( 'Capturing payment on order #%s failed. Message: %s', $order->get_id(), $capture->qp_status_msg ) );
-		}
-
-		return $this;
+        return $this;
 	}
 
 
     /**
-     * cancel function.
+     * @param string $action action|refund
+     * @param array $request
+     * @param WC_Order $order
      *
-     * Sends a 'cancel' request to the PensoPay API
+     * @throws PensoPay_API_Exception
+     * @throws PensoPay_Capture_Exception
+     * @throws PensoPay_Exception
+     */
+    public function check_last_operation_of_type_with_location_fallback( $action, $order, $request ) {
+        $follow_location = isset( $request[5]['location'] ) && ! empty( $request[5]['location'] );
+
+        try {
+            $_action = $this->get_last_operation_of_type( $action );
+        } catch ( PensoPay_Exception $e ) {
+            $_action = null;
+        }
+
+        if ( $follow_location && ! $_action ) {
+            $api     = new WC_PensoPay_API( WC_PP()->s( 'pensopay_apikey' ) );
+            $_action = $api->get( $request[5]['location'][0] );
+
+            if ( empty( $_action ) ) {
+                throw new PensoPay_Exception( sprintf( '%s inconclusive. Response from location header is empty.', ucfirst( $action ) ) );
+            }
+        }
+
+        if ( ! $follow_location && ! $_action ) {
+            throw new PensoPay_Exception( sprintf( 'No %s operation or location found: %s', $action, json_encode( $this->resource_data ) ) );
+        }
+
+        if ( $_action->qp_status_code > 20200 ) {
+            throw new PensoPay_Capture_Exception( sprintf( '%s payment on order #%s failed. Message: %s', ucfirst( $action ), $order->get_id(), $_action->qp_status_msg ) );
+        }
+    }
+
+
+    /**
+     * Cancel function.
+     *
+     * Sends a 'cancel' request to the Pensopay API
      *
      * @access public
      *
@@ -116,9 +147,9 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 
 
 	/**
-	 * refund function.
+	 * Refund function.
 	 *
-	 * Sends a 'refund' request to the PensoPay API
+	 * Sends a 'refund' request to the Pensopay API
 	 *
 	 * @access public
 	 *
@@ -147,20 +178,13 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 		// Select the first item as this should be an actual product and not shipping or similar.
 		$product = reset( $basket_items );
 
-		$this->post( sprintf( '%d/%s', $transaction_id, "refund" ), [
+		$request = $this->post( sprintf( '%d/%s', $transaction_id, "refund" ), [
 			'amount'   => WC_PensoPay_Helper::price_multiply( $amount, $order->get_currency() ),
 			'vat_rate' => $product['vat_rate'],
-		] );
+		], true );
 
-		if ( ! $refund = $this->get_last_operation_of_type( 'refund' ) ) {
-			throw new PensoPay_Exception( 'No refund operation found: ' . (string) json_encode( $this->resource_data ) );
-		}
 
-		if ( $refund->qp_status_code > 20200 ) {
-		    $msg = sprintf( 'Refunding payment on order #%s failed. Message: %s', $order->get_id(), $refund->qp_status_msg );
-		    $order->add_order_note($msg);
-			throw new PensoPay_API_Exception( $msg );
-		}
+        $this->check_last_operation_of_type_with_location_fallback( 'refund', $order, $request );
 	}
 
 

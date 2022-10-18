@@ -10,7 +10,7 @@ class WC_PensoPay_Trustly extends WC_PensoPay_Instance {
         // Get gateway variables
         $this->id = 'trustly';
 
-        $this->method_title = 'PensoPay - Trustly';
+        $this->method_title = 'Pensopay - Trustly';
 
         $this->setup();
 

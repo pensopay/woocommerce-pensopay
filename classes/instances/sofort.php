@@ -10,7 +10,7 @@ class WC_PensoPay_Sofort extends WC_PensoPay_Instance {
 		// Get gateway variables
 		$this->id = 'sofort';
 
-		$this->method_title = 'PensoPay - Sofort';
+		$this->method_title = 'Pensopay - Sofort';
 
 		$this->setup();
 
@@ -18,11 +18,7 @@ class WC_PensoPay_Sofort extends WC_PensoPay_Instance {
 		$this->description = $this->s( 'description' );
 
 		add_filter( 'woocommerce_pensopay_cardtypelock_sofort', [ $this, 'filter_cardtypelock' ] );
-
-		add_action( 'woocommerce_pensopay_accepted_callback_status_capture', [
-			$this,
-			'additional_callback_handler'
-		], 10, 2 );
+		add_action( 'woocommerce_pensopay_accepted_callback_status_capture', [ $this, 'additional_callback_handler' ], 10, 2 );
 	}
 
 

@@ -112,13 +112,13 @@ class WC_PensoPay_Helper {
         return $price;
 	}
 
-	/**
-	 * Multiplies a custom formatted price based on the WooCommerce decimal- and thousand separators
-	 *
-	 * @param $price
-	 *
-	 * @return int
-	 */
+    /**
+     * Multiplies a custom formatted price based on the WooCommerce decimal- and thousand separators
+     *
+     * @param $price
+     * @param $currency
+     * @return int
+     */
 	public static function price_custom_to_multiplied( $price, $currency ) {
         $decimal_separator  = get_option( 'woocommerce_price_decimal_sep' );
         $thousand_separator = get_option( 'woocommerce_price_thousand_sep' );
@@ -128,17 +128,17 @@ class WC_PensoPay_Helper {
         return self::price_multiply( $price, $currency );
 	}
 
-	/**
-	 * price_multiply function.
-	 *
-	 * Returns the price with no decimals. 10.10 returns as 1010.
-	 *
-	 * @access public static
-	 *
-	 * @param $price
-	 *
-	 * @return integer
-	 */
+    /**
+     * price_multiply function.
+     *
+     * Returns the price with no decimals. 10.10 returns as 1010.
+     *
+     * @access public static
+     *
+     * @param $price
+     * @param null $currency
+     * @return integer
+     */
     public static function price_multiply( $price, $currency = null ) {
         if ( $currency && self::is_currency_using_decimals( $currency ) ) {
             return number_format( $price * 100, 0, '', '' );
@@ -352,10 +352,13 @@ class WC_PensoPay_Helper {
 	public static function get_payment_type_logo( $payment_type ) {
         $logos = [
             'american-express'        => 'americanexpress.svg',
+            'anyday'                  => 'anyday.svg',
+            'apple-pay'               => 'apple-pay.svg',
             'dankort'                 => 'dankort.svg',
             'diners'                  => 'diners.svg',
             'edankort'                => 'edankort.png',
             'fbg1886'                 => 'forbrugsforeningen.svg',
+            'google-pay'              => 'google-pay.svg',
             'jcb'                     => 'jcb.svg',
             'maestro'                 => 'maestro.svg',
             'mastercard'              => 'mastercard.svg',
@@ -461,4 +464,43 @@ class WC_PensoPay_Helper {
 
 		return $haystack;
 	}
+
+    /**
+     * @param $browser
+     *
+     * @return bool
+     */
+    public static function is_browser( $browser ) {
+        $u_agent = $_SERVER['HTTP_USER_AGENT'];
+        $name    = 'Unknown';
+
+        if ( false !== stripos( $u_agent, "MSIE" ) && false === stripos( $u_agent, "Opera" ) ) {
+            $name = "MSIE";
+        } elseif ( false !== stripos( $u_agent, "Firefox" ) ) {
+            $name = "Firefox";
+        } elseif ( false !== stripos( $u_agent, "Chrome" ) ) {
+            $name = "Chrome";
+        } elseif ( false !== stripos( $u_agent, "Safari" ) ) {
+            $name = "Safari";
+        } elseif ( false !== stripos( $u_agent, "Opera" ) ) {
+            $name = "Opera";
+        } elseif ( false !== stripos( $u_agent, "Netscape" ) ) {
+            $name = "Netscape";
+        }
+
+        return strtolower( $name ) === strtolower( $browser );
+    }
+
+    /**
+     * @param $status
+     *
+     * @return bool
+     */
+    public static function is_subscription_status( $status ) {
+        if ( strpos( 'wc-', $status ) !== 0 ) {
+            $status = 'wc-' . $status;
+        }
+
+        return array_key_exists( $status, wcs_get_subscription_statuses() );
+    }
 }

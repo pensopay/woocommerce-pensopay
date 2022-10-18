@@ -271,7 +271,7 @@ class WC_PensoPay_Order extends WC_Order {
 	 */
 	public function note( $message ) {
 		if ( isset( $message ) ) {
-			$this->add_order_note( 'PensoPay: ' . $message );
+			$this->add_order_note( 'Pensopay: ' . $message );
 		}
 	}
 
@@ -290,7 +290,7 @@ class WC_PensoPay_Order extends WC_Order {
 
 		if ( $is_subscription ) {
 			$params_subscription = [
-				'description' => 'woocommerce-subscription',
+				'description' => apply_filters( 'woocommerce_pensopay_transaction_params_description', 'woocommerce-subscription', $this ),
 			];
 		}
 
@@ -304,7 +304,7 @@ class WC_PensoPay_Order extends WC_Order {
 			'shopsystem'       => $this->get_transaction_shopsystem_params(),
 		], $this->get_custom_variables() );
 
-		return array_merge( $params, $params_subscription );
+        return apply_filters( 'woocommerce_pensopay_transaction_params', array_merge( $params, $params_subscription ), $this );
 	}
 
 	/**
@@ -864,6 +864,9 @@ class WC_PensoPay_Order extends WC_Order {
 		$order_id = $this->get_id();
 
 		return in_array( get_post_meta( $order_id, '_payment_method', true ), [
+            'pensopay_anyday',
+            'pensopay_apple_pay',
+            'pensopay_google_pay',
 			'ideal',
 			'fbg1886',
 			'ideal',

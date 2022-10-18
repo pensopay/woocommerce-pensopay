@@ -10,7 +10,7 @@ class WC_PensoPay_MobilePay extends WC_PensoPay_Instance {
 		// Get gateway variables
 		$this->id = 'mobilepay';
 
-		$this->method_title = 'PensoPay - MobilePay';
+		$this->method_title = 'Pensopay - MobilePay';
 
 		$this->setup();
 

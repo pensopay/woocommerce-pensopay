@@ -10,7 +10,7 @@ class WC_PensoPay_iDEAL extends WC_PensoPay_Instance {
         // Get gateway variables
         $this->id = 'ideal';
 
-        $this->method_title = 'PensoPay - iDEAL';
+        $this->method_title = 'Pensopay - iDEAL';
 
         $this->setup();
 

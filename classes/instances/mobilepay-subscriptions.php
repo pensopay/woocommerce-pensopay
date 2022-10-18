@@ -12,7 +12,7 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 		// Get gateway variables
 		$this->id = 'mobilepay-subscriptions';
 
-		$this->method_title = 'PensoPay - MobilePay Subscriptions | Currently in BETA! Not suggested for live stores';
+		$this->method_title = 'Pensopay - MobilePay Subscriptions';
 
 		$this->setup();
 
@@ -33,6 +33,15 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
         ];
 
 		add_filter( 'woocommerce_pensopay_cardtypelock_mobilepay_subscriptions', [ $this, 'filter_cardtypelock' ] );
+        add_action( 'woocommerce_scheduled_subscription_payment_' . $this->id, [ WC_PP(), 'scheduled_subscription_payment' ], 10, 2 );
+        add_filter( 'woocommerce_pensopay_transaction_params_invoice', [ $this, 'maybe_remove_phone_number' ], 10, 2 );
+        add_filter( 'woocommerce_available_payment_gateways', [ $this, 'adjust_available_gateways' ] );
+        add_filter( "woocommerce_pensopay_create_recurring_payment_data_{$this->id}", [ $this, 'recurring_payment_data' ], 10, 3 );
+        add_action( 'woocommerce_pensopay_callback_subscription_authorized', [ $this, 'on_subscription_authorized' ], 10, 3 );
+        add_action( 'woocommerce_pensopay_scheduled_subscription_payment_after', [ $this, 'on_after_scheduled_payment_created' ], 10, 2 );
+        add_filter( 'woocommerce_pensopay_callback_payment_captured', [ $this, 'maybe_process_order_on_capture' ], 10, 2 );
+        add_filter( 'woocommerce_subscription_payment_meta', [ $this, 'woocommerce_subscription_payment_meta' ], 10, 2 );
+        add_action( 'woocommerce_pensopay_callback_subscription_cancelled', [ $this, 'on_subscription_cancelled' ], 10, 4 );
 	}
 
 	/**
@@ -66,25 +75,74 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 				'type'        => 'textarea',
 				'description' => __( 'This controls the description which the user sees during checkout.', 'woo-pensopay' ),
 				'default'     => __( 'Subscribe with your mobile phone', 'woo-pensopay' )
-			]
+			],
+            'checkout_instant_activation'         => [
+                'title'       => __( 'Activate subscriptions immediately.', 'woo-pensopay' ),
+                'type'        => 'checkbox',
+                'label'       => __( 'Enable', 'woo-pensopay' ),
+                'default'     => 'no',
+                'description' => __( 'Activates the subscription after the customer authorizes an agreement. <strong>Not suitable for membership pages selling virtual products</strong> as the first payment might take up to 48 hours to either succeed or fail. Read more <a href="https://learn.quickpay.net/helpdesk/da/articles/payment-methods/mobilepay-subscriptions/#oprettelse-af-abonnement" target="_blank">here</a>', 'woo-pensopay' ),
+            ],
+            'checkout_prefill_phone_number'       => [
+                'title'       => __( 'Pre-fill phone number', 'woo-pensopay' ),
+                'type'        => 'checkbox',
+                'label'       => __( 'Enable', 'woo-pensopay' ),
+                'default'     => 'yes',
+                'description' => __( 'When enabled the customer\'s phone number will be used on the MobilePay payment page.', 'woo-pensopay' ),
+            ],
+            [
+                'type'  => 'title',
+                'title' => 'Renewals'
+            ],
+            'renewal_keep_active'                 => [
+                'title'       => __( 'Keep subscription active', 'woo-pensopay' ),
+                'type'        => 'checkbox',
+                'label'       => __( 'Enable', 'woo-pensopay' ),
+                'default'     => 'no',
+                'description' => __( 'When enabled the subscription will automatically be activated after scheduling the renewal payment. If the payment fails the subscription will be put on-hold.', 'woo-pensopay' ),
+            ],
+            [
+                'type'  => 'title',
+                'title' => __( 'Agreements', 'woo-pensopay' )
+            ],
+            'mps_transaction_cancellation_status' => [
+                'title'             => __( 'Cancelled agreements status', 'woo-pensopay' ),
+                'type'              => 'select',
+                'class'             => 'wc-enhanced-select',
+                'css'               => 'width: 450px;',
+                'default'           => 'none',
+                'description'       => __( 'Changes subscription status in case of cancelled payment agreement from either the QuickPay manager or the customer\'s MobilePay app', 'woo-pensopay' ),
+                'options'           => $this->get_mps_cancel_agreement_status_options(),
+                'custom_attributes' => [
+                    'data-placeholder' => __( 'Select status', 'woo-pensopay' )
+                ]
+            ],
 		];
 	}
 
-    public function is_available() {
-	    $is_available = parent::is_available();
-
-        if( !$is_available || !class_exists( 'WC_Subscriptions_Product' ) || !is_checkout()) {
-            return $is_available;
-        }
-
-        $bFound = false;
-        foreach (WC()->cart->get_cart() as $item) {
-            if (WC_Subscriptions_Product::is_subscription( $item['data']->get_id() )) {
-                $bFound = true;
+    /**
+     * Handle subscription cancellation
+     *
+     * @param WC_PensoPay_Order $subscription
+     * @param WC_PensoPay_Order $parent_order
+     * @param stdClass $operation
+     * @param stdClass $json
+     */
+    public function on_subscription_cancelled( $subscription, $order, $operation, $json ) {
+        if ( $subscription->get_payment_method() === $this->id && ( $transition_to = $this->s( 'mps_transaction_cancellation_status' ) ) ) {
+            $allowed_transition_from = apply_filters( 'woocommerce_pensopay_mps_cancelled_from_status', [ 'active' ], $subscription, $order, $json );
+            if ( $subscription->has_status( $allowed_transition_from ) && ! $subscription->has_status( $transition_to ) && WC_PensoPay_Helper::is_subscription_status( $transition_to ) ) {
+                $subscription->update_status( $transition_to, ! empty( $operation->aq_status_msg ) ? $operation->aq_status_msg : __( 'Payment transaction has been cancelled by merchant or customer', 'woo-pensopay' ) );
             }
         }
+    }
 
-        return $bFound;
+    private function get_mps_cancel_agreement_status_options() {
+        return apply_filters( 'woocommerce_pensopay_mps_cancel_agreement_status_options', [
+            'none'      => __( 'Do nothing', 'woo-pensopay' ),
+            'on-hold'   => wc_get_order_status_name( 'on-hold' ),
+            'cancelled' => wc_get_order_status_name( 'cancelled' ),
+        ], $this );
     }
 
 	/**
@@ -98,4 +156,131 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 	public function filter_cardtypelock() {
 		return 'mobilepay-subscriptions';
 	}
+
+    /**
+     * If disabled, the phone number won't be sent to MobilePay which means that customers will have to type in their
+     * phone numbers manually.
+     *
+     * @param array $data
+     * @param WC_PensoPay_Order $order
+     *
+     * @return array
+     */
+    public function maybe_remove_phone_number( $data, $order ) {
+        if ( $order->get_payment_method() === $this->id ) {
+            if ( ! WC_PensoPay_Helper::option_is_enabled( $this->s( 'checkout_prefill_phone_number' ) ) ) {
+                if ( isset( $data['phone_number'] ) ) {
+                    $data['phone_number'] = null;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Only show the gateway if the cart contains a subscription product
+     *
+     * @param $available_gateways
+     *
+     * @return mixed
+     */
+    public function adjust_available_gateways( $available_gateways ) {
+        if ( isset( $available_gateways[ $this->id ] )
+            && WC_PensoPay_Subscription::plugin_is_active()
+            && ( is_cart() || is_checkout() ) && ! WC_Subscriptions_Cart::cart_contains_subscription()
+            && ! WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment ) {
+            unset( $available_gateways[ $this->id ] );
+        }
+
+        return $available_gateways;
+    }
+
+    /**
+     * @param array $data
+     * @param \WC_PensoPay_Order $order
+     * @param int $subscription_id
+     *
+     * @return array
+     */
+    public function recurring_payment_data( $data, $order, $subscription_id ) {
+        if ( empty( $data['due_date'] ) ) {
+            $data['auto_capture_at'] = wp_date( 'Y-m-d', strtotime( 'now + 2 days' ), apply_filters( 'woocommerce_pensopay_mps_timezone', null, $data, $order, $subscription_id ) );
+            $data['description']     = sprintf( __( 'Payment of #%s', 'woo-pensopay' ), $order->get_order_number() );
+        }
+
+        return $data;
+    }
+
+    /**
+     * If enabled, the module will activate the subscription after an agreement has been authorized, but
+     *
+     * @param WC_PensoPay_Order $subscription
+     * @param WC_PensoPay_Order $parent_order
+     * @param stdClass $transaction
+     */
+    public function on_subscription_authorized( $subscription, $parent_order, $transaction ) {
+        try {
+            if ( $subscription->get_payment_method() === self::instance_id && $subscription = wcs_get_subscription( $subscription->get_id() ) ) {
+                $instant_activation    = WC_PensoPay_Helper::option_is_enabled( $this->s( 'checkout_instant_activation' ) );
+                $subscription_inactive = ! $subscription->has_status( 'active' );
+
+                if ( $instant_activation && $subscription_inactive ) {
+                    $subscription->update_status( 'active', __( "'Activate subscriptions immediately.' enabled. Activating subscription due to authorized MobilePay agreement", 'woo-pensopay' ) );
+                    $subscription->save();
+                }
+            }
+        } catch ( \Exception $e ) {
+            ( new WC_PensoPay_Log() )->add( 'Unable to activate subscription immediately after payment authorization: ' . $e->getMessage() );
+        }
+    }
+
+    /**
+     * @param WC_Subscription $subscription
+     * @param WC_Order $renewal_order
+     */
+    public function on_after_scheduled_payment_created( $subscription, $renewal_order ) {
+        if ( WC_PensoPay_Helper::option_is_enabled( $this->s( 'renewal_keep_active' ) ) ) {
+            try {
+                $subscription->update_status( 'active' );
+            } catch ( \Exception $e ) {
+                $subscription->add_order_note( $e->getMessage() );
+            }
+        }
+    }
+
+    /**
+     * @param WC_PensoPay_Order $order
+     * @param stdClass $transaction
+     *
+     * @return bool
+     */
+    public function maybe_process_order_on_capture( $order, $transaction ) {
+        if ( $order->get_payment_method() === $this->id && $order->needs_payment() ) {
+            $order->payment_complete( $transaction->id );
+        }
+    }
+
+    /**
+     * Declare gateway's meta data requirements in case of manual payment gateway changes performed by admins.
+     *
+     * @param array $payment_meta
+     *
+     * @param WC_Subscription $subscription
+     *
+     * @return array
+     */
+    public function woocommerce_subscription_payment_meta( $payment_meta, $subscription ) {
+        $order                     = new WC_PensoPay_Order( $subscription->get_id() );
+        $payment_meta[ $this->id ] = [
+            'post_meta' => [
+                '_pensopay_transaction_id' => [
+                    'value' => $order->get_transaction_id(),
+                    'label' => __( 'Pensopay Transaction ID', 'woo-pensopay' ),
+                ],
+            ],
+        ];
+
+        return $payment_meta;
+    }
 }

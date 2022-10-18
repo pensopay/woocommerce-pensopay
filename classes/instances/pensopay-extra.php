@@ -16,7 +16,7 @@ class WC_PensoPay_Extra extends WC_PensoPay_Instance {
 		// Get gateway variables
 		$this->id = 'pensopay-extra';
 
-		$this->method_title = 'PensoPay - Extra';
+		$this->method_title = 'Pensopay - Extra';
 
 		$this->setup();
 
@@ -40,7 +40,7 @@ class WC_PensoPay_Extra extends WC_PensoPay_Instance {
 			'enabled'        => [
 				'title'   => __( 'Enable', 'woo-pensopay' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Enable Extra PensoPay gateway', 'woo-pensopay' ),
+				'label'   => __( 'Enable Extra Pensopay gateway', 'woo-pensopay' ),
 				'default' => 'no'
 			],
 			'_Shop_setup'    => [
@@ -51,7 +51,7 @@ class WC_PensoPay_Extra extends WC_PensoPay_Instance {
 				'title'       => __( 'Title', 'woo-pensopay' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'woo-pensopay' ),
-				'default'     => __( 'PensoPay', 'woo-pensopay' )
+				'default'     => __( 'Pensopay', 'woo-pensopay' )
 			],
 			'description'    => [
 				'title'       => __( 'Customer Message', 'woo-pensopay' ),
@@ -68,7 +68,7 @@ class WC_PensoPay_Extra extends WC_PensoPay_Instance {
 			'pensopay_icons' => [
 				'title'             => __( 'Credit card icons', 'woo-pensopay' ),
 				'type'              => 'multiselect',
-				'description'       => __( 'Choose the card icons you wish to show next to the PensoPay payment option in your shop.', 'woo-pensopay' ),
+				'description'       => __( 'Choose the card icons you wish to show next to the Pensopay payment option in your shop.', 'woo-pensopay' ),
 				'desc_tip'          => true,
 				'class'             => 'wc-enhanced-select',
 				'css'               => 'width: 450px;',

@@ -10,7 +10,7 @@ class WC_PensoPay_FBG1886 extends WC_PensoPay_Instance {
 		// Get gateway variables
 		$this->id = 'fbg1886';
 
-		$this->method_title = 'PensoPay - Forbrugsforeningen af 1886';
+		$this->method_title = 'Pensopay - Forbrugsforeningen af 1886';
 
 		$this->setup();
 

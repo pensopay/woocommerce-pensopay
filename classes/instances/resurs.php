@@ -10,7 +10,7 @@ class WC_PensoPay_Resurs extends WC_PensoPay_Instance {
         // Get gateway variables
         $this->id = 'resurs';
 
-        $this->method_title = 'PensoPay - Resurs Bank';
+        $this->method_title = 'Pensopay - Resurs Bank';
 
         $this->setup();
 

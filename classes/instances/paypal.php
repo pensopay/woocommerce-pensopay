@@ -10,7 +10,7 @@ class WC_PensoPay_PayPal extends WC_PensoPay_Instance {
 		// Get gateway variables
 		$this->id = 'pensopay_paypal';
 
-		$this->method_title = 'PensoPay - PayPal';
+		$this->method_title = 'Pensopay - PayPal';
 
 		$this->setup();
 
