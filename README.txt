@@ -27,6 +27,10 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 6.3.1 =
+* Fix: Better handling of vipps
+* Fix: Issue where operations array would be null
+
 = 6.3.0 =
 * Fix: Rely on auto_capture_at instead of due_date for MPS payments
 * Fix: Enhance the way auto_capture_at is calculated. It now relies on the timezone used in WordPress but can be changed with the filter woocommerce_pensopay_mps_timezone
