@@ -80,7 +80,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 		if ( ! is_object( $this->resource_data ) ) {
 			throw new PensoPay_API_Exception( 'No API payment resource data available.', 0 );
 		}
-		$operations = array_reverse( $this->resource_data->operations );
+		$operations = array_reverse( (array) $this->resource_data->operations );
 
 		foreach ( $operations as $operation ) {
 			if ( $operation->type === $type ) {

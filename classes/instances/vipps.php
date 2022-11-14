@@ -68,6 +68,6 @@ class WC_PensoPay_Vipps extends WC_PensoPay_Instance {
 	 */
 	public function filter_cardtypelock( )
 	{
-		return 'vipps';
+		return 'vipps,vippspsp';
 	}
 }
