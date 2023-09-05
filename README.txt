@@ -29,6 +29,7 @@ General:
 == Changelog ==
 = 6.3.2 = 
 * Fix: Sanitize pensopay_action in pensopay_manual_transaction_actions handler
+* Fix: Remove final from private __clone() method to get rid of php >= 8 warning
 
 = 6.3.1 =
 * Fix: Better handling of vipps
