@@ -37,7 +37,7 @@ abstract class WC_PensoPay_Module {
 	/**
 	 *
 	 */
-	final private function __clone() {
+	private function __clone() {
 	}
 
 }
