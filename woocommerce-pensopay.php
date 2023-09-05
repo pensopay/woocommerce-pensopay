@@ -1241,7 +1241,7 @@ function init_pensopay_gateway() {
 								break;
 
 							case 'refund' :
-								$order->note( sprintf( __( 'Refunded %s %s', 'woo-pensopay' ), WC_PensoPay_Helper::price_normalize( $transaction->amount ), $json->currency ) );
+								$order->note( sprintf( __( 'Refunded %s %s', 'woo-pensopay' ), WC_PensoPay_Helper::price_normalize( $transaction->amount, $json->currency ), $json->currency ) );
                                 break;
 
                             case 'recurring':
