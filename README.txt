@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 6.3.2 = 
+* Fix: Sanitize pensopay_action in pensopay_manual_transaction_actions handler
+
 = 6.3.1 =
 * Fix: Better handling of vipps
 * Fix: Issue where operations array would be null

@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '6.3.1' );
+define( 'WCPP_VERSION', '6.3.2' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -557,8 +557,8 @@ function init_pensopay_gateway() {
 		 */
 		public function ajax_pensopay_manual_transaction_actions() {
 			if ( isset( $_REQUEST['pensopay_action'] ) && isset( $_REQUEST['post'] ) ) {
-				$param_action = $_REQUEST['pensopay_action'];
-				$param_post   = $_REQUEST['post'];
+				$param_action = sanitize_text_field( $_REQUEST['pensopay_action'] );
+				$param_post   = sanitize_text_field( $_REQUEST['post'] );
 
                 if ( ! woocommerce_pensopay_can_user_manage_payments( $param_action ) ) {
                     printf( 'Your user is not capable of %s payments.', $param_action );
