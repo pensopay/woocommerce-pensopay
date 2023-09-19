@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 6.3.3 =
+* Compatibility test with WC 8.1
+
 = 6.3.2 = 
 * Fix: Sanitize pensopay_action in pensopay_manual_transaction_actions handler
 * Fix: Remove final from private __clone() method to get rid of php >= 8 warning
