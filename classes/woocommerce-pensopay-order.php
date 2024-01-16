@@ -3,79 +3,37 @@
 /**
  * WC_PensoPay_Order class
  *
- * @class        WC_PensoPay_Order
- * @version        1.0.0
+ * @class          WC_PensoPay_Order
+ * @version        1.0.1
  * @package        Woocommerce_PensoPay/Classes
- * @category    Class
- * @author        PensoPay
+ * @category       Class
+ * @author         PerfectSolution
  */
 
 class WC_PensoPay_Order extends WC_Order {
 
-	/** */
-	const META_PAYMENT_METHOD_CHANGE_COUNT = '_pensopay_payment_method_change_count';
-	/** */
-	const META_FAILED_PAYMENT_COUNT = '_pensopay_failed_payment_count';
-
-    /**
-	 * get_order_id_from_callback function.
-	 *
-	 * Returns the order ID based on the ID retrieved from the PensoPay callback.
-	 *
-	 * @access static public
-	 *
-	 * @param object - the callback data
+	/**
+	 * @param $callback_data
 	 *
 	 * @return int
 	 */
-	public static function get_order_id_from_callback( $callback_data ) {
-		global $wpdb;
+	public static function get_order_id_from_callback( $callback_data ): int {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Callbacks::get_order_id_from_callback' );
 
-		// Check for the post ID reference on the response object.
-		// This should be available on all new orders.
-		if ( ! empty( $callback_data->variables ) && ! empty( $callback_data->variables->order_post_id ) ) {
-			return $callback_data->variables->order_post_id;
-		} else if ( isset( $_GET['order_post_id'] ) ) {
-			return trim( $_GET['order_post_id'] );
-		} else {
-			$result = $wpdb->get_var("SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'TRANSACTION_ORDER_ID' AND meta_value = '{$callback_data->order_id}' LIMIT 1");
-			if ($result) {
-				return $result;
-			}
-            $result = $wpdb->get_var("SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'PENSOPAY_PAYMENT_ID' AND meta_value = '{$callback_data->id}' ORDER BY meta_id DESC LIMIT 1");
-			if ($result) {
-			    return $result;
-            }
-		}
-
-		// Fallback
-		preg_match( '/\d{4,}$/', $callback_data->order_id, $order_number );
-		$order_number = (int) end( $order_number );
-
-		return $order_number;
+		return WC_PensoPay_Callbacks::get_order_id_from_callback( $callback_data );
 	}
 
 	/**
-	 * get_subscription_id_from_callback function.
-	 *
 	 * Returns the subscription ID based on the ID retrieved from the PensoPay callback, if present.
 	 *
-	 * @access static public
-	 *
-	 * @param object - the callback data
+	 * @param mixed $callback_data - the callback data
 	 *
 	 * @return int
 	 */
-	public static function get_subscription_id_from_callback( $callback_data ) {
-		// Check for the post ID reference on the response object.
-		// This should be available on all new orders.
-		if ( ! empty( $callback_data->variables ) && ! empty( $callback_data->variables->subscription_post_id ) ) {
-			return $callback_data->variables->subscription_post_id;
-		} else if ( isset( $_GET['subscription_post_id'] ) ) {
-			return trim( $_GET['subscription_post_id'] );
-		}
+	public static function get_subscription_id_from_callback( $callback_data ): int {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Callbacks::get_subscription_id_from_callback' );
 
-		return null;
+		return WC_PensoPay_Callbacks::get_subscription_id_from_callback( $callback_data );
 	}
 
 
@@ -87,68 +45,66 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @access public
 	 * @return string
 	 */
-	public function get_payment_id() {
-		return get_post_meta( $this->get_id(), 'PENSOPAY_PAYMENT_ID', true );
+	public function get_payment_id(): ?string {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::get_payment_id' );
+
+		return WC_PensoPay_Order_Payments_Utils::get_payment_id( $this );
 	}
 
 	/**
-	 * set_payment_id function
-	 *
 	 * Set the payment ID on an order
 	 *
-	 * @access public
+	 * @param $payment_link
+	 *
 	 * @return void
 	 */
-	public function set_payment_id( $payment_link ) {
-		update_post_meta( $this->get_id(), 'PENSOPAY_PAYMENT_ID', $payment_link );
+	public function set_payment_id( $payment_link ): void {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::set_payment_id' );
+		WC_PensoPay_Order_Payments_Utils::set_payment_id( $this, $payment_link );
 	}
 
 	/**
-	 * delete_payment_id function
-	 *
 	 * Delete the payment ID on an order
 	 *
 	 * @access public
 	 * @return void
 	 */
-	public function delete_payment_id() {
-		delete_post_meta( $this->get_id(), 'PENSOPAY_PAYMENT_ID' );
+	public function delete_payment_id(): void {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::delete_payment_id' );
+		WC_PensoPay_Order_Payments_Utils::delete_payment_id( $this );
 	}
 
 	/**
-	 * get_payment_link function
-	 *
 	 * If the order has a payment link, we will return it. If no link is set we return FALSE.
 	 *
-	 * @access public
-	 * @return string
+	 * @return null|string
 	 */
-	public function get_payment_link() {
-		return get_post_meta( $this->get_id(), 'PENSOPAY_PAYMENT_LINK', true );
+	public function get_payment_link(): ?string {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::get_payment_link' );
+
+		return WC_PensoPay_Order_Payments_Utils::get_payment_link( $this );
 	}
 
 	/**
-	 * set_payment_link function
-	 *
 	 * Set the payment link on an order
 	 *
-	 * @access public
+	 * @param $payment_link
+	 *
 	 * @return void
 	 */
-	public function set_payment_link( $payment_link ) {
-		update_post_meta( $this->get_id(), 'PENSOPAY_PAYMENT_LINK', $payment_link );
+	public function set_payment_link( $payment_link ): void {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::set_payment_link' );
+		WC_PensoPay_Order_Payments_Utils::set_payment_link( $this, $payment_link );
 	}
 
 	/**
-	 * delete_payment_link function
-	 *
 	 * Delete the payment link on an order
 	 *
-	 * @access public
 	 * @return void
 	 */
-	public function delete_payment_link() {
-		delete_post_meta( $this->get_id(), 'PENSOPAY_PAYMENT_LINK' );
+	public function delete_payment_link(): void {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::delete_payment_link' );
+		WC_PensoPay_Order_Payments_Utils::delete_payment_link( $this );
 	}
 
 	/**
@@ -157,11 +113,12 @@ class WC_PensoPay_Order extends WC_Order {
 	 * If the order has a transaction order reference, we will return it. If no transaction order reference is set we
 	 * return FALSE.
 	 *
-	 * @access public
 	 * @return string
 	 */
-	public function get_transaction_order_id() {
-		return get_post_meta( $this->get_id(), 'TRANSACTION_ORDER_ID', true );
+	public function get_transaction_order_id(): string {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::get_transaction_order_id' );
+
+		return WC_PensoPay_Order_Payments_Utils::get_transaction_order_id( $this );
 	}
 
 	/**
@@ -170,77 +127,29 @@ class WC_PensoPay_Order extends WC_Order {
 	 * Set the transaction order ID on an order
 	 *
 	 * @access public
+	 *
+	 * @param $transaction_order_id
+	 *
 	 * @return void
 	 */
-	public function set_transaction_order_id( $transaction_order_id ) {
-		update_post_meta( $this->get_id(), 'TRANSACTION_ORDER_ID', $transaction_order_id );
+	public function set_transaction_order_id( $transaction_order_id ): void {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::set_transaction_order_id' );
+
+		WC_PensoPay_Order_Payments_Utils::set_transaction_order_id( $this, $transaction_order_id );
 	}
 
 	/**
-	 * get_payment_cancelled function
-	 *
-	 * If the payment was in an iframe and was cancelled, it will return true.
-	 *
-	 * @access public
-	 * @return bool
-	 */
-	public function get_payment_cancelled() {
-		return get_post_meta( $this->get_id(), 'PENSOPAY_PAYMENT_CANCELLED', true );
-	}
-
-	/**
-	 * set_payment_cancelled function
-	 *
-	 * Set whether an iframe payment was cancelled.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function set_payment_cancelled( $bool ) {
-		update_post_meta( $this->get_id(), 'PENSOPAY_PAYMENT_CANCELLED', $bool );
-	}
-
-	/**
-	 * add_transaction_fee function.
-	 *
 	 * Adds order transaction fee to the order before sending out the order confirmation
 	 *
-	 * @access   public
-	 *
-	 * @param $fee_amount
+	 * @param $fee_in_cents
 	 *
 	 * @return bool
 	 */
 
-	public function add_transaction_fee( $fee_amount ) {
-		if ( $fee_amount > 0 ) {
+	public function add_transaction_fee( $fee_in_cents ): bool {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::add_order_item_transaction_fee' );
 
-			try {
-				$fee = new WC_Order_Item_Fee();
-
-				$fee->set_name( __( 'Payment Fee', 'woo-pensopay' ) );
-				$fee->set_total( $fee_amount / 100 );
-				$fee->set_tax_status( 'none' );
-				$fee->set_total_tax( 0 );
-				$fee->set_order_id( $this->get_id() );
-
-				$fee->save();
-
-				$this->add_item( apply_filters( 'woocommerce_pensopay_transaction_fee_data', $fee, $this ) );
-
-				$this->calculate_taxes();
-				$this->calculate_totals( false );
-				$this->save();
-
-				return true;
-			} catch ( WC_Data_Exception $e ) {
-				$logger = wc_get_logger();
-				$logger->error( $e->getMessage() );
-			}
-
-		}
-
-		return false;
+		return WC_PensoPay_Order_Payments_Utils::add_order_item_transaction_fee( $this, (int) $fee_in_cents );
 	}
 
 	/**
@@ -248,31 +157,24 @@ class WC_PensoPay_Order extends WC_Order {
 	 *
 	 * Checks if the order is currently in a failed renewal
 	 *
-	 * @access public
 	 * @return boolean
 	 */
-	public function subscription_is_renewal_failure() {
-		$renewal_failure = false;
+	public function subscription_is_renewal_failure(): bool {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Utils::is_failed_renewal' );
 
-		if ( WC_PensoPay_Subscription::plugin_is_active() ) {
-			$renewal_failure = ( WC_PensoPay_Subscription::is_renewal( $this ) && $this->get_status() == 'failed' );
-		}
-
-		return $renewal_failure;
+		return WC_PensoPay_Order_Utils::is_failed_renewal( $this );
 	}
 
 	/**
-	 * note function.
-	 *
 	 * Adds a custom order note
 	 *
-	 * @access public
+	 * @param $message
+	 *
 	 * @return void
 	 */
-	public function note( $message ) {
-		if ( isset( $message ) ) {
-			$this->add_order_note( 'Pensopay: ' . $message );
-		}
+	public function note( $message ): void {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Utils::add_note' );
+		WC_PensoPay_Order_Utils::add_note( $this, (string) $message );
 	}
 
 	/**
@@ -283,28 +185,10 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @access public
 	 * @return array
 	 */
-	public function get_transaction_params() {
-		$is_subscription = $this->contains_subscription() || $this->is_request_to_change_payment() || WC_PensoPay_Subscription::is_subscription( $this->get_id() );
+	public function get_transaction_params(): array {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::prepare_transaction_params' );
 
-		$params_subscription = [];
-
-		if ( $is_subscription ) {
-			$params_subscription = [
-				'description' => apply_filters( 'woocommerce_pensopay_transaction_params_description', 'woocommerce-subscription', $this ),
-			];
-		}
-
-        $should_send_address = WC_PensoPay_Helper::option_is_enabled(WC_PP()->s('pensopay_sendaddresses'));
-		$params = array_merge( [
-			'order_id'         => $this->get_order_number_for_api(),
-			'basket'           => $this->get_transaction_basket_params(),
-			'shipping_address' => $should_send_address ? $this->get_transaction_shipping_address_params() : [],
-			'invoice_address'  => $should_send_address ? $this->get_transaction_invoice_address_params() : [],
-			'shipping'         => $this->get_transaction_shipping_params(),
-			'shopsystem'       => $this->get_transaction_shopsystem_params(),
-		], $this->get_custom_variables() );
-
-        return apply_filters( 'woocommerce_pensopay_transaction_params', array_merge( $params, $params_subscription ), $this );
+		return WC_PensoPay_Order_Payments_Utils::prepare_transaction_params( $this );
 	}
 
 	/**
@@ -315,147 +199,59 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @access public
 	 * @return boolean
 	 */
-	public function contains_subscription() {
-		$has_subscription = false;
+	public function contains_subscription(): bool {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Utils::contains_subscription' );
 
-		if ( WC_PensoPay_Subscription::plugin_is_active() ) {
-			$has_subscription = wcs_order_contains_subscription( $this );
-		}
-
-		return $has_subscription;
+		return WC_PensoPay_Order_Utils::contains_subscription( $this );
 	}
 
 	/**
-	 * is_request_to_change_payment
-	 *
-	 * Check if the current request is trying to change the payment gateway
-	 *
 	 * @return bool
 	 */
-	public function is_request_to_change_payment() {
-		$is_request_to_change_payment = false;
+	public function is_request_to_change_payment(): bool {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Requests_Utils::is_request_to_change_payment' );
 
-		if ( WC_PensoPay_Subscription::plugin_is_active() ) {
-			$is_request_to_change_payment = WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment;
-
-			if ( ! $is_request_to_change_payment && ! empty( $_GET['pensopay_change_payment_method'] ) ) {
-				$is_request_to_change_payment = true;
-			}
-		}
-
-		return apply_filters( 'woocommerce_pensopay_is_request_to_change_payment', $is_request_to_change_payment );
+		return WC_PensoPay_Requests_Utils::is_request_to_change_payment();
 	}
 
 	/**
-	 * get_order_number_for_api function.
-	 *
-	 * Prefix the order number if necessary. This is done
-	 * because PensoPay requires the order number to contain at least
-	 * 4 chars.
-	 *
-	 * @access public
-	 *
 	 * @param bool $recurring
 	 *
 	 * @return string
 	 */
-	public function get_order_number_for_api( $recurring = false ) {
-		$minimum_length = 4;
+	public function get_order_number_for_api( bool $recurring = false ): ?string {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::get_order_number_for_api' );
 
-		$order_id = $this->get_id();
-
-		// When changing payment method on subscriptions
-		if ( WC_PensoPay_Subscription::is_subscription( $order_id ) ) {
-			$order_number = $order_id;
-		} // On initial subscription authorizations
-		else if ( ! $this->order_contains_switch() && $this->contains_subscription() && ! $recurring ) {
-			// Find all subscriptions
-			$subscriptions = WC_PensoPay_Subscription::get_subscriptions_for_order( $order_id );
-			// Get the last one and base the transaction on it.
-			$subscription = end( $subscriptions );
-			// Fetch the ID of the subscription, not the parent order.
-			$order_number = $subscription->get_id();
-
-			// If an initial payment on a subscription failed (recurring payment), create a new subscription with appended ID.
-			if ( $this->get_failed_pensopay_payment_count() > 0 ) {
-				$order_number .= sprintf( '-%d', $this->get_failed_pensopay_payment_count() );
-			}
-		} // On recurring / payment attempts
-		else {
-			// Normal orders - get the order number
-			$order_number = $this->get_clean_order_number();
-			// If an initial payment on a subscription failed (recurring payment), create a new subscription with appended ID.
-			if ( $this->get_failed_pensopay_payment_count() > 0 ) {
-				$order_number .= sprintf( '-%d', $this->get_failed_pensopay_payment_count() );
-			} // If manual payment of renewal, append the order number to avoid duplicate order numbers.
-			else if ( WC_PensoPay_Subscription::cart_contains_failed_renewal_order_payment() ) {
-				// Get the last one and base the transaction on it.
-				$subscription = WC_PensoPay_Subscription::get_subscriptions_for_renewal_order( $this->id, true );
-                $order_number .= sprintf( '-%d', $subscription ? $subscription->get_failed_payment_count() : time() );
-			}
-			// FIXME: This is for backwards compatability only. Before 4.5.6 orders were not set to 'FAILED' when a recurring payment failed.
-			// FIXME: To allow customers to pay the outstanding, we must append a value to the order number to avoid errors with duplicate order numbers in the API.
-			else if ( WC_PensoPay_Subscription::cart_contains_renewal() ) {
-				$order_number .= sprintf( '-%d', time() );
-			}
-		}
-
-		if ( $this->is_request_to_change_payment() ) {
-			$order_number .= sprintf( '-%d', $this->get_payment_method_change_count() );
-		}
-
-		$order_number_length = strlen( $order_number );
-
-		if ( $order_number_length < $minimum_length ) {
-			preg_match( '/\d+/', $order_number, $digits );
-
-			if ( ! empty( $digits ) ) {
-				$missing_digits = $minimum_length - $order_number_length;
-				$order_number   = str_replace( $digits[0], str_pad( $digits[0], strlen( $digits[0] ) + $missing_digits, 0, STR_PAD_LEFT ), $order_number );
-			}
-		}
-
-		return apply_filters( 'woocommerce_pensopay_order_number_for_api', $order_number, $this, $recurring );
+		return WC_PensoPay_Order_Payments_Utils::get_order_number_for_api( $this, $recurring );
 	}
 
 	/**
-	 * @param WC_Order|int $order The WC_Order object or ID of a WC_Order order.
-	 *
 	 * @return bool
 	 */
-	public function order_contains_switch() {
-		if ( function_exists( 'wcs_order_contains_switch' ) ) {
-			return wcs_order_contains_switch( $this );
-		}
+	public function order_contains_switch(): bool {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Utils::contains_switch_order' );
 
-		return false;
+		return WC_PensoPay_Order_Utils::contains_switch_order( $this );
 	}
 
 	/**
-	 * Increase the amount of payment attemtps done through PensoPay
+	 * Increase the amount of payment attempts done through PensoPay
 	 *
 	 * @return int
 	 */
-	public function get_failed_pensopay_payment_count() {
-		$order_id = $this->get_id();
-		$count    = get_post_meta( $order_id, self::META_FAILED_PAYMENT_COUNT, true );
-		if ( empty( $count ) ) {
-			$count = 0;
-		}
+	public function get_failed_pensopay_payment_count(): int {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::get_failed_payment_count' );
 
-		return $count;
+		return WC_PensoPay_Order_Payments_Utils::get_failed_payment_count( $this );
 	}
 
 	/**
-	 * get_clean_order_number function
-	 *
-	 * Returns the order number without leading #
-	 *
-	 * @access public
-	 * @return integer
+	 * @return string
 	 */
-	public function get_clean_order_number() {
-		return str_replace( '#', '', $this->get_order_number() );
+	public function get_clean_order_number(): string {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Utils::get_clean_order_number' );
+
+		return WC_PensoPay_Order_Utils::get_clean_order_number( $this );
 	}
 
 	/**
@@ -463,15 +259,10 @@ class WC_PensoPay_Order extends WC_Order {
 	 *
 	 * @return int
 	 */
-	public function get_payment_method_change_count() {
-		$order_id = $this->get_id();
-		$count    = get_post_meta( $order_id, self::META_PAYMENT_METHOD_CHANGE_COUNT, true );
+	public function get_payment_method_change_count(): int {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::get_payment_method_change_count' );
 
-		if ( ! empty( $count ) ) {
-			return $count;
-		}
-
-		return 0;
+		return WC_PensoPay_Order_Payments_Utils::get_payment_method_change_count( $this );
 	}
 
 	/**
@@ -479,130 +270,61 @@ class WC_PensoPay_Order extends WC_Order {
 	 *
 	 * @return array
 	 */
-	public function get_transaction_basket_params() {
-		// Contains order items in PensoPay basket format
-		$basket = [];
+	public function get_transaction_basket_params(): array {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Transaction_Data_Utils::get_basket_params' );
 
-		foreach ( $this->get_items() as $item_line ) {
-			$basket[] = $this->get_transaction_basket_params_line_helper( $item_line );
-		}
-
-		return apply_filters( 'woocommerce_pensopay_transaction_params_basket', $basket, $this );
+		return WC_PensoPay_Order_Transaction_Data_Utils::get_basket_params( $this );
 	}
+
 
 	/**
-	 * @param $line_item
-	 *
 	 * @return array
 	 */
-	private function get_transaction_basket_params_line_helper( $line_item ) {
-        // Before WC 3.0
-        /**
-         * @var WC_Order_Item_Product $line_item
-         */
+	public function get_transaction_shipping_address_params(): array {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Transaction_Data_Utils::get_shipping_address' );
 
-        $vat_rate = 0;
-
-        if ( wc_tax_enabled() ) {
-            $taxes = WC_Tax::get_rates( $line_item->get_tax_class() );
-            //Get rates of the product
-            $rates = array_shift( $taxes );
-            //Take only the item rate and round it.
-            $vat_rate = ! empty( $rates ) && wc_tax_enabled() ? round( array_shift( $rates ) ) : 0;
-        }
-
-        $data = [
-            'qty'        => $line_item->get_quantity(),
-            'item_no'    => $line_item->get_product_id(),
-            'item_name'  => $line_item->get_name(),
-            'item_price' => (float) ( $line_item->get_total() + $line_item->get_total_tax() ) / $line_item->get_quantity(),
-            'vat_rate'   => $vat_rate,
-        ];
-
-        return [
-            'qty'        => $data['qty'],
-            'item_no'    => $data['item_no'], //
-            'item_name'  => esc_attr( $data['item_name'] ),
-            'item_price' => WC_PensoPay_Helper::price_multiply( $data['item_price'], $this->get_currency() ),
-            'vat_rate'   => $data['vat_rate'] > 0 ? $data['vat_rate'] / 100 : 0 // Basket item VAT rate (ex. 0.25 for 25%)
-        ];
-	}
-
-	public function get_transaction_shipping_address_params() {
-		$shipping_name = trim( $this->get_formatted_shipping_full_name() );
-		$company_name  = $this->get_shipping_company();
-
-		if ( empty ( $shipping_name ) && ! empty( $company_name ) ) {
-			$shipping_name = $company_name;
-		}
-
-		$params = [
-			'name'            => $shipping_name,
-			'street'          => $this->get_shipping_street_name(),
-			'house_number'    => $this->get_shipping_house_number(),
-			'house_extension' => $this->get_shipping_house_extension(),
-			'city'            => $this->get_shipping_city(),
-			'region'          => $this->get_shipping_state(),
-			'zip_code'        => $this->get_shipping_postcode(),
-			'country_code'    => WC_PensoPay_Countries::getAlpha3FromAlpha2( $this->get_shipping_country() ),
-			'phone_number'    => $this->get_billing_phone(),
-			'mobile_number'   => $this->get_billing_phone(),
-			'email'           => $this->get_billing_email(),
-		];
-
-		return apply_filters( 'woocommerce_pensopay_transaction_params_shipping', $params, $this );
+		return WC_PensoPay_Order_Transaction_Data_Utils::get_shipping_address( $this );
 	}
 
 	/**
 	 * @return mixed
 	 */
 	public function get_shipping_street_name() {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'Use WC_PensoPay_Address::get_street_name( $order->get_shipping_address_1() )' );
+
 		return WC_PensoPay_Address::get_street_name( $this->get_shipping_address_1() );
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_shipping_house_number() {
+	public function get_shipping_house_number(): string {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'Use WC_PensoPay_Address::get_house_number( $order->get_shipping_address_1() )' );
+
 		return WC_PensoPay_Address::get_house_number( $this->get_shipping_address_1() );
 	}
 
 	/**
 	 * @return string
 	 */
-	public function get_shipping_house_extension() {
+	public function get_shipping_house_extension(): string {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'Use WC_PensoPay_Address::get_house_extension( $order->get_shipping_address_1() )' );
+
 		return WC_PensoPay_Address::get_house_extension( $this->get_shipping_address_1() );
 	}
 
-	public function get_transaction_invoice_address_params() {
-		$billing_name = trim( $this->get_formatted_billing_full_name() );
-		$company_name = $this->get_billing_company();
+	public function get_transaction_invoice_address_params(): array {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Transaction_Data_Utils::get_invoice_address' );
 
-		if ( empty ( $billing_name ) && ! empty( $company_name ) ) {
-			$billing_name = $company_name;
-		}
-
-		$params = [
-			'name'            => $billing_name,
-			'street'          => $this->get_billing_street_name(),
-			'house_number'    => $this->get_billing_house_number(),
-			'house_extension' => $this->get_billing_house_extension(),
-			'city'            => $this->get_billing_city(),
-			'region'          => $this->get_billing_state(),
-			'zip_code'        => $this->get_billing_postcode(),
-			'country_code'    => WC_PensoPay_Countries::getAlpha3FromAlpha2( $this->get_billing_country() ),
-			'phone_number'    => $this->get_billing_phone(),
-			'mobile_number'   => $this->get_billing_phone(),
-			'email'           => $this->get_billing_email(),
-		];
-
-		return apply_filters( 'woocommerce_pensopay_transaction_params_invoice', $params, $this );
+		return WC_PensoPay_Order_Transaction_Data_Utils::get_invoice_address( $this );
 	}
 
 	/**
 	 * @return mixed
 	 */
 	public function get_billing_street_name() {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'Use WC_PensoPay_Address::get_street_name( $order->get_billing_address_1() )' );
+
 		return WC_PensoPay_Address::get_street_name( $this->get_billing_address_1() );
 	}
 
@@ -610,6 +332,7 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @return string
 	 */
 	public function get_billing_house_number() {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'Use WC_PensoPay_Address::get_house_number( $order->get_billing_address_1() )' );
 
 		return WC_PensoPay_Address::get_house_number( $this->get_billing_address_1() );
 	}
@@ -618,152 +341,62 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @return string
 	 */
 	public function get_billing_house_extension() {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'Use WC_PensoPay_Address::get_house_extension( $order->get_billing_address_1() )' );
+
 		return WC_PensoPay_Address::get_house_extension( $this->get_billing_address_1() );
 	}
 
 	/**
-	 * Creates shipping basket row.
-	 *
 	 * @return array
 	 */
-	private function get_transaction_shipping_params() {
-		$shipping_tax      = $this->get_shipping_tax();
-		$shipping_total    = $this->get_shipping_total();
-		$shipping_incl_vat = $shipping_total;
-		$shipping_vat_rate = 0;
+	public function get_transaction_shopsystem_params(): array {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Transaction_Data_Utils::get_shop_system_params' );
 
-		if ( $shipping_tax && $shipping_total ) {
-			$shipping_incl_vat += $shipping_tax;
-			$shipping_vat_rate = $shipping_tax / $shipping_total; // Basket item VAT rate (ex. 0.25 for 25%)
-		}
-
-		$result = apply_filters( 'woocommerce_pensopay_transaction_params_shipping_row', [
-            'method'          => 'own_delivery',
-            'company'         => $this->get_shipping_method(),
-            'amount'          => WC_PensoPay_Helper::price_multiply( $shipping_incl_vat, $this->get_currency() ),
-            'vat_rate'        => $shipping_vat_rate,
-            'tracking_number' => '',
-            'tracking_url'    => ''
-        ], $this );
-
-		return $result;
+		return WC_PensoPay_Order_Transaction_Data_Utils::get_shop_system_params( $this );
 	}
 
 	/**
-	 * @return array
-	 */
-	public function get_transaction_shopsystem_params() {
-		$params = [
-			'name'   => 'WooCommerce',
-			'version' => WCPP_VERSION,
-		];
-
-		return apply_filters( 'woocommerce_pensopay_transaction_params_shopsystem', $params, $this );
-	}
-
-	/**
-	 * get_custom_variables function.
-	 *
 	 * Returns custom variables chosen in the gateway settings. This information will
 	 * be sent to PensoPay and stored with the transaction.
 	 *
-	 * @access public
 	 * @return array
 	 */
-	public function get_custom_variables() {
-		$custom_vars_settings = (array) WC_PP()->s( 'pensopay_custom_variables' );
-		$custom_vars          = [];
+	public function get_custom_variables(): array {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Transaction_Data_Utils::get_custom_variables' );
 
-		// Single: Order Email
-		if ( in_array( 'customer_email', $custom_vars_settings ) ) {
-			$custom_vars[ __( 'Customer Email', 'woo-pensopay' ) ] = $this->get_billing_email();
-		}
-
-		// Single: Order Phone
-		if ( in_array( 'customer_phone', $custom_vars_settings ) ) {
-			$custom_vars[ __( 'Customer Phone', 'woo-pensopay' ) ] = $this->get_billing_phone();
-		}
-
-		// Single: Browser User Agent
-		if ( in_array( 'browser_useragent', $custom_vars_settings ) ) {
-			$custom_vars[ __( 'User Agent', 'woo-pensopay' ) ] = $this->get_customer_user_agent();
-		}
-
-		// Single: Shipping Method
-		if ( in_array( 'shipping_method', $custom_vars_settings ) ) {
-			$custom_vars[ __( 'Shipping Method', 'woo-pensopay' ) ] = $this->get_shipping_method();
-		}
-
-		// Save a POST ID reference on the transaction
-		$custom_vars['order_post_id'] = $this->get_id();
-
-		// Get the correct order_post_id. We want to fetch the ID of the subscription to store data on subscription (if available).
-		// But only on the first attempt. In case of failed auto capture on the initial order, we dont want to add the subscription ID.
-		// If we are handlong a product switch, we will not need this ID as we are making a regular payment.
-		if ( ! $this->order_contains_switch() ) {
-			$subscription_id = WC_PensoPay_Subscription::get_subscription_id( $this );
-			if ( $subscription_id ) {
-				$custom_vars['subscription_post_id'] = $subscription_id;
-			}
-		}
-
-		if ( $this->is_request_to_change_payment() ) {
-			$custom_vars['change_payment'] = true;
-		}
-
-		$custom_vars['payment_method'] = $this->get_payment_method();
-
-		$custom_vars = apply_filters( 'woocommerce_pensopay_transaction_params_variables', $custom_vars, $this );
-
-		ksort( $custom_vars );
-
-		return [ 'variables' => $custom_vars ];
+		return WC_PensoPay_Order_Transaction_Data_Utils::get_custom_variables( $this );
 	}
 
 	/**
-	 * Increase the amount of payment attemtps done through PensoPay
+	 * Increase the amount of payment attempts done through PensoPay
 	 *
 	 * @return int
 	 */
-	public function increase_failed_pensopay_payment_count() {
-		$order_id = $this->get_id();
-		$count    = $this->get_failed_pensopay_payment_count();
-		update_post_meta( $order_id, self::META_FAILED_PAYMENT_COUNT, ++ $count );
+	public function increase_failed_pensopay_payment_count(): int {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::increase_failed_payment_count' );
 
-		return $count;
+		return WC_PensoPay_Order_Payments_Utils::increase_failed_payment_count( $this );
+
 	}
 
 	/**
 	 * Reset the failed payment attempts made through the PensoPay gateway
 	 */
-	public function reset_failed_pensopay_payment_count() {
-		$order_id = $this->get_id();
-		delete_post_meta( $order_id, self::META_FAILED_PAYMENT_COUNT );
+	public function reset_failed_pensopay_payment_count(): void {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::reset_failed_payment_count' );
+
+		WC_PensoPay_Order_Payments_Utils::reset_failed_payment_count( $this );
 	}
 
 	/**
-	 * get_transaction_link_params function.
-	 *
 	 * Returns the necessary basic params to send to PensoPay when creating a payment link
 	 *
-	 * @access public
 	 * @return array
 	 */
-	public function get_transaction_link_params() {
-		$is_subscription = $this->contains_subscription() || $this->is_request_to_change_payment();
-		$amount          = $this->get_total();
+	public function get_transaction_link_params(): array {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::prepare_transaction_link_params' );
 
-		if ( $is_subscription ) {
-			$amount = $this->get_total();
-		}
-
-		return [
-			'order_id'    => $this->get_order_number_for_api(),
-			'continueurl' => $this->get_continue_url(),
-			'cancelurl'   => $this->get_cancellation_url(),
-			'amount'      => WC_PensoPay_Helper::price_multiply( $amount, $this->get_currency() ),
-			'framed'      => WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_iframe' ))
-		];
+		return WC_PensoPay_Order_Payments_Utils::prepare_transaction_link_params( $this );
 	}
 
 	/**
@@ -774,31 +407,21 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @access public
 	 * @return string
 	 */
-	public function get_continue_url() {
-		if ( method_exists( $this, 'get_checkout_order_received_url' ) ) {
-			return $this->get_checkout_order_received_url();
-		}
+	public function get_continue_url(): string {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Transaction_Data_Utils::get_continue_url' );
 
-		return add_query_arg( 'key', $this->order_key, add_query_arg( 'order', $this->get_id(), get_permalink( get_option( 'woocommerce_thanks_page_id' ) ) ) );
+		return WC_PensoPay_Order_Transaction_Data_Utils::get_continue_url( $this );
 	}
 
 	/**
-	 * get_cancellation_url function
-	 *
 	 * Returns the order's cancellation callback url
 	 *
-	 * @access public
 	 * @return string
 	 */
-	public function get_cancellation_url() {
-		if ( method_exists( $this, 'get_cancel_order_url' ) ) {
-			return str_replace( '&amp;', '&', $this->get_cancel_order_url() );
-		}
+	public function get_cancellation_url(): string {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Transaction_Data_Utils::get_cancellation_url' );
 
-		return add_query_arg( 'key', $this->get_order_key(), add_query_arg( [
-			'order'                => $this->get_id(),
-			'payment_cancellation' => 'yes',
-		], get_permalink( get_option( 'woocommerce_cart_page_id' ) ) ) );
+		return WC_PensoPay_Order_Transaction_Data_Utils::get_cancellation_url( $this );
 	}
 
 	/**
@@ -806,48 +429,10 @@ class WC_PensoPay_Order extends WC_Order {
 	 * plugin configuration and the product types. If the order contains both virtual
 	 * and non-virtual products,  we will default to the 'pensopay_autocapture'-setting.
 	 */
-	public function get_autocapture_setting() {
-		// Get the autocapture settings
-		$autocapture_default = WC_PP()->s( 'pensopay_autocapture' );
-		$autocapture_virtual = WC_PP()->s( 'pensopay_autocapture_virtual' );
+	public function get_autocapture_setting(): bool {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Transaction_Data_Utils::should_auto_capture_order' );
 
-		$has_virtual_products    = false;
-		$has_nonvirtual_products = false;
-
-		// If the two options are the same, return immediately.
-		if ( $autocapture_default === $autocapture_virtual ) {
-			return $autocapture_default;
-		}
-
-		// Check order items type.
-		$order_items = $this->get_items( 'line_item' );
-
-		// Loop through the order items
-        foreach ( $order_items as $order_item ) {
-            // Get the product
-            if ( is_callable( array( $order_item, 'get_product' ) ) ) {
-                $product = $order_item->get_product();
-                // Is this product virtual?
-                if ( $product->is_virtual() ) {
-                    $has_virtual_products = true;
-                } // This was a non-virtual product.
-                else {
-                    $has_nonvirtual_products = true;
-                }
-            }
-        }
-
-		// If the order contains both virtual and nonvirtual products,
-		// we use the 'pensopay_autopay' as the option of choice.
-		if ( $has_virtual_products && $has_nonvirtual_products ) {
-			return $autocapture_default;
-		} // Or check if the order contains virtual products only
-		else if ( $has_virtual_products ) {
-			return $autocapture_virtual;
-		} // Or default
-		else {
-			return $autocapture_default;
-		}
+		return WC_PensoPay_Order_Transaction_Data_Utils::should_auto_capture_order( $this );
 	}
 
 	/**
@@ -858,35 +443,11 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @return bool
 	 * @since  4.5.0
 	 * @access public
-	 * @return bool
 	 */
-	public function has_pensopay_payment() {
-		$order_id = $this->get_id();
+	public function has_pensopay_payment(): bool {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::is_order_using_pensopay' );
 
-		return in_array( get_post_meta( $order_id, '_payment_method', true ), [
-            'pensopay_anyday',
-            'pensopay_apple_pay',
-            'pensopay_google_pay',
-			'ideal',
-			'fbg1886',
-			'ideal',
-			'klarna',
-			'klarna-payments',
-			'anyday-split',
-			'pensopay',
-			'mobilepay',
-			'mobilepay_checkout',
-            'mobilepay-subscriptions',
-			'pensopay_paypal',
-			'pensopay',
-			'pensopay-extra',
-			'resurs',
-			'sofort',
-			'swish',
-			'trustly',
-			'viabill',
-			'vipps',
-		] );
+		return WC_PensoPay_Order_Payments_Utils::is_order_using_pensopay( $this );
 	}
 
 	/**
@@ -894,13 +455,10 @@ class WC_PensoPay_Order extends WC_Order {
 	 *
 	 * @return int
 	 */
-	public function increase_payment_method_change_count() {
-		$count    = $this->get_payment_method_change_count();
-		$order_id = $this->get_id();
+	public function increase_payment_method_change_count(): int {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Payments_Utils::increase_payment_method_change_count' );
 
-		update_post_meta( $order_id, self::META_PAYMENT_METHOD_CHANGE_COUNT, ++ $count );
-
-		return $count;
+		return WC_PensoPay_Order_Payments_Utils::increase_payment_method_change_count( $this );
 	}
 
 	/**
@@ -909,27 +467,22 @@ class WC_PensoPay_Order extends WC_Order {
 	 * @return mixed|string
 	 */
 	public function get_transaction_id( $context = 'view' ) {
-		$order_id = $this->get_id();
+//		wc_deprecated_function( __METHOD__, '7.0.0', 'WC_PensoPay_Order_Utils::get_transaction_id' );
 
 		// Search for custom transaction meta added in 4.8 to avoid transaction ID
 		// sometimes being empty on subscriptions in WC 3.0.
-		$transaction_id = get_post_meta( $order_id, '_pensopay_transaction_id', true );
+		$transaction_id = $this->get_meta( '_pensopay_transaction_id' );
 		if ( empty( $transaction_id ) ) {
 
-            $ids = get_post_meta( $order_id, '_transaction_id', false );
-		    if (is_array($ids) && !empty($ids)) {
-		        $transaction_id = end($ids);
-            } else { //A bit overkill, but let it default to what it was
-                $transaction_id = parent::get_transaction_id($context);
-            }
+			$transaction_id = parent::get_transaction_id();
 
 			if ( empty( $transaction_id ) ) {
 				// Search for original transaction ID. The transaction might be temporarily removed by
 				// subscriptions. Use this one instead (if available).
-				$transaction_id = get_post_meta( $order_id, '_transaction_id_original', true );
+				$transaction_id = $this->get_meta( '_transaction_id_original' );
 				if ( empty( $transaction_id ) ) {
 					// Check if the old legacy TRANSACTION ID meta value is available.
-					$transaction_id = get_post_meta( $order_id, 'TRANSACTION_ID', true );
+					$transaction_id = $this->get_meta( 'TRANSACTION_ID' );
 				}
 			}
 		}

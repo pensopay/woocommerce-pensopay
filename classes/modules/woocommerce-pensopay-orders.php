@@ -5,9 +5,6 @@
  */
 class WC_PensoPay_Orders extends WC_PensoPay_Module {
 
-	/**
-	 * @return mixed|void
-	 */
 	public function hooks() {
 		// Reset failed payment count
 		add_action( 'woocommerce_order_status_completed', [ $this, 'reset_failed_payment_count' ], 10 );
@@ -21,7 +18,7 @@ class WC_PensoPay_Orders extends WC_PensoPay_Module {
 	 * @param $order_id
 	 * @param $order
 	 */
-	public function maybe_cancel_transaction( $order_id, $order ) {
+	public function maybe_cancel_transaction( $order_id, $order ): void {
 		if ( $order && WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_cancel_transaction_on_cancel' ) ) ) {
 			$order = new WC_PensoPay_Order( $order_id );
 			if ( $transaction_id = $order->get_transaction_id() ) {
@@ -44,20 +41,16 @@ class WC_PensoPay_Orders extends WC_PensoPay_Module {
 	 *
 	 * @param $order_id
 	 */
-	public function reset_failed_payment_count( $order_id ) {
-		try {
-			if ( $order = new WC_PensoPay_Order( $order_id ) ) {
-				$order->reset_failed_pensopay_payment_count();
-			}
-		} catch ( Exception $e ) {
-			// NOOP
+	public function reset_failed_payment_count( $order_id ): void {
+		if ( $order = woocommerce_pensopay_get_order( $order_id ) ) {
+			WC_PensoPay_Order_Payments_Utils::reset_failed_payment_count( $order );
 		}
 	}
 
 	/**
 	 * @param WC_PensoPay_Order $order
 	 */
-	public function on_payment_authorized( $order ) {
+	public function on_payment_authorized( $order ): void {
 		$is_mp_subscription          = $order->get_payment_method() === WC_PensoPay_MobilePay_Subscriptions::instance_id;
 		$autocomplete_renewal_orders = WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'subscription_autocomplete_renewal_orders' ) );
 

@@ -130,7 +130,8 @@ class WC_PensoPay_Settings {
 						'no'        => 'Norwegian',
 						'nl'        => 'Dutch',
 						'pl'        => 'Polish',
-						'se'        => 'Swedish'
+						'se'        => 'Swedish',
+						'fi'        => 'Finnish'
 					]
 				],
 				'pensopay_currency'       => [

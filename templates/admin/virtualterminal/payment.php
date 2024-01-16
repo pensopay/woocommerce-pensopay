@@ -23,7 +23,7 @@
 <p>
     <small>
         <label for="order_id" class="input-required"><?= __('Order ID', 'woo-pensopay') ?></label>
-        <input id="order_id" name="order_id" type="text" style="width:100%" value="<?= $paymentInstance->get_post_data('order_id') ?>" <?= $blockInitial ? 'disabled="disabled"' : 'class="required min_4 max_20"' ?> />
+        <input id="order_id" name="order_id" type="text" style="width:100%" value="<?= $paymentInstance->get_post_data('order_id') ?>" <?= $blockInitial ? 'disabled="disabled"' : 'class="required min_4 max_20 alphanumeric"' ?> />
     </small>
 </p>
 
@@ -204,13 +204,18 @@ if ($operations): ?>
     jQuery(function () {
         validator = jQuery('#post').validate();
 
+        jQuery.validator.addMethod("alphanumeric", function(value, element) {
+            return this.optional(element) || /^[\w.]+$/i.test(value);
+        }, "Letters and numbers only please");
+
         // Add the rules to the classname hooks
         jQuery.validator.addClassRules({
             min_4: {minlength: 4},
             max_20: {maxlength: 20},
             number: {number: true},
             required: {required: true},
-            email: {email: true}
+            email: {email: true},
+            alphanumeric: {alphanumeric: true}
         });
 
         var payLink = document.getElementById('payLink');

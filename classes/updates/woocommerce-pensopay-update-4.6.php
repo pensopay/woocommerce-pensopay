@@ -17,7 +17,11 @@ set_time_limit( 0 );
 
 global $wpdb;
 
-$subscriptions = $wpdb->get_results("SELECT * FROM {$wpdb->posts} p WHERE p.post_type = 'shop_subscription' AND p.post_status NOT IN ('draft', 'trash') AND NOT EXISTS(SELECT 1 FROM {$wpdb->postmeta} pm WHERE p.ID=pm.post_id AND pm.meta_key IN ('_transaction_id', 'TRANSACTION_ID'))", OBJECT);
+if (WC_PensoPay_Helper::is_HPOS_enabled()) {
+	$subscriptions = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wc_orders p WHERE p.type = 'shop_subscription' AND p.status NOT IN ('draft', 'trash') AND NOT EXISTS(SELECT 1 FROM {$wpdb->prefix}wc_orders_meta pm WHERE p.id=pm.order_id AND pm.meta_key IN ('_transaction_id', 'TRANSACTION_ID'))", OBJECT );
+} else {
+	$subscriptions = $wpdb->get_results( "SELECT * FROM {$wpdb->posts} p WHERE p.post_type = 'shop_subscription' AND p.post_status NOT IN ('draft', 'trash') AND NOT EXISTS(SELECT 1 FROM {$wpdb->postmeta} pm WHERE p.ID=pm.post_id AND pm.meta_key IN ('_transaction_id', 'TRANSACTION_ID'))", OBJECT );
+}
 
 if (!empty($subscriptions)) {
     foreach( $subscriptions as $subscription_post ) {

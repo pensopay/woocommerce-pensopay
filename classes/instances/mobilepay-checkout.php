@@ -29,10 +29,9 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 		add_filter( 'woocommerce_pensopay_transaction_link_params', [ $this, 'filter_transaction_link_params'], 10, 3 );
 		add_action( 'woocommerce_pensopay_accepted_callback_before_processing_status_authorize', [$this, 'callback_save_address'], 10, 2 );
 		add_action( 'woocommerce_checkout_before_customer_details', [ $this, 'insert_woocommerce_pensopay_mobilepay_checkout'], 10 );
-
 		add_filter( 'woocommerce_update_order_review_fragments', [ $this, 'update_order_review_fragments' ], 10, 1 );
-
 		add_filter( 'woocommerce_pensopay_automatic_shipping_address', [ $this, 'maybe_modify_object_shipping_address' ], 10, 4 );
+		add_filter( 'woocommerce_available_payment_gateways', [ $this, 'maybe_disable_gateway' ] );
 	}
 
 	/**
@@ -56,11 +55,11 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 * But, in order to support shipping plugins to set the address of a parcel shop / pick-up point, we will check
 	 * if the shipping address has been set - if so, we will disable the automatic address selection.
 	 *
-	 * @param \WC_PensoPay_Order $order
+	 * @param WC_Order $order
 	 *
 	 * @return bool
 	 */
-	private function maybe_disable_automatic_shipping_address_selection( $order ) {
+	private function maybe_disable_automatic_shipping_address_selection( WC_Order $order ): bool {
 		$enabled = true;
 
 		if (
@@ -176,10 +175,10 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	}
 
 	/**
-	 * @param WC_PensoPay_Order $order
+	 * @param WC_Order $order
 	 * @param object $transaction
 	 */
-	public function callback_save_address( $order, $transaction ) {
+	public function callback_save_address( WC_Order $order, $transaction ) {
         if ( isset($transaction->variables->payment_method) && $transaction->variables->payment_method === $this->id && $this->is_enabled() ) {
             $billing_address  = apply_filters( 'woocommerce_pensopay_automatic_billing_address', ! empty( $transaction->invoice_address ) ? $transaction->invoice_address : null, $order, $transaction );
             $shipping_address = apply_filters( 'woocommerce_pensopay_automatic_shipping_address', ! empty( $transaction->shipping_address ) ? $transaction->shipping_address : null, $order, $billing_address, $transaction );
@@ -344,7 +343,7 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 	 * @access public
 	 * @return array
 	 */
-	public function init_form_fields() {
+	public function init_form_fields(): void {
 		$this->form_fields = [
 			'enabled'                                          => [
 				'title'   => __( 'Enable', 'woo-pensopay' ),
@@ -435,5 +434,16 @@ class WC_PensoPay_MobilePay_Checkout extends WC_PensoPay_Instance {
 		$fragments['mpco_required_fields']                   = $this->get_shipping_rate_required_address_fields();
 
 		return $fragments;
+	}
+
+	public function maybe_disable_gateway( $gateways ) {
+		if ( isset( $gateways[ $this->id ] ) && is_checkout() && ( $cart = WC()->cart ) ) {
+
+			if ( !in_array(strtoupper( get_woocommerce_currency() ), ['DKK', 'EUR']) || !in_array(WC()->customer->get_shipping_country(), ['DK', 'FI']) ) {
+				unset( $gateways[ $this->id ] );
+			}
+		}
+
+		return $gateways;
 	}
 }

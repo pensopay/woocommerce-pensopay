@@ -2,36 +2,35 @@
 
 class WC_PensoPay_Anyday extends WC_PensoPay_Instance {
 
-    public $main_settings = NULL;
+	public $main_settings = null;
 
-    public function __construct() {
-        parent::__construct();
+	public function __construct() {
+		parent::__construct();
 
         // Get gateway variables
         $this->id = 'anyday-split';
 
         $this->method_title = 'Pensopay - Anyday';
 
-        $this->setup();
+		$this->setup();
 
-        $this->title = $this->s('title');
-        $this->description = $this->s('description');
+		$this->title       = $this->s( 'title' );
+		$this->description = $this->s( 'description' );
 
-        add_filter( 'woocommerce_available_payment_gateways', [ $this, 'should_disable_gateway' ] );
+        add_filter( 'woocommerce_available_payment_gateways', [ $this, 'maybe_disable_gateway' ] );
         add_filter( 'woocommerce_pensopay_cardtypelock_anyday-split', [ $this, 'filter_cardtypelock' ] );
     }
 
 
-    /**
-     * init_form_fields function.
-     *
-     * Initiates the plugin settings form fields
-     *
-     * @access public
-     * @return array
-     */
-    public function init_form_fields()
-    {
+	/**
+	 * init_form_fields function.
+	 *
+	 * Initiates the plugin settings form fields
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function init_form_fields(): void {
         $this->form_fields = [
             'enabled' => [
                 'title' => __( 'Enable', 'woo-pensopay' ),
@@ -59,37 +58,32 @@ class WC_PensoPay_Anyday extends WC_PensoPay_Instance {
     }
 
 
-    /**
-     * filter_cardtypelock function.
-     *
-     * Sets the cardtypelock
-     *
-     * @access public
-     * @return string
-     */
-    public function filter_cardtypelock( )
-    {
-        return 'anyday-split';
-    }
+	/**
+	 * filter_cardtypelock function.
+	 *
+	 * Sets the cardtypelock
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function filter_cardtypelock() {
+		return 'anyday-split';
+	}
 
+	/**
+	 * @param array $gateways
+	 */
+	public function maybe_disable_gateway( $gateways ) {
+		if ( isset( $gateways[ $this->id ] ) && is_checkout() && ( $cart = WC()->cart ) ) {
+			$cart_total = (float) $cart->get_total( 'edit' );
+			$cart_min   = 300;
+			$cart_max   = 30000;
 
-    /**
-     * Determine if gateway should be disabled
-     *
-     * @param $gateways
-     * @return void
-     */
-    public function should_disable_gateway( $gateways ) {
-        if ( isset( $gateways[ $this->id ] ) && is_checkout() && ( $cart = WC()->cart ) ) {
-            $cart_total = (float) $cart->get_total( 'edit' );
-            $cart_min   = 1;
-            $cart_max   = 30000;
+			if ( ! ( $cart_total >= $cart_min && $cart_total <= $cart_max ) || 'DKK' !== strtoupper( get_woocommerce_currency() ) ) {
+				unset( $gateways[ $this->id ] );
+			}
+		}
 
-            if ( ! ( $cart_total >= $cart_min && $cart_total <= $cart_max ) || 'DKK' !== strtoupper( get_woocommerce_currency() ) ) {
-                unset( $gateways[ $this->id ] );
-            }
-        }
-
-        return $gateways;
-    }
+		return $gateways;
+	}
 }

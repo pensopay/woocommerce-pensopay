@@ -63,7 +63,7 @@ class WC_PensoPay_API {
 	 *
 	 * @return boolean
 	 */
-	public function is_authorized_callback( $response_body ) {
+	public function is_authorized_callback( $response_body ): bool {
 		if ( ! isset( $_SERVER["HTTP_QUICKPAY_CHECKSUM_SHA256"] ) ) {
 			return false;
 		}
@@ -87,7 +87,7 @@ class WC_PensoPay_API {
 	 * @return object
 	 * @throws PensoPay_API_Exception
 	 */
-	public function get( $path, $return_array = false ) {
+	public function get( $path, bool $return_array = false ) {
 		// Instantiate a new instance
 		$this->remote_instance();
 
@@ -95,16 +95,12 @@ class WC_PensoPay_API {
 		$this->set_url( $path );
 
 		// Start the request and return the response
-		return $this->execute( 'GET', $return_array );
+		return $this->execute( 'GET', [], $return_array );
 	}
 
 
 	/**
-	 * post function.
-	 *
 	 * Performs an API POST request
-	 *
-	 * @access public
 	 *
 	 * @param       $path
 	 * @param array $form
@@ -113,7 +109,7 @@ class WC_PensoPay_API {
 	 * @return object
 	 * @throws PensoPay_API_Exception
 	 */
-	public function post( $path, $form = [], $return_array = false ) {
+	public function post( $path, array $form = [], bool $return_array = false ) {
 		// Instantiate a new instance
 		$this->remote_instance( $this->get_post_id_from_form_object( $form ) );
 
@@ -126,11 +122,7 @@ class WC_PensoPay_API {
 
 
 	/**
-	 * put function.
-	 *
 	 * Performs an API PUT request
-	 *
-	 * @access public
 	 *
 	 * @param       $path
 	 * @param array $form
@@ -139,7 +131,7 @@ class WC_PensoPay_API {
 	 * @return object
 	 * @throws PensoPay_API_Exception
 	 */
-	public function put( $path, $form = [], $return_array = false ) {
+	public function put( $path, array $form = [], bool $return_array = false ) {
 		// Instantiate a new instance
 		$this->remote_instance( $this->get_post_id_from_form_object( $form ) );
 
@@ -151,11 +143,7 @@ class WC_PensoPay_API {
 	}
 
 	/**
-	 * put function.
-	 *
 	 * Performs an API PUT request
-	 *
-	 * @access public
 	 *
 	 * @param $path
 	 * @param array $form
@@ -164,7 +152,7 @@ class WC_PensoPay_API {
 	 * @return object
 	 * @throws PensoPay_API_Exception
 	 */
-	public function patch( $path, $form = [], $return_array = false ) {
+	public function patch( $path, array $form = [], bool $return_array = false ) {
 		// Instantiate a new instance
 		$this->remote_instance( $this->get_post_id_from_form_object( $form ) );
 
@@ -177,20 +165,16 @@ class WC_PensoPay_API {
 
 
 	/**
-	 * execute function.
-	 *
 	 * Executes the API request
-	 *
-	 * @access public
 	 *
 	 * @param string $request_type
 	 * @param array $form
-	 * @param boolean $return_array - if we want to retrieve an array with additional
+	 * @param bool $return_array - if we want to retrieve an array with additional
 	 *
 	 * @return object|array
 	 * @throws PensoPay_API_Exception
 	 */
-	public function execute( $request_type, $form = [], $return_array = false ) {
+	public function execute( string $request_type, array $form = [], bool $return_array = false ) {
 		// Set the HTTP request type
 		curl_setopt( $this->ch, CURLOPT_CUSTOMREQUEST, $request_type );
 
@@ -221,10 +205,8 @@ class WC_PensoPay_API {
 			// Prepare to post the data string
 			curl_setopt( $this->ch, CURLOPT_POSTFIELDS, $request_form_data );
 		}
-
 		// Execute the request and decode the response to JSON
-		$this->resource_data = (object) json_decode( curl_exec( $this->ch ) );
-
+		$this->resource_data = json_decode( curl_exec( $this->ch ) );
 		// Retrieve the HTTP response code
 		$response_code    = (int) curl_getinfo( $this->ch, CURLINFO_HTTP_CODE );
 		$response_data    = json_encode( $this->resource_data );
@@ -243,8 +225,8 @@ class WC_PensoPay_API {
 
 				if ( ! empty( $errors['errors'] ) && $errors['error_code'] === null ) {
 					foreach ( $errors['errors'] as $field => $field_errors ) {
-						foreach ($field_errors as $field_error) {
-							$error_messages[] = sprintf('- <strong>%s</strong>: %s', $field, $field_error);
+						foreach ( $field_errors as $field_error ) {
+							$error_messages[] = sprintf( '- <strong>%s</strong>: %s', $field, $field_error );
 						}
 					}
 				}
@@ -257,7 +239,6 @@ class WC_PensoPay_API {
 			}
 
 		}
-
 		// Everything went well, return the resource data object.
 		if ( $return_array ) {
 			$return_data = [

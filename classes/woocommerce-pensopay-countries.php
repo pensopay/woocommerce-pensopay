@@ -295,12 +295,12 @@ class WC_PensoPay_Countries
 	public static function getAlpha3FromAlpha2( $alpha2 ) {
 		$countries = self::get( 'alpha2', 'alpha3' );
 
-        return $countries[ $alpha2 ] ?? null;
+		return $countries[ $alpha2 ] ?? null;
 	}
 
-    public static function getAlpha2FromAlpha3( $alpha3 ) {
-        $countries = self::get( 'alpha3', 'alpha2' );
+	public static function getAlpha2FromAlpha3( $alpha3 ) {
+		$countries = self::get( 'alpha3', 'alpha2' );
 
-        return $countries[ $alpha3 ] ?? null;
-    }
+		return $countries[ $alpha3 ] ?? null;
+	}
 }

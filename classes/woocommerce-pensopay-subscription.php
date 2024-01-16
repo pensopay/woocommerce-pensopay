@@ -46,138 +46,179 @@ class WC_PensoPay_Subscription {
 
 	/**
 	 * Checks if a subscription is up for renewal.
-	 * Ensures backwards compatability.
+	 * Ensures backwards compatibility.
 	 *
 	 * @access public static
-	 * @param  [WC_PensoPay_Order] $order [description]
+	 *
+	 * @param WC_Order|int $order [description]
+	 *
 	 * @return boolean
 	 */
-	public static function is_renewal( $order ) {
-	    if ( function_exists( 'wcs_order_contains_renewal' ) ) {
-            return wcs_order_contains_renewal( $order );
-        }
+	public static function is_renewal( $order ): bool {
+		if ( function_exists( 'wcs_order_contains_renewal' ) ) {
+			return wcs_order_contains_renewal( $order );
+		}
 
-        return false;
+		return false;
 	}
-	
+
 	/**
-	* Checks if Woocommerce Subscriptions is enabled or not
-	*
-	* @access public static
-	* @return string
-	*/
-	public static function plugin_is_active() {
+	 * Checks if Woocommerce Subscriptions is enabled or not
+	 * @return bool
+	 */
+	public static function plugin_is_active(): bool {
 		return class_exists( 'WC_Subscriptions' ) && WC_Subscriptions::$name = 'subscription';
 	}
 
 	/**
 	 * Convenience wrapper for wcs_cart_contains_failed_renewal_order_payment
-	 * 
-	 * @return bool
+	 *
+	 * @return array|bool
 	 */
 	public static function cart_contains_failed_renewal_order_payment() {
 		if ( function_exists( 'wcs_cart_contains_failed_renewal_order_payment' ) ) {
 			return wcs_cart_contains_failed_renewal_order_payment();
 		}
-		
+
 		return false;
 	}
 
 	/**
 	 * Convenience wrapper for wcs_cart_contains_renewal
-	 * 
-	 * @return bool
+	 *
+	 * @return false|string
 	 */
 	public static function cart_contains_renewal() {
 		if ( function_exists( 'wcs_cart_contains_renewal' ) ) {
 			return wcs_cart_contains_renewal();
 		}
-		
+
+		return false;
+	}
+
+	/**
+	 * @param $order
+	 *
+	 * @return bool
+	 */
+	public static function order_contains_early_renewal( $order ): bool {
+		if ( function_exists( 'wcs_order_contains_early_renewal' ) ) {
+			return wcs_order_contains_early_renewal( $order );
+		}
+
 		return false;
 	}
 
 	/**
 	 * Convenience wrapper for wcs_get_subscriptions_for_renewal_order
+	 *
 	 * @param $order
-	 * @param bool - to return a single item or not
-	 * @return array
+	 * @param bool $single - to return a single item or not
+	 *
+	 * @return WC_Subscription|WC_Subscription[]
 	 */
-	public static function get_subscriptions_for_renewal_order( $order, $single = false ) {
+	public static function get_subscriptions_for_renewal_order( $order, bool $single = false ) {
 		if ( function_exists( 'wcs_get_subscriptions_for_renewal_order' ) ) {
 			$subscriptions = wcs_get_subscriptions_for_renewal_order( $order );
+
 			return $single ? end( $subscriptions ) : $subscriptions;
 		}
+
 		return [];
 	}
 
 	/**
 	 * Convenience wrapper for wcs_get_subscriptions_for_order
+	 *
 	 * @param $order
-	 * @return bool
+	 *
+	 * @return WC_Subscription[]
 	 */
-	public static function get_subscriptions_for_order( $order ) {
+	public static function get_subscriptions_for_order( $order, $args = [] ): array {
 		if ( function_exists( 'wcs_get_subscriptions_for_order' ) ) {
-			return wcs_get_subscriptions_for_order( $order );
+			return wcs_get_subscriptions_for_order( $order, $args );
 		}
 
 		return [];
 	}
 
-    /**
-     * @param WC_PensoPay_Order $order The parent order
-     * @return bool
-     */
-	public static function get_subscription_id( WC_PensoPay_Order $order ) {
+	/**
+	 * @param WC_Order $order
+	 *
+	 * @return int|null
+	 */
+	public static function get_subscription_id( WC_Order $order ): ?int {
 		$order_id = $order->get_id();
-	    if ( WC_PensoPay_Subscription::is_subscription( $order_id ) ) {
-	        return $order_id;
-        } else if ( $order->contains_subscription() ) {
-            // Find all subscriptions
-            $subscriptions = WC_PensoPay_Subscription::get_subscriptions_for_order( $order_id );
-            // Get the last one and base the transaction on it.
-            $subscription = end( $subscriptions );
+		if ( self::is_subscription( $order_id ) ) {
+			return $order_id;
+		}
 
-            // Fetch the post ID of the subscription, not the parent order.
-            return $subscription->get_id();
-        }
-        return false;
-    }
+		if ( WC_PensoPay_Order_Utils::contains_subscription( $order ) ) {
+			// Find all subscriptions
+			$subscriptions = self::get_subscriptions_for_order( $order_id );
+			// Get the last one and base the transaction on it.
+			// Fetch the post ID of the subscription, not the parent order.
+			return end( $subscriptions )->get_id();
+		}
 
-    /**
-     * Activates subscriptions on a parent order
-     * @param $order
-     */
-    public static function activate_subscriptions_for_order( $order ) {
-        if ( self::plugin_is_active() ) {
-            WC_Subscriptions_Manager::activate_subscriptions_for_order( $order );
-        }
+		// Check if it is a renewal order and return the subscription ID from it.
+		if ( self::is_renewal( $order ) && $subscriptions = self::get_subscriptions_for_order( $order, [ 'order_type' => [ 'renewal' ] ] ) ) {
+			return end( $subscriptions )->get_id();
+		}
+		return null;
+	}
 
-        return false;
-    }
+	public static function get_subscription( $entity ): ?WC_Subscription {
+		if ( ! self::plugin_is_active() ) {
+			return null;
+		}
 
-    /**
-     * Check if a given object is a WC_Subscription (or child class of WC_Subscription), or if a given ID
-     * belongs to a post with the subscription post type ('shop_subscription')
-     * @param $subscription
-     * @return bool
-     */
-    public static function is_subscription( $subscription ) {
-        if ( function_exists( 'wcs_is_subscription' ) ) {
-            return wcs_is_subscription( $subscription );
-        }
+		if ( ! is_object( $entity ) ) {
+			return wcs_get_subscription( $entity );
+		}
 
-        return false;
-    }
+		$order_type = OrderUtil::get_order_type( $entity );
+
+		if ( 'shop_subscription' === $order_type ) {
+			return $entity;
+		}
+
+		if ( 'shop_order' === $order_type ) {
+			$subscriptions = self::get_subscriptions_for_order( $entity );
+
+			if ( ! empty( $subscriptions ) ) {
+				return end( $subscriptions );
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Check if a given object is a WC_Subscription (or child class of WC_Subscription), or if a given ID
+	 * belongs to a post with the subscription post type ('shop_subscription')
+	 *
+	 * @param $subscription
+	 *
+	 * @return bool
+	 */
+	public static function is_subscription( $subscription ): bool {
+		if ( function_exists( 'wcs_is_subscription' ) ) {
+			return wcs_is_subscription( $subscription );
+		}
+
+		return false;
+	}
 
 	/**
 	 * Checks if the current cart has a switch product
 	 * @return bool
 	 */
-    public static function cart_contains_switches() {
-    	if ( class_exists( 'WC_Subscriptions_Switcher' ) && method_exists( 'WC_Subscriptions_Switcher', 'cart_contains_switches' ) ) {
+	public static function cart_contains_switches(): bool {
+		if ( class_exists( 'WC_Subscriptions_Switcher' ) && method_exists( 'WC_Subscriptions_Switcher', 'cart_contains_switches' ) ) {
 			return WC_Subscriptions_Switcher::cart_contains_switches() !== false;
-	    }
+		}
 
-	    return false;
-    }
+		return false;
+	}
 }

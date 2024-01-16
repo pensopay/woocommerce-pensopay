@@ -1,5 +1,7 @@
 <?php
 
+use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+
 /**
  * WC_PensoPay_Helper class
  *
@@ -10,13 +12,6 @@
  * @author         PensoPay
  */
 class WC_PensoPay_Helper {
-
-	const PENSOPAY_VAR_IFRAMEPAY = 'pensoPay';
-	const PENSOPAY_VAR_IFRAMEPOLL = 'pensoPayPoll';
-	const PENSOPAY_VAR_IFRAMECANCEL = 'pensoPayCancel';
-	const PENSOPAY_VAR_IFRAMECONTINUE = 'pensoPayContinue';
-	const PENSOPAY_VAR_ORDERID = 'order_id';
-	const PENSOPAY_VAR_IFRAMESUCCESS = 'pensoPaySuccess';
 
     protected static function get_recurring_total($order)
     {
@@ -81,102 +76,101 @@ class WC_PensoPay_Helper {
 	/**
 	 * price_normalize function.
 	 *
-	 * Returns the price with decimals if currency is using them. 1010 returns as 10.10.
+	 * Returns the price with decimals. 1010 returns as 10.10.
 	 *
 	 * @access public static
 	 *
-	 * @param $price
-     * @param $currency
+	 * @param mixed $price
+	 * @param string $currency
 	 *
-	 * @return float
+	 * @return mixed
 	 */
 	public static function price_normalize( $price, $currency ) {
-        if ( self::is_currency_using_decimals( $currency ) ) {
-            return number_format( $price / 100, 2, wc_get_price_decimal_separator(), '' );
-        }
+		if ( self::is_currency_using_decimals( $currency ) ) {
+			return number_format( $price / 100, 2, wc_get_price_decimal_separator(), '' );
+		}
 
-        return $price;
+		return $price;
 	}
 
 	/**
 	 * @param $price
-     * @param $currency
+	 * @param $currency
 	 *
 	 * @return string
 	 */
 	public static function price_multiplied_to_float( $price, $currency ) {
-        if ( self::is_currency_using_decimals( $currency ) ) {
-            return number_format( $price / 100, 2, '.', '' );
-        }
+		if ( self::is_currency_using_decimals( $currency ) ) {
+			return number_format( $price / 100, 2, '.', '' );
+		}
 
-        return $price;
+		return $price;
 	}
 
-    /**
-     * Multiplies a custom formatted price based on the WooCommerce decimal- and thousand separators
-     *
-     * @param $price
-     * @param $currency
-     * @return int
-     */
+	/**
+	 * Multiplies a custom formatted price based on the WooCommerce decimal- and thousand separators
+	 *
+	 * @param $price
+	 * @param $currency
+	 *
+	 * @return int
+	 */
 	public static function price_custom_to_multiplied( $price, $currency ) {
-        $decimal_separator  = get_option( 'woocommerce_price_decimal_sep' );
-        $thousand_separator = get_option( 'woocommerce_price_thousand_sep' );
+		$decimal_separator  = get_option( 'woocommerce_price_decimal_sep' );
+		$thousand_separator = get_option( 'woocommerce_price_thousand_sep' );
 
-        $price = str_replace( [ $thousand_separator, $decimal_separator ], [ '', '.' ], $price );
+		$price = str_replace( [ $thousand_separator, $decimal_separator ], [ '', '.' ], $price );
 
-        return self::price_multiply( $price, $currency );
+		return self::price_multiply( $price, $currency );
 	}
 
-    /**
-     * price_multiply function.
-     *
-     * Returns the price with no decimals. 10.10 returns as 1010.
-     *
-     * @access public static
-     *
-     * @param $price
-     * @param null $currency
-     * @return integer
-     */
-    public static function price_multiply( $price, $currency = null ) {
-        if ( $currency && self::is_currency_using_decimals( $currency ) ) {
-            return number_format( $price * 100, 0, '', '' );
-        }
+	/**
+	 * price_multiply function.
+	 *
+	 * Returns the price with no decimals. 10.10 returns as 1010.
+	 *
+	 * @access public static
+	 *
+	 * @param $price
+	 * @param null $currency
+	 *
+	 * @return integer
+	 */
+	public static function price_multiply( $price, $currency = null ) {
+		if ( $currency && self::is_currency_using_decimals( $currency ) ) {
+			return number_format( $price * 100, 0, '', '' );
+		}
 
-        return $price;
-    }
+		return $price;
+	}
 
-    /**
-     * Determine if currency is using decimals
-     *
-     * @param $currency
-     *
-     * @return bool
-     */
-    public static function is_currency_using_decimals( $currency ) {
-        $non_decimal_currencies = [
-            'BIF',
-            'CLP',
-            'DJF',
-            'GNF',
-            'ISK',
-            'JPY',
-            'KMF',
-            'KRW',
-            'PYG',
-            'RWF',
-            'UGX',
-            'UYI',
-            'VND',
-            'VUV',
-            'XAF',
-            'XOF',
-            'XPF',
-        ];
+	/**
+	 * @param $currency
+	 *
+	 * @return bool
+	 */
+	public static function is_currency_using_decimals( $currency ) {
+		$non_decimal_currencies = [
+			'BIF',
+			'CLP',
+			'DJF',
+			'GNF',
+			'JPY',
+			'KMF',
+			'KRW',
+			'PYG',
+			'RWF',
+			'UGX',
+			'UYI',
+			'VND',
+			'VUV',
+			'XAF',
+			'XOF',
+			'XPF',
+		];
 
-        return ! in_array( strtoupper( $currency ), $non_decimal_currencies, true );
-    }
+		return ! in_array( strtoupper( $currency ), $non_decimal_currencies, true );
+	}
 
 	/**
 	 * enqueue_javascript_backend function.
@@ -187,7 +181,9 @@ class WC_PensoPay_Helper {
 	public static function enqueue_javascript_backend() {
 		if ( self::maybe_enqueue_admin_statics() ) {
 			wp_enqueue_script( 'pensopay-backend', plugins_url( '/assets/javascript/backend.js', __DIR__ ), [ 'jquery' ], self::static_version() );
-			wp_localize_script( 'pensopay-backend', 'ajax_object', [ 'ajax_url' => admin_url( 'admin-ajax.php' ) ] );
+			wp_localize_script( 'pensopay-backend', 'pensopayBackend', [
+				'ajax_url' => WC_PensoPay_Admin_Ajax::get_instance()->get_base_url()
+			] );
 		}
 
 		wp_enqueue_script( 'pensopay-backend-notices', plugins_url( '/assets/javascript/backend-notices.js', __DIR__ ), [ 'jquery' ], self::static_version() );
@@ -197,7 +193,7 @@ class WC_PensoPay_Helper {
 	/**
 	 * @return bool
 	 */
-	protected static function maybe_enqueue_admin_statics() {
+	protected static function maybe_enqueue_admin_statics(): bool {
 		global $post;
 		/**
 		 * Enqueue on the settings page for the gateways
@@ -209,14 +205,14 @@ class WC_PensoPay_Helper {
 		} /**
 		 * Enqueue on the shop order page
 		 */
-		else if ( ! empty( $post ) && in_array( $post->post_type, [ 'shop_order', 'shop_subscription' ] ) ) {
+		else if ( WC_PensoPay_Requests_Utils::is_current_admin_screen( WC_PensoPay_Requests_Utils::get_edit_order_screen_id(), WC_PensoPay_Requests_Utils::get_edit_subscription_screen_id() ) ) {
 			return true;
 		}
 
 		return false;
 	}
 
-	public static function static_version() {
+	public static function static_version(): string {
 		return 'wcpp-' . WCPP_VERSION;
 	}
 
@@ -230,17 +226,6 @@ class WC_PensoPay_Helper {
 	public static function enqueue_stylesheet() {
 		wp_enqueue_style( 'woocommere-pensopay-style', plugins_url( '/assets/stylesheets/woocommerce-pensopay.css', __DIR__ ), [], self::static_version() );
 	}
-
-
-    /**
-     * enqueue_front_stylesheet function
-     *
-     * @access public statuc
-     * @return void
-     */
-    public static function enqueue_front_stylesheet() {
-        wp_enqueue_style( 'woocommerce-pensopay-style', plugins_url( '/assets/stylesheets/embedded.css', __DIR__ ), [], self::static_version() );
-    }
 
 
 	/**
@@ -491,16 +476,45 @@ class WC_PensoPay_Helper {
         return strtolower( $name ) === strtolower( $browser );
     }
 
-    /**
-     * @param $status
-     *
-     * @return bool
-     */
-    public static function is_subscription_status( $status ) {
-        if ( strpos( 'wc-', $status ) !== 0 ) {
-            $status = 'wc-' . $status;
-        }
+	/**
+	 * @param $status
+	 *
+	 * @return bool
+	 */
+	public static function is_subscription_status( $status ) {
+		if ( strpos( 'wc-', $status ) !== 0 ) {
+			$status = 'wc-' . $status;
+		}
 
-        return array_key_exists( $status, wcs_get_subscription_statuses() );
-    }
+		return array_key_exists( $status, wcs_get_subscription_statuses() );
+	}
+
+	/**
+	 * Checks if High Performance Order Storage is enabled
+	 * @return bool
+	 */
+	public static function is_HPOS_enabled(): bool {
+		return wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled();
+	}
+
+	/**
+	 * @param $n - amount of chars
+	 *
+	 * @return string
+	 */
+	public static function create_random_string( $n ): string {
+		$characters    = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$random_string = '';
+
+		for ( $i = 0; $i < $n; $i ++ ) {
+			try {
+				$index         = random_int( 0, strlen( $characters ) - 1 );
+				$random_string .= $characters[ $index ];
+			} catch ( Exception $e ) {
+				$random_string = substr( time(), - $n );
+			}
+		}
+
+		return $random_string;
+	}
 }

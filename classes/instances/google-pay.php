@@ -2,34 +2,34 @@
 
 class WC_PensoPay_Google_Pay extends WC_PensoPay_Instance {
 
-    public $main_settings = null;
+	public $main_settings = null;
 
-    public function __construct() {
-        parent::__construct();
+	public function __construct() {
+		parent::__construct();
 
-        $this->supports = [
-            'products',
-            'subscriptions',
-            'subscription_cancellation',
-            'subscription_reactivation',
-            'subscription_suspension',
-            'subscription_amount_changes',
-            'subscription_date_changes',
-            'subscription_payment_method_change_admin',
-            'subscription_payment_method_change_customer',
-            'refunds',
-            'multiple_subscriptions',
-        ];
+		$this->supports = [
+			'products',
+			'subscriptions',
+			'subscription_cancellation',
+			'subscription_reactivation',
+			'subscription_suspension',
+			'subscription_amount_changes',
+			'subscription_date_changes',
+			'subscription_payment_method_change_admin',
+			'subscription_payment_method_change_customer',
+			'refunds',
+			'multiple_subscriptions',
+		];
 
         // Get gateway variables
         $this->id = 'pensopay_google_pay';
 
         $this->method_title = 'Pensopay - Google Pay';
 
-        $this->setup();
+		$this->setup();
 
-        $this->title       = $this->s( 'title' );
-        $this->description = $this->s( 'description' );
+		$this->title       = $this->s( 'title' );
+		$this->description = $this->s( 'description' );
 
         add_filter( 'woocommerce_pensopay_cardtypelock_' . $this->id, [ $this, 'filter_cardtypelock' ] );
 
@@ -38,15 +38,15 @@ class WC_PensoPay_Google_Pay extends WC_PensoPay_Instance {
     }
 
 
-    /**
-     * init_form_fields function.
-     *
-     * Initiates the plugin settings form fields
-     *
-     * @access public
-     * @return array
-     */
-    public function init_form_fields() {
+	/**
+	 * init_form_fields function.
+	 *
+	 * Initiates the plugin settings form fields
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function init_form_fields(): void {
         $this->form_fields = [
             'enabled'     => [
                 'title'   => __( 'Enable', 'woo-pensopay' ),
@@ -75,39 +75,39 @@ class WC_PensoPay_Google_Pay extends WC_PensoPay_Instance {
     }
 
 
-    /**
-     * filter_cardtypelock function.
-     *
-     * Sets the cardtypelock
-     *
-     * @access public
-     * @return string
-     */
-    public function filter_cardtypelock() {
-        return 'google-pay';
-    }
+	/**
+	 * filter_cardtypelock function.
+	 *
+	 * Sets the cardtypelock
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function filter_cardtypelock() {
+		return 'google-pay';
+	}
 
-    /**
-     * @param $icon
-     *
-     * @return string
-     */
-    public function filter_icon( $icon ) {
-        if ( 'google_pay' === $icon ) {
-            $icon = 'google-pay';
-        }
+	/**
+	 * @param $icon
+	 *
+	 * @return string
+	 */
+	public function filter_icon( $icon ) {
+		if ( 'google_pay' === $icon ) {
+			$icon = 'google-pay';
+		}
 
-        return $icon;
-    }
+		return $icon;
+	}
 
-    /**
-     * @param array $gateways
-     */
-    public function maybe_disable_gateway( $gateways ) {
-        if ( isset( $gateways[ $this->id ] ) && is_checkout() && ! WC_PensoPay_Helper::is_browser( 'chrome' ) ) {
-            unset( $gateways[ $this->id ] );
-        }
+	/**
+	 * @param array $gateways
+	 */
+	public function maybe_disable_gateway( $gateways ) {
+		if ( isset( $gateways[ $this->id ] ) && is_checkout() && ! WC_PensoPay_Helper::is_browser( 'chrome' ) ) {
+			unset( $gateways[ $this->id ] );
+		}
 
-        return $gateways;
-    }
+		return $gateways;
+	}
 }

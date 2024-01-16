@@ -31,10 +31,10 @@ class WC_PensoPay_Payment_Link_Email extends WC_Email {
 	/**
 	 * Trigger the sending of this email.
 	 *
-	 * @param \WC_PensoPay_Order $order
+	 * @param WC_Order $order
 	 * @param null               $payment_link
 	 */
-	public function trigger( $payment_link, $order ) {
+	public function trigger( $payment_link, WC_Order $order ) {
 		$this->setup_locale();
 
 		$this->object                         = $order;
@@ -87,7 +87,7 @@ class WC_PensoPay_Payment_Link_Email extends WC_Email {
 	/**
 	 * Initialise settings form fields.
 	 */
-	public function init_form_fields() {
+	public function init_form_fields(): void {
 		$this->form_fields = [
 			'enabled'    => [
 				'title'   => __( 'Enable/Disable', 'woocommerce' ),

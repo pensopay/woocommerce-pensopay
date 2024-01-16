@@ -30,7 +30,7 @@ class WC_PensoPay_Sofort extends WC_PensoPay_Instance {
 	 * @access public
 	 * @return array
 	 */
-	public function init_form_fields() {
+	public function init_form_fields(): void {
 		$this->form_fields = [
 			'enabled'     => [
 				'title'   => __( 'Enable', 'woo-pensopay' ),
@@ -58,13 +58,13 @@ class WC_PensoPay_Sofort extends WC_PensoPay_Instance {
 	}
 
 	/**
-	 * Sofort payments are not sending authorized callbacks. Instead a capture callback is sent. We will perform
+	 * Sofort payments are not sending authorized callbacks. Instead, a capture callback is sent. We will perform
 	 * gateway specific logic here to handle the payment properly.
 	 *
-	 * @param \WC_PensoPay_Order $order
+	 * @param WC_Order $order
 	 * @param stdClass $transaction
 	 */
-	public function additional_callback_handler( $order, $transaction ) {
+	public function additional_callback_handler( WC_Order $order, $transaction ): void {
 		if ( $order->get_payment_method() === $this->id ) {
 			WC_PensoPay_Callbacks::authorized($order, $transaction);
 			WC_PensoPay_Callbacks::payment_authorized($order, $transaction);

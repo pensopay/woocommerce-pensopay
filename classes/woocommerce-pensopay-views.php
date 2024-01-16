@@ -29,7 +29,9 @@ class WC_PensoPay_Views
 	 *
 	 * @return string
 	 */
-	public static function asset_url($path) {
-		return WC_PP()->plugin_url('assets/' . $path);
+	public static function asset_url( $path ): string {
+		wc_deprecated_function( __METHOD__, '7.0.0', 'Will be removed' );
+
+		return WC_PP()->plugin_url( 'assets/' . $path );
 	}
 }

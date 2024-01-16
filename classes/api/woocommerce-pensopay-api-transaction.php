@@ -17,7 +17,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	/**
 	 * @var bool
 	 */
-	protected $loaded_from_cache = false;
+	protected bool $loaded_from_cache = false;
 
 	/**
 	 * get_current_type function.
@@ -28,7 +28,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 * @return string
 	 * @throws PensoPay_API_Exception
 	 */
-	public function get_current_type() {
+	public function get_current_type(): string {
 		$last_operation = $this->get_last_operation();
 
 		if ( ! is_object( $last_operation ) ) {
@@ -36,6 +36,23 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 		}
 
 		return $last_operation->type;
+	}
+
+	/**
+	 * get_current_type function.
+	 *
+	 * Returns the current payment type
+	 *
+	 * @access public
+	 * @return string
+	 * @throws PensoPay_API_Exception
+	 */
+	public function is_accepted(): string {
+		if ( ! is_object( $this->resource_data ) ) {
+			throw new PensoPay_API_Exception( 'No API payment resource data available.', 0 );
+		}
+
+		return $this->resource_data->accepted;
 	}
 
 	/**
@@ -53,17 +70,17 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 		}
 
 		// Loop through all the operations and return only the operations that were successful (based on the qp_status_code and pending mode).
-		$successful_operations = array_filter( (array) $this->resource_data->operations, function ( $operation ) {
-			return $operation->qp_status_code == 20000 || $operation->pending == true;
+		$successful_operations = array_filter( $this->resource_data->operations, static function ( $operation ) {
+			return (int) $operation->qp_status_code === 20000 || wc_string_to_bool( $operation->pending );
 		} );
 
-		$last_operation = (object) end( $successful_operations );
+		$last_operation = end( $successful_operations );
 
 		if ( ! is_object( $last_operation ) ) {
 			throw new PensoPay_API_Exception( 'Malformed operation object' );
 		}
 
-		if ( $last_operation->pending === true ) {
+		if ( wc_string_to_bool( $last_operation->pending ) ) {
 			$last_operation->type = __( 'Pending - check your PensoPay manager', 'woo-pensopay' );
 		}
 
@@ -80,7 +97,8 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 		if ( ! is_object( $this->resource_data ) ) {
 			throw new PensoPay_API_Exception( 'No API payment resource data available.', 0 );
 		}
-		$operations = array_reverse( (array) $this->resource_data->operations );
+
+		$operations = array_reverse( $this->resource_data->operations );
 
 		foreach ( $operations as $operation ) {
 			if ( $operation->type === $type ) {
@@ -100,12 +118,12 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 * @return boolean
 	 * @throws PensoPay_API_Exception
 	 */
-	public function is_test() {
+	public function is_test(): bool {
 		if ( ! is_object( $this->resource_data ) ) {
 			throw new PensoPay_API_Exception( 'No API payment resource data available.', 0 );
 		}
 
-		return $this->resource_data->test_mode;
+		return (bool) $this->resource_data->test_mode;
 	}
 
 	/**
@@ -120,7 +138,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 * @return object
 	 * @throws PensoPay_API_Exception
 	 */
-	public function create( WC_PensoPay_Order $order ) {
+	public function create( WC_Order $order ) {
 		$base_params = [
 			'currency'      => $order->get_currency(),
 			'order_post_id' => $order->get_id(),
@@ -131,11 +149,11 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 			$base_params['text_on_statement'] = $text_on_statement;
 		}
 
-		$order_params = $order->get_transaction_params();
+		$order_params = WC_PensoPay_Order_Payments_Utils::prepare_transaction_params( $order );
 
 		$params = array_merge( $base_params, $order_params );
 
-        return $this->post( '/', $params );
+		return $this->post( '/', $params );
 	}
 
 	/**
@@ -143,8 +161,8 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 *
 	 * Creates or updates a payment link via the API
 	 *
-	 * @param int $transaction_id
-	 * @param WC_PensoPay_Order $order
+	 * @param mixed $transaction_id
+	 * @param WC_Order $order
 	 *
 	 * @return object
 	 * @throws PensoPay_API_Exception
@@ -152,40 +170,40 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 * @access public
 	 *
 	 */
-	public function patch_link( $transaction_id, WC_PensoPay_Order $order ) {
-		$cardtypelock = WC_PP()->s( 'pensopay_cardtypelock' );
+	public function patch_link( $transaction_id, WC_Order $order ) {
+		$payment_method = strtolower( $order->get_payment_method() );
 
-		$payment_method = strtolower( version_compare( WC_VERSION, '3.0', '<' ) ? $order->payment_method : $order->get_payment_method() );
+//		debug_print_backtrace(0, 10);
+//		die;
 
 		$base_params = [
-			'language'                     => WC_PP()->get_gateway_language(),
+			'language'                     => woocommerce_pensopay_get_language(),
 			'currency'                     => $order->get_currency(),
 			'callbackurl'                  => WC_PensoPay_Helper::get_callback_url(),
-			'autocapture'                  => WC_PensoPay_Helper::option_is_enabled( $order->get_autocapture_setting() ),
+			'auto_capture'                 => WC_PensoPay_Order_Transaction_Data_Utils::should_auto_capture_order( $order ),
 			'autofee'                      => WC_PensoPay_Helper::option_is_enabled( WC_PP()->s( 'pensopay_autofee' ) ),
-			'payment_methods'              => apply_filters( 'woocommerce_pensopay_cardtypelock_' . $payment_method, $cardtypelock, $payment_method ),
+			'payment_methods'              => apply_filters( 'woocommerce_pensopay_cardtypelock_' . $payment_method, WC_PP()->s( 'pensopay_cardtypelock' ), $payment_method ),
 			'branding_id'                  => WC_PP()->s( 'pensopay_branding_id' ),
 			'google_analytics_tracking_id' => WC_PP()->s( 'pensopay_google_analytics_tracking_id' ),
 			'customer_email'               => $order->get_billing_email(),
 		];
 
-		$order_params = $order->get_transaction_link_params();
+		$order_params = WC_PensoPay_Order_Payments_Utils::prepare_transaction_link_params( $order );
 
-		$merged_params = array_merge( $base_params, $order_params );
-
-		$params = apply_filters( 'woocommerce_pensopay_transaction_link_params', $merged_params, $order, $payment_method );
-
-        return $this->put( sprintf( '%d/link', $transaction_id ), $params );
+		return $this->put(
+			sprintf( '%d/link', $transaction_id ),
+			apply_filters( 'woocommerce_pensopay_transaction_link_params', array_merge( $base_params, $order_params ), $order, $payment_method )
+		);
 	}
 
 	/**
 	 * @param $transaction_id
-	 * @param WC_PensoPay_Order $order
+	 * @param WC_Order $order
 	 *
 	 * @return object
 	 * @throws PensoPay_API_Exception
 	 */
-	public function patch_payment( $transaction_id, WC_PensoPay_Order $order ) {
+	public function patch_payment( $transaction_id, WC_Order $order ) {
 		$base_params = [
 			'currency'      => $order->get_currency(),
 			'order_post_id' => $order->get_id(),
@@ -197,16 +215,12 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 			$base_params['text_on_statement'] = $text_on_statement;
 		}
 
-		$order_params = $order->get_transaction_params();
+		$order_params = WC_PensoPay_Order_Payments_Utils::prepare_transaction_params( $order );
 
-		$params = array_merge( $base_params, $order_params );
-
-        return $this->patch( sprintf( '/%s', $transaction_id ), $params );
+		return $this->patch( sprintf( '/%s', $transaction_id ), array_merge( $base_params, $order_params ) );
 	}
 
 	/**
-	 * get_cardtype function
-	 *
 	 * Returns the payment type / card type used on the transaction
 	 *
 	 * @return mixed
@@ -218,35 +232,20 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 			throw new PensoPay_API_Exception( 'No API payment resource data available.', 0 );
 		}
 
-        if ( ! empty( $this->resource_data->metadata->brand ) ) {
-            return $this->resource_data->metadata->brand;
-        }
+		if ( ! empty( $this->resource_data->metadata->brand ) ) {
+			return $this->resource_data->metadata->brand;
+		}
 
-        if ( ! empty( $this->resource_data->variables->payment_method ) ) {
-            return str_replace( 'pensopay_', '', $this->resource_data->variables->payment_method );
-        }
+		if ( ! empty( $this->resource_data->variables->payment_method ) ) {
+			return str_replace( 'pensopay_', '', $this->resource_data->variables->payment_method );
+		}
 
-        if ( ! empty( $this->resource_data->link->payment_methods ) ) {
-            return $this->resource_data->link->payment_methods;
-        }
+		if ( ! empty( $this->resource_data->link->payment_methods ) ) {
+			return $this->resource_data->link->payment_methods;
+		}
 	}
 
 	/**
-	 * get_formatted_balance function
-	 *
-	 * Returns a formatted transaction balance
-	 *
-	 * @return mixed
-	 * @throws PensoPay_API_Exception
-	 * @since  4.5.0
-	 */
-	public function get_formatted_balance() {
-		return WC_PensoPay_Helper::price_normalize( $this->get_balance(), $this->get_currency() );
-	}
-
-	/**
-	 * get_balance function
-	 *
 	 * Returns the transaction balance
 	 *
 	 * @return mixed
@@ -317,12 +316,12 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	public function get_remaining_balance() {
 		$balance = $this->get_balance();
 
-		$authorized_operations = array_filter( $this->resource_data->operations, function ( $operation ) {
+		$authorized_operations = array_filter( $this->resource_data->operations, static function ( $operation ) {
 			return 'authorize' === $operation->type || 'recurring' === $operation->type;
 		} );
 
 		if ( empty( $authorized_operations ) ) {
-			return;
+			return null;
 		}
 
 		$operation = reset( $authorized_operations );
@@ -338,43 +337,18 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 		return $remaining;
 	}
 
-    /**
-     * @return string|null
-     */
-    public function get_acquirer() {
-        $acquirer = null;
-
-        if ( is_object( $this->resource_data ) && isset( $this->resource_data->acquirer ) ) {
-            $acquirer = $this->resource_data->acquirer;
-        }
-
-        return $acquirer;
-    }
-
 	/**
-	 * Checks if either a specific operation or the last operation was successful.
-	 *
-	 * @param null $operation
-	 *
-	 * @return bool
-	 * @throws PensoPay_API_Exception
-	 * @since 4.5.0
+	 * @return string|null
 	 */
-	public function is_operation_approved( $operation = null ) {
-		if ( ! is_object( $this->resource_data ) ) {
-			throw new PensoPay_API_Exception( 'No API payment resource data available.', 0 );
+	public function get_acquirer(): ?string {
+		if ( is_object( $this->resource_data ) && isset( $this->resource_data->acquirer ) ) {
+			return $this->resource_data->acquirer;
 		}
 
-		if ( $operation === null ) {
-			$operation = $this->get_last_operation();
-		}
-
-		return $this->resource_data->accepted && $operation->qp_status_code == 20000 && $operation->aq_status_code == 20000;
+		return null;
 	}
 
 	/**
-	 * get_metadata function
-	 *
 	 * Returns the metadata of a transaction
 	 *
 	 * @return mixed
@@ -429,7 +403,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 		if ( $is_caching_enabled && false !== ( $transient = get_transient( 'wcpp_transaction_' . $transaction_id ) ) ) {
 			$this->loaded_from_cache = true;
 
-			return $this->resource_data = (object) json_decode( $transient );
+			return $this->resource_data = (object) json_decode( $transient, false, 512, JSON_THROW_ON_ERROR );
 		}
 
 		$this->get( $transaction_id );
@@ -444,8 +418,8 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	/**
 	 * @return boolean
 	 */
-	public static function is_transaction_caching_enabled() {
-		$is_enabled = strtolower( WC_PP()->s( 'pensopay_caching_enabled' ) ) === 'no' ? false : true;
+	public static function is_transaction_caching_enabled(): bool {
+		$is_enabled = ! ( strtolower( WC_PP()->s( 'pensopay_caching_enabled' ) ) === 'no' );
 
 		return apply_filters( 'woocommerce_pensopay_transaction_cache_enabled', $is_enabled );
 	}
@@ -456,7 +430,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	 * @return boolean
 	 * @throws PensoPay_Exception
 	 */
-	public function cache_transaction() {
+	public function cache_transaction(): bool {
 		if ( ! is_object( $this->resource_data ) ) {
 			throw new PensoPay_Exception( "Cannot cache empty transaction." );
 		}
@@ -480,7 +454,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	/**
 	 * @return bool
 	 */
-	public function is_loaded_from_cached() {
+	public function is_loaded_from_cached(): bool {
 		return $this->loaded_from_cache;
 	}
 

@@ -33,24 +33,6 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 		$this->api_url .= 'payments/';
 	}
 
-
-	/**
-	 * create function.
-	 *
-	 * Creates a new payment via the API
-	 *
-	 * @access public
-	 *
-	 * @param  WC_PensoPay_Order $order
-	 *
-	 * @return object
-	 * @throws PensoPay_API_Exception
-	 */
-	public function create( WC_PensoPay_Order $order ) {
-		return parent::create( $order );
-	}
-
-
 	/**
 	 * Capture function.
 	 *
@@ -58,16 +40,16 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 	 *
 	 * @access public
 	 *
-	 * @param int $transaction_id
-	 * @param \WC_Order $order
-	 * @param int $amount
+	 * @param mixed $transaction_id
+	 * @param WC_Order $order
+	 * @param float $amount
 	 *
 	 * @return object
 	 * @throws PensoPay_API_Exception
 	 * @throws PensoPay_Exception
      * @throws PensoPay_Capture_Exception
 	 */
-	public function capture( $transaction_id, $order, $amount = null ) {
+	public function capture( $transaction_id, WC_Order $order, $amount = null ) {
 		// Check if a custom amount ha been set
 		if ( $amount === null ) {
 			// No custom amount set. Default to the order total
@@ -91,7 +73,7 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
      * @throws PensoPay_Capture_Exception
      * @throws PensoPay_Exception
      */
-    public function check_last_operation_of_type_with_location_fallback( $action, $order, $request ) {
+	public function check_last_operation_of_type_with_location_fallback( string $action, $order, $request ) {
         $follow_location = isset( $request[5]['location'] ) && ! empty( $request[5]['location'] );
 
         try {
@@ -132,17 +114,8 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
      * @throws PensoPay_API_Exception
      * @throws PensoPay_Exception
      */
-	public function cancel( $transaction_id ) {
-		$this->post( sprintf( '%d/%s?synchronized', $transaction_id, 'cancel') );
-
-        if ( ! $cancellation = $this->get_last_operation_of_type( 'cancel' ) ) {
-            throw new PensoPay_Exception( 'No cancellation operation found: ' . (string) json_encode( $this->resource_data ) );
-        }
-
-        if ( $cancellation->qp_status_code > 20200 ) {
-            $msg = sprintf( 'Cancellation of payment for transaction #%s failed. Message: %s', $transaction_id, $cancellation->qp_status_msg );
-            throw new PensoPay_API_Exception( $msg );
-        }
+	public function cancel( $transaction_id ): void {
+		$this->post( sprintf( '%d/%s', $transaction_id, "cancel" ) );
 	}
 
 
@@ -161,19 +134,15 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 	 * @throws PensoPay_API_Exception
 	 * @throws PensoPay_Exception
 	 */
-	public function refund( $transaction_id, $order, $amount = null ) {
+	public function refund( int $transaction_id, WC_Order $order, ?float $amount = null ): void {
 		// Check if a custom amount ha been set
 		if ( $amount === null ) {
 			// No custom amount set. Default to the order total
 			$amount = $order->get_total();
 		}
 
-		if ( ! $order instanceof WC_PensoPay_Order) {
-			$order = new WC_PensoPay_Order( $order->get_id() );
-		}
-
 		// Get all basket items
-		$basket_items = $order->get_transaction_basket_params();
+		$basket_items = WC_PensoPay_Order_Transaction_Data_Utils::get_basket_params( $order );
 
 		// Select the first item as this should be an actual product and not shipping or similar.
 		$product = reset( $basket_items );
@@ -183,8 +152,7 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 			'vat_rate' => $product['vat_rate'],
 		], true );
 
-
-        $this->check_last_operation_of_type_with_location_fallback( 'refund', $order, $request );
+		$this->check_last_operation_of_type_with_location_fallback( 'refund', $order, $request );
 	}
 
 
@@ -197,31 +165,34 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
 	 * @return boolean
 	 * @throws PensoPay_API_Exception
 	 */
-	public function is_action_allowed( $action ) {
-		$state             = $this->get_current_type();
-		$remaining_balance = $this->get_remaining_balance();
+	public function is_action_allowed( $action ): bool {
+		try {
+			$state             = $this->get_current_type();
+			$remaining_balance = $this->get_remaining_balance();
 
+			$allowed_states = [
+				'capture'          => [ 'authorize', 'recurring' ],
+				'cancel'           => [ 'authorize', 'recurring' ],
+				'refund'           => [ 'capture', 'refund' ],
+				'renew'            => [ 'authorize' ],
+				'splitcapture'     => [ 'authorize', 'capture' ],
+				'recurring'        => [ 'subscribe' ],
+				'standard_actions' => [ 'authorize', 'recurring' ],
+			];
 
-		$allowed_states = [
-			'capture'          => [ 'authorize', 'recurring' ],
-			'cancel'           => [ 'authorize', 'recurring' ],
-			'refund'           => [ 'capture', 'refund' ],
-			'renew'            => [ 'authorize' ],
-			'splitcapture'     => [ 'authorize', 'capture' ],
-			'recurring'        => [ 'subscribe' ],
-			'standard_actions' => [ 'authorize', 'recurring' ],
-		];
+			// MP Subscription payments cannot be manually captured as they are automatically captured on the due date.
+			if ( $action === 'capture' && 'mobilepaysubscriptions' === $this->get_acquirer() ) {
+				return false;
+			}
 
-        // MP Subscription payments cannot be manually captured as they are automatically captured on the due date.
-        if ( 'mobilepaysubscriptions' === $this->get_acquirer() && $action === 'capture' ) {
-            return false;
-        }
+			// We want to still allow captures if there is a remaining balance.
+			if ( 'capture' === $state && $remaining_balance > 0 && $action !== 'cancel' ) {
+				return true;
+			}
 
-		// We wants to still allow captures if there is a remaining balance.
-		if ( 'capture' === $state && $remaining_balance > 0 && $action !== 'cancel' ) {
-			return true;
+			return in_array( $state, $allowed_states[ $action ] );
+		} catch ( Exception $e ) {
+			return false;
 		}
-
-		return in_array( $state, $allowed_states[ $action ] );
 	}
 }

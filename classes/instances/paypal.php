@@ -18,8 +18,8 @@ class WC_PensoPay_PayPal extends WC_PensoPay_Instance {
 		$this->description = $this->s( 'description' );
 
 		add_filter( 'woocommerce_pensopay_cardtypelock_pensopay_paypal', [ $this, 'filter_cardtypelock' ] );
-		add_filter( 'woocommerce_pensopay_transaction_params_basket', [ $this, 'filter_basket_items' ], 30, 2 );
-		add_filter( 'woocommerce_pensopay_transaction_params_shipping_row', [ $this, 'filter_shipping_row' ], 30, 2 );
+		add_filter( 'woocommerce_pensopay_transaction_params_basket', [ $this, '_return_empty_array' ], 30, 2 );
+		add_filter( 'woocommerce_pensopay_transaction_params_shipping_row', [ $this, '_return_empty_array' ], 30, 2 );
 	}
 
 
@@ -31,7 +31,7 @@ class WC_PensoPay_PayPal extends WC_PensoPay_Instance {
 	 * @access public
 	 * @return array
 	 */
-	public function init_form_fields() {
+	public function init_form_fields(): void {
 		$this->form_fields = [
 			'enabled'     => [
 				'title'   => __( 'Enable', 'woo-pensopay' ),
@@ -67,17 +67,17 @@ class WC_PensoPay_PayPal extends WC_PensoPay_Instance {
 	 * @access public
 	 * @return string
 	 */
-	public function filter_cardtypelock() {
+	public function filter_cardtypelock(): string {
 		return 'paypal';
 	}
 
 	/**
 	 * @param array $items
-	 * @param WC_PensoPay_Order $order
+	 * @param WC_Order $order
 	 *
 	 * @return array
 	 */
-	public function filter_basket_items( $items, $order ) {
+	public function _return_empty_array( array $items, WC_Order $order ): array {
 		if ( $order->get_payment_method() === $this->id ) {
 			$items = [];
 		}
@@ -86,33 +86,18 @@ class WC_PensoPay_PayPal extends WC_PensoPay_Instance {
 	}
 
 	/**
-	 * FILTER: apply_gateway_icons function.
-	 *
 	 * Sets gateway icons on frontend
 	 *
-	 * @access public
-	 * @return void
+	 * @param $icon
+	 * @param $id
+	 *
+	 * @return string
 	 */
 	public function apply_gateway_icons( $icon, $id ) {
-		if ( $id == $this->id ) {
+		if ( $id === $this->id ) {
 			$icon = $this->gateway_icon_create( 'paypal', $this->gateway_icon_size() );
 		}
 
 		return $icon;
 	}
-
-    /**
-     * This will solve a bug where the basket isn't sent to gateway but shipping is, effectively canceling due to
-     * amount mismatch.
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    public function filter_shipping_row( $data, $order ) {
-        if ( $order->get_payment_method() === $this->id ) {
-            return [];
-        }
-        return $data;
-    }
 }

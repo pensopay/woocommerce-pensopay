@@ -35,7 +35,7 @@ class WC_PensoPay_Extra extends WC_PensoPay_Instance {
 	 * @access public
 	 * @return array
 	 */
-	public function init_form_fields() {
+	public function init_form_fields(): void {
 		$this->form_fields = [
 			'enabled'        => [
 				'title'   => __( 'Enable', 'woo-pensopay' ),

@@ -25,7 +25,7 @@ abstract class WC_PensoPay_Module {
 	 * @return mixed
 	 */
 	public static function get_instance() {
-		$class = get_called_class();
+		$class = static::class;
 
 		if ( ! isset( self::$instances[ $class ] ) ) {
 			self::$instances[ $class ] = new $class;

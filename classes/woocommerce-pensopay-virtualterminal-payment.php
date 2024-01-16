@@ -236,7 +236,7 @@ class WC_PensoPay_VirtualTerminal_Payment
 
 	public function save_payment($post_id)
     {
-        if ($_POST['post_type'] === self::POST_TYPE) {
+        if (isset($_POST['post_type']) && $_POST['post_type'] === self::POST_TYPE && is_admin()) {
             if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
                 return;
             }
@@ -485,7 +485,7 @@ class WC_PensoPay_VirtualTerminal_Payment
 
     public function get_last_code()
     {
-        return $this->get_last_operation()['code'];
+        return $this->get_last_operation()['code'] ?? '';
     }
 
     public function get_metadata()
@@ -524,7 +524,7 @@ class WC_PensoPay_VirtualTerminal_Payment
 
     public function get_post_data($field)
     {
-        $post_id = $this->_postid ?: $_GET['post'];
+        $post_id = $this->_postid ?: ($_GET['post'] ?? false);
         if ($post_id) {
             switch ($field) {
                 default:

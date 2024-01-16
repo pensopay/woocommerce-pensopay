@@ -2,35 +2,34 @@
 
 class WC_PensoPay_Trustly extends WC_PensoPay_Instance {
 
-    public $main_settings = NULL;
+	public $main_settings = null;
 
-    public function __construct() {
-        parent::__construct();
+	public function __construct() {
+		parent::__construct();
 
-        // Get gateway variables
-        $this->id = 'trustly';
+		// Get gateway variables
+		$this->id = 'trustly';
 
         $this->method_title = 'Pensopay - Trustly';
 
-        $this->setup();
+		$this->setup();
 
-        $this->title = $this->s('title');
-        $this->description = $this->s('description');
+		$this->title       = $this->s( 'title' );
+		$this->description = $this->s( 'description' );
 
         add_filter( 'woocommerce_pensopay_cardtypelock_' . $this->id, [ $this, 'filter_cardtypelock' ] );
     }
 
 
-    /**
-     * init_form_fields function.
-     *
-     * Initiates the plugin settings form fields
-     *
-     * @access public
-     * @return array
-     */
-    public function init_form_fields()
-    {
+	/**
+	 * init_form_fields function.
+	 *
+	 * Initiates the plugin settings form fields
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function init_form_fields(): void {
         $this->form_fields = [
             'enabled' => [
                 'title' => __( 'Enable', 'woo-pensopay' ),
@@ -58,16 +57,15 @@ class WC_PensoPay_Trustly extends WC_PensoPay_Instance {
     }
 
 
-    /**
-     * filter_cardtypelock function.
-     *
-     * Sets the cardtypelock
-     *
-     * @access public
-     * @return string
-     */
-    public function filter_cardtypelock( )
-    {
-        return 'trustly';
-    }
+	/**
+	 * filter_cardtypelock function.
+	 *
+	 * Sets the cardtypelock
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function filter_cardtypelock() {
+		return 'trustly';
+	}
 }

@@ -2,23 +2,37 @@
 
 class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
 
-    public $main_settings = NULL;
+	public $main_settings = null;
 
-    protected $_isWdp = false;
+	protected $_isWdp = false;
 
-    public function __construct() {
-        parent::__construct();
+	public function maybe_disable_gateway( $gateways ) {
+		if ( isset( $gateways[ $this->id ] ) && is_checkout() && ( $cart = WC()->cart ) ) {
+			$cart_total = (float) $cart->get_total( 'edit' );
+			$cart_min   = 120;
 
-        // Get gateway variables
-        $this->id = 'viabill';
+			if ( ! ( $cart_total >= $cart_min ) || 'DKK' !== strtoupper( get_woocommerce_currency() ) ) {
+				unset( $gateways[ $this->id ] );
+			}
+		}
+
+		return $gateways;
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		// Get gateway variables
+		$this->id = 'viabill';
 
         $this->method_title = 'Pensopay - ViaBill';
 
-        $this->setup();
+		$this->setup();
 
-        $this->title = $this->s('title');
-        $this->description = $this->s('description');
+		$this->title       = $this->s( 'title' );
+		$this->description = $this->s( 'description' );
 
+		add_filter( 'woocommerce_available_payment_gateways', [ $this, 'maybe_disable_gateway' ] );
         add_filter( 'woocommerce_pensopay_cardtypelock_viabill', [ $this, 'filter_cardtypelock' ] );
 
 	    add_filter('woocommerce_get_price_html', [ $this, 'viabill_price_html' ], 10, 2);
@@ -78,7 +92,7 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
 	 * @access public
 	 * @return void
 	 */
-	public function payment_fields() {
+	public function payment_fields(): void {
 		echo wpautop( wptexturize( $this->description ) ) . $this->getViabillPriceHtml('basket', WC()->cart->get_total('nodisplay'));
 	}
 
@@ -161,8 +175,7 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
     * @access public
     * @return array
     */
-    public function init_form_fields()
-    {
+	public function init_form_fields(): void {
         $this->form_fields = [
             'enabled' => [
                 'title' => __( 'Enable', 'woo-pensopay' ),
@@ -234,16 +247,15 @@ class WC_PensoPay_ViaBill extends WC_PensoPay_Instance {
     }
 
 
-    /**
-    * filter_cardtypelock function.
-    *
-    * Sets the cardtypelock
-    *
-    * @access public
-    * @return string
-    */
-    public function filter_cardtypelock( )
-    {
-        return 'viabill';
-    }
+	/**
+	 * filter_cardtypelock function.
+	 *
+	 * Sets the cardtypelock
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function filter_cardtypelock() {
+		return 'viabill';
+	}
 }

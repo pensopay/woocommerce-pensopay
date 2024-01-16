@@ -11,22 +11,21 @@
  */
 class WC_PensoPay_Log {
 
-    /* The domain handler used to name the log */
-    private $_domain = 'woocommerce-pensopay';
+	/* The domain handler used to name the log */
+	private $_domain = 'woocommerce-pensopay';
 
 
-    /* The WC_Logger instance */
-    private $_logger;
+	/* The WC_Logger instance */
+	private $_logger;
 
 
-    /**
-	* __construct.
-	*
-	* @access public 
-	* @return void
-	*/	
-    public function __construct() 
-    {
+	/**
+	 * __construct.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function __construct() {
         $this->_logger = new WC_Logger();
     }
 

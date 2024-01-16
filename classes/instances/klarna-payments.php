@@ -2,7 +2,7 @@
 
 class WC_PensoPay_Klarna_Payments extends WC_PensoPay_Instance {
 
-    public $main_settings = NULL;
+    public $main_settings = null;
 
     public function __construct() {
         parent::__construct();
@@ -29,8 +29,7 @@ class WC_PensoPay_Klarna_Payments extends WC_PensoPay_Instance {
      * @access public
      * @return array
      */
-    public function init_form_fields()
-    {
+    public function init_form_fields(): void {
         $this->form_fields = [
             'enabled' => [
                 'title' => __( 'Enable', 'woo-pensopay' ),
@@ -66,8 +65,7 @@ class WC_PensoPay_Klarna_Payments extends WC_PensoPay_Instance {
      * @access public
      * @return string
      */
-    public function filter_cardtypelock( )
-    {
+    public function filter_cardtypelock( ): string {
         return 'klarna-payments';
     }
 }

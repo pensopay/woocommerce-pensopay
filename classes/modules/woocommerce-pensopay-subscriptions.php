@@ -13,11 +13,11 @@ class WC_PensoPay_Subscriptions extends WC_PensoPay_Module {
 	}
 
 	/**
-	 * @param WC_PensoPay_Order $subscription
-	 * @param WC_PensoPay_Order $parent_order
+	 * @param WC_Subscription $subscription
+	 * @param WC_Order $parent_order
 	 * @param object $transaction
 	 */
-	public function on_subscription_authorized( $subscription, $parent_order, $transaction ) {
+	public function on_subscription_authorized( WC_Subscription $subscription, WC_Order $parent_order, $transaction ): void {
 		if ( function_exists( 'wcs_get_subscriptions_for_order' ) && ! WC_PensoPay_Subscription::is_subscription( $parent_order->get_id() ) ) {
 			$subscriptions = wcs_get_subscriptions_for_order( $parent_order, [ 'order_type' => 'any' ] );
 
@@ -27,10 +27,9 @@ class WC_PensoPay_Subscriptions extends WC_PensoPay_Module {
 						continue;
 					}
 
-					update_post_meta( $sub->get_id(), '_pensopay_transaction_id', $transaction->id );
+					$sub->get_meta( '_pensopay_transaction_id' );
 				}
 			}
 		}
 	}
-
 }

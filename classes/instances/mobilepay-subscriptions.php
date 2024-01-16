@@ -4,13 +4,27 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 
 	public $main_settings = null;
 
-    const instance_id = 'mobilepay-subscriptions';
+	const instance_id = 'mobilepay-subscriptions';
 
 	public function __construct() {
 		parent::__construct();
 
+		$this->supports = [
+			'products',
+			'subscriptions',
+			'subscription_cancellation',
+			'subscription_reactivation',
+			'subscription_suspension',
+			'subscription_amount_changes',
+			'subscription_date_changes',
+			'subscription_payment_method_change_admin',
+			'subscription_payment_method_change_customer',
+			'refunds',
+			'multiple_subscriptions',
+		];
+
 		// Get gateway variables
-		$this->id = 'mobilepay-subscriptions';
+		$this->id = self::instance_id;
 
 		$this->method_title = 'Pensopay - MobilePay Subscriptions';
 
@@ -19,20 +33,7 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 		$this->title       = $this->s( 'title' );
 		$this->description = $this->s( 'description' );
 
-        $this->supports = [
-            'subscriptions',
-            'subscription_cancellation',
-            'subscription_reactivation',
-            'subscription_suspension',
-            'subscription_amount_changes',
-            'subscription_date_changes',
-            'subscription_payment_method_change_admin',
-            'subscription_payment_method_change_customer',
-            'refunds',
-            'multiple_subscriptions'
-        ];
-
-		add_filter( 'woocommerce_pensopay_cardtypelock_mobilepay_subscriptions', [ $this, 'filter_cardtypelock' ] );
+		add_filter( 'woocommerce_pensopay_cardtypelock_mobilepay-subscriptions', [ $this, 'filter_cardtypelock' ] );
         add_action( 'woocommerce_scheduled_subscription_payment_' . $this->id, [ WC_PP(), 'scheduled_subscription_payment' ], 10, 2 );
         add_filter( 'woocommerce_pensopay_transaction_params_invoice', [ $this, 'maybe_remove_phone_number' ], 10, 2 );
         add_filter( 'woocommerce_available_payment_gateways', [ $this, 'adjust_available_gateways' ] );
@@ -52,7 +53,7 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 	 * @access public
 	 * @return array
 	 */
-	public function init_form_fields() {
+	public function init_form_fields(): void {
 		$this->form_fields = [
 			'enabled'     => [
 				'title'   => __( 'Enable', 'woo-pensopay' ),
@@ -162,64 +163,64 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
      * phone numbers manually.
      *
      * @param array $data
-     * @param WC_PensoPay_Order $order
+     * @param WC_Order $order
      *
      * @return array
      */
-    public function maybe_remove_phone_number( $data, $order ) {
-        if ( $order->get_payment_method() === $this->id ) {
-            if ( ! WC_PensoPay_Helper::option_is_enabled( $this->s( 'checkout_prefill_phone_number' ) ) ) {
-                if ( isset( $data['phone_number'] ) ) {
-                    $data['phone_number'] = null;
-                }
-            }
-        }
+	public function maybe_remove_phone_number( array $data, WC_Order $order ): array {
+		if ( $order->get_payment_method() === $this->id ) {
+			if ( ! WC_PensoPay_Helper::option_is_enabled( $this->s( 'checkout_prefill_phone_number' ) ) ) {
+				if ( isset( $data['phone_number'] ) ) {
+					$data['phone_number'] = null;
+				}
+			}
+		}
 
-        return $data;
-    }
+		return $data;
+	}
 
-    /**
-     * Only show the gateway if the cart contains a subscription product
-     *
-     * @param $available_gateways
-     *
-     * @return mixed
-     */
-    public function adjust_available_gateways( $available_gateways ) {
-        if ( isset( $available_gateways[ $this->id ] )
-            && WC_PensoPay_Subscription::plugin_is_active()
-            && ( is_cart() || is_checkout() ) && ! WC_Subscriptions_Cart::cart_contains_subscription()
-            && ! WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment ) {
-            unset( $available_gateways[ $this->id ] );
-        }
+	/**
+	 * Only show the gateway if the cart contains a subscription product
+	 *
+	 * @param $available_gateways
+	 *
+	 * @return mixed
+	 */
+	public function adjust_available_gateways( $available_gateways ) {
+		if ( isset( $available_gateways[ $this->id ] )
+		     && WC_PensoPay_Subscription::plugin_is_active()
+		     && ( is_cart() || is_checkout() ) && ! WC_Subscriptions_Cart::cart_contains_subscription()
+		     && ! WC_Subscriptions_Change_Payment_Gateway::$is_request_to_change_payment ) {
+			unset( $available_gateways[ $this->id ] );
+		}
 
-        return $available_gateways;
-    }
+		return $available_gateways;
+	}
 
-    /**
-     * @param array $data
-     * @param \WC_PensoPay_Order $order
-     * @param int $subscription_id
-     *
-     * @return array
-     */
-    public function recurring_payment_data( $data, $order, $subscription_id ) {
+	/**
+	 * @param array $data
+	 * @param WC_Order $order
+	 * @param int $subscription_id
+	 *
+	 * @return array
+	 */
+	public function recurring_payment_data( $data, WC_Order $order, $subscription_id ): array {
         if ( empty( $data['due_date'] ) ) {
             $data['auto_capture_at'] = wp_date( 'Y-m-d', strtotime( 'now + 2 days' ), apply_filters( 'woocommerce_pensopay_mps_timezone', null, $data, $order, $subscription_id ) );
             $data['description']     = sprintf( __( 'Payment of #%s', 'woo-pensopay' ), $order->get_order_number() );
         }
 
-        return $data;
-    }
+		return $data;
+	}
 
-    /**
-     * If enabled, the module will activate the subscription after an agreement has been authorized, but
-     *
-     * @param WC_PensoPay_Order $subscription
-     * @param WC_PensoPay_Order $parent_order
-     * @param stdClass $transaction
-     */
-    public function on_subscription_authorized( $subscription, $parent_order, $transaction ) {
+	/**
+	 * If enabled, the module will activate the subscription after an agreement has been authorized, but
+	 *
+	 * @param WC_Subscription $subscription
+	 * @param WC_Order $parent_order
+	 * @param mixed $transaction
+	 */
+	public function on_subscription_authorized( WC_Subscription $subscription, WC_Order $parent_order, $transaction ): void {
         try {
             if ( $subscription->get_payment_method() === self::instance_id && $subscription = wcs_get_subscription( $subscription->get_id() ) ) {
                 $instant_activation    = WC_PensoPay_Helper::option_is_enabled( $this->s( 'checkout_instant_activation' ) );
@@ -235,11 +236,11 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
         }
     }
 
-    /**
-     * @param WC_Subscription $subscription
-     * @param WC_Order $renewal_order
-     */
-    public function on_after_scheduled_payment_created( $subscription, $renewal_order ) {
+	/**
+	 * @param WC_Subscription $subscription
+	 * @param WC_Order $renewal_order
+	 */
+	public function on_after_scheduled_payment_created( $subscription, WC_Order $renewal_order ): void {
         if ( WC_PensoPay_Helper::option_is_enabled( $this->s( 'renewal_keep_active' ) ) ) {
             try {
                 $subscription->update_status( 'active' );
@@ -249,28 +250,28 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
         }
     }
 
-    /**
-     * @param WC_PensoPay_Order $order
-     * @param stdClass $transaction
-     *
-     * @return bool
-     */
-    public function maybe_process_order_on_capture( $order, $transaction ) {
-        if ( $order->get_payment_method() === $this->id && $order->needs_payment() ) {
-            $order->payment_complete( $transaction->id );
-        }
-    }
+	/**
+	 * @param WC_Order $order
+	 * @param mixed $transaction
+	 *
+	 * @return void
+	 */
+	public function maybe_process_order_on_capture( WC_Order $order, $transaction ): void {
+		if ( $order->get_payment_method() === $this->id && $order->needs_payment() ) {
+			$order->payment_complete( $transaction->id );
+		}
+	}
 
-    /**
-     * Declare gateway's meta data requirements in case of manual payment gateway changes performed by admins.
-     *
-     * @param array $payment_meta
-     *
-     * @param WC_Subscription $subscription
-     *
-     * @return array
-     */
-    public function woocommerce_subscription_payment_meta( $payment_meta, $subscription ) {
+	/**
+	 * Declare gateway's meta data requirements in case of manual payment gateway changes performed by admins.
+	 *
+	 * @param array $payment_meta
+	 *
+	 * @param WC_Subscription $subscription
+	 *
+	 * @return array
+	 */
+	public function woocommerce_subscription_payment_meta( $payment_meta, $subscription ): array {
         $order                     = new WC_PensoPay_Order( $subscription->get_id() );
         $payment_meta[ $this->id ] = [
             'post_meta' => [
@@ -281,6 +282,6 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
             ],
         ];
 
-        return $payment_meta;
-    }
+		return $payment_meta;
+	}
 }
