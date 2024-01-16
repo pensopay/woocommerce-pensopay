@@ -26,6 +26,70 @@ General:
 2. WooCommerce >= 3.0
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
+= 7.0.4 =
+* Feat: HPOS (High Performance Order Storage)
+* Feat: Support for Finnish payment window.
+* Fix: Proper restrictions for some payment method countries/currencies.
+* Fix: Auto currency
+* Fix: MP Subs renewals, update to latest
+* Fix: Remove ISK from list of non-decimal currencies as the QuickPay API requires ISK amount to be multiplied
+* Fix: Update autofee helper text.
+* Fix: Bump tested WP version number to 6.3
+* Fix: Bump tested WC version number to 8.1
+* Fix: Manually creating a payment link from wp-admin on subscriptions with empty transaction IDs could lead to errors on link generation
+* Fix: Problem with transaction fee from callbacks triggering an error when setting it on the order object.
+* Fix: Remove strict return type from WC_Pensopay_Paypal::apply_gateway_icons
+* Feat: Added support for High Performance Order Storage / Custom Order Tables
+* Feat: Added template for meta-box-order.php
+* Feat: Added template for meta-box-subscription.php
+* Feat: Added support for Early Renewals modal
+* Fix: Added payment.quickpay.net as a whitelisted host to avoid problems with wp_safe_redirect when changing payment method in WCS 5.1.0 and above.
+* Fix: Adjust the link to payment methods documentation
+* Fix: WC_Pensopay::remove_renewal_meta_data wasn't removing subscription meta data from renewal orders properly.
+* Fix: 'Create payment' now patches transactions in 'initial' state and creates new payments in case they have already been authorized.
+* Fix: 'Create payment' now ensures unique order numbers by adding a random string to the order number before sending it to the API. This fixes problems with duplicate order number errors from the API.
+* Dev: Refactor order logic in general which means we are deprecating the WC_Pensopay_Order object and its methods. For better compatibility, and to avoid overhead, we are solely relying on the WC_Order object.
+* Dev: Introducing utility helper classes used to replace logic in the WC_Pensopay_Order object
+* Dev: Bump minimum required version of WooCommerce to 7.1.0
+* Dev: Bump minimum required version of WooCommerce Subscriptions to 5.0
+* Dev: Bump minimum required version of PHP to 7.4
+* Fix: Avoid requesting quickpay_fetch_private_key on all order / subscription related pages.
+* Fix: Add fees to basket items array
+* Fix: Refactor WC_Pensopay_Order::get_transaction_basket_params_line_helper
+* Fix: Remove shipping[tracking_number] and shipping[tracking_url] by default as they were empty anyway and resulted in problems with Resurs payments
+* Fix: Vipps - adjust payment method to "vipps,vippspsp"
+* Dev: Introducing filter woocommerce_pensopaypay_transaction_params_basket_apply_fees
+* Fix: Rely on auto_capture_at instead of due_date for MPS payments
+* Fix: Enhance the way auto_capture_at is calculated. It now relies on the timezone used in WordPress but can be changed with the filter woocommerce_pensopaypay_mps_timezone
+* Feat: MobilePay Subscriptions - setting added to control status transition when a payment agreement is cancelled outside WooCommerce.
+* Dev: add filter woocommerce_pensopaypay_mps_cancelled_from_status
+* Dev: add filter woocommerce_pensopaypay_mps_cancel_agreement_status_options
+* Fix: Bump tested with WC version to 6.6
+* Fix: Bump tested with WP version to 6.0
+* Feat: Anyday - hide gateway if currency is not DKK and if cart total is not within 300 - 30.000
+* Fix: Remove VISA Electron card logo
+* Feat: Add Google Pay as payment gateway
+* Fix: Adjust SVG icons for Paypal, Apple Pay and Klarna to show properly in Safari
+* Feat: Only show Apple Pay in Safari browsers
+* Fix: MobilePay Subscription gateway is now available when using the "Change Payment" option from the account page.
+* Feat: Add Apple Pay gateway - works only in Safari.
+* Feat: Show a more user-friendly error message when payments fail in the callback handler.
+* Dev: Add new filter woocommerce_pensopaypay_checkout_gateway_icon
+* Fix: Bump WC + WP tested with versions to latest versions
+* Dev: Add WC_Pensopay_Countries::getAlpha2FromAlpha3
+* Fix: Use alpha2 country code instead of alpha3 country code in MP Checkout callbacks
+* Fix: Modify force checkout logic used for MobilePay Checkout to enhance theme support.
+* Fix: WC_Pensopay_API_Transaction::get_brand removes prefixed pensopaypay_ when fallback to variables.
+* Fix: Refund now supports location header to avoid wrong response messages when capturing Klarna and Anyday payments.
+* Dev: Add filter woocommerce_pensopaypay_transaction_params
+* Dev: Add filter woocommerce_pensopaypay_transaction_params_description
+* Bump WC tested with version
+* Bump WP tested with version
+* Feat: MobilePay Checkout now automatically ticks the terms and condition field during checkout.
+* Fix: PHP8 compatability
+* Fix: Capture now supports location header to avoid wrong response messages when capturing Klarna and Anyday payments.
+* Fix: WC_Pensopay_API_Transaction::get_brand now falls back to variables.payment_methods sent from the shop if brand is empty on metadata.
+
 == Changelog ==
 = 6.3.3 =
 * Compatibility test with WC 8.1

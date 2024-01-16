@@ -9,7 +9,7 @@
  * Domain Path: /languages/
  * Author URI: https://pensopay.com/
  * Wiki: https://pensopay.zendesk.com/hc/da
- * WC requires at least: 3.0.0
+ * WC requires at least: 7.1.0
  * WC tested up to: 8.1
  */
 
