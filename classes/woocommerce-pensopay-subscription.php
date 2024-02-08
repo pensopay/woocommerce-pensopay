@@ -10,39 +10,6 @@
  */
 
 class WC_PensoPay_Subscription {
-	/**
-	 * Gets a parent order of a subscription
-	 * @param  [type] $order [description]
-	 * @return [type]        [description]
-	 */
-	public static function get_parent_order( $order ) {
-		return wcs_get_subscriptions_for_renewal_order( $order );
-	}
-
-	/**
-	 * Returns the transaction ID of the parent subscription.
-	 * This ID is used to make all future renewal orders.
-	 * @param  [type] $order [description]
-	 * @return [type]        [description]
-	 */
-	public static function get_initial_subscription_transaction_id( $order ) {
-		$order_id = $order->get_id();
-		// Lets check if the current order IS the parent order. If so, return the subscription ID from current order.
-		$is_subscription = wcs_is_subscription( $order_id );
-		if( $is_subscription ) {
-			$original_order = new WC_PensoPay_Order( $order->post->post_parent );
-			return $original_order->get_transaction_id();
-		} 
-		else if( self::is_renewal( $order ) ) {
-			$subscriptions = self::get_parent_order( $order );
-			$subscription = end( $subscriptions );
-			$original_order = new WC_PensoPay_Order( $subscription->post->post_parent );
-			return $original_order->get_transaction_id();
-		}
-
-		// Nothing found
-		return null;
-	}
 
 	/**
 	 * Checks if a subscription is up for renewal.

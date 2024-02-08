@@ -173,9 +173,6 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 	public function patch_link( $transaction_id, WC_Order $order ) {
 		$payment_method = strtolower( $order->get_payment_method() );
 
-//		debug_print_backtrace(0, 10);
-//		die;
-
 		$base_params = [
 			'language'                     => woocommerce_pensopay_get_language(),
 			'currency'                     => $order->get_currency(),
@@ -448,7 +445,7 @@ class WC_PensoPay_API_Transaction extends WC_PensoPay_API {
 		// Cache expiration in seconds
 		$expiration = apply_filters( 'woocommerce_pensopay_transaction_cache_expiration', $expiration );
 
-		return set_transient( 'wcpp_transaction_' . $this->resource_data->id, json_encode( $this->resource_data ), $expiration );
+		return set_transient( 'wcpp_transaction_' . $this->resource_data->id, json_encode( $this->resource_data, JSON_THROW_ON_ERROR ), $expiration );
 	}
 
 	/**

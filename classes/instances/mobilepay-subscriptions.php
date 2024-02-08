@@ -46,6 +46,23 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 	}
 
 	/**
+	 * Handle subscription cancellation
+	 *
+	 * @param WC_PensoPay_Order $subscription
+	 * @param WC_PensoPay_Order $parent_order
+	 * @param stdClass $operation
+	 * @param stdClass $json
+	 */
+	public function on_subscription_cancelled( $subscription, WC_Order $order, $operation, $json ): void {
+		if ( $subscription->get_payment_method() === $this->id && ( $transition_to = $this->s( 'mps_transaction_cancellation_status' ) ) ) {
+			$allowed_transition_from = apply_filters( 'woocommerce_pensopay_mps_cancelled_from_status', [ 'active' ], $subscription, $order, $json );
+			if ( $subscription->has_status( $allowed_transition_from ) && ! $subscription->has_status( $transition_to ) && WC_PensoPay_Helper::is_subscription_status( $transition_to ) ) {
+				$subscription->update_status( $transition_to, ! empty( $operation->aq_status_msg ) ? $operation->aq_status_msg : __( 'Payment transaction has been cancelled by merchant or customer', 'woo-pensopay' ) );
+			}
+		}
+	}
+
+	/**
 	 * init_form_fields function.
 	 *
 	 * Initiates the plugin settings form fields
@@ -120,23 +137,6 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
             ],
 		];
 	}
-
-    /**
-     * Handle subscription cancellation
-     *
-     * @param WC_PensoPay_Order $subscription
-     * @param WC_PensoPay_Order $parent_order
-     * @param stdClass $operation
-     * @param stdClass $json
-     */
-    public function on_subscription_cancelled( $subscription, $order, $operation, $json ) {
-        if ( $subscription->get_payment_method() === $this->id && ( $transition_to = $this->s( 'mps_transaction_cancellation_status' ) ) ) {
-            $allowed_transition_from = apply_filters( 'woocommerce_pensopay_mps_cancelled_from_status', [ 'active' ], $subscription, $order, $json );
-            if ( $subscription->has_status( $allowed_transition_from ) && ! $subscription->has_status( $transition_to ) && WC_PensoPay_Helper::is_subscription_status( $transition_to ) ) {
-                $subscription->update_status( $transition_to, ! empty( $operation->aq_status_msg ) ? $operation->aq_status_msg : __( 'Payment transaction has been cancelled by merchant or customer', 'woo-pensopay' ) );
-            }
-        }
-    }
 
     private function get_mps_cancel_agreement_status_options() {
         return apply_filters( 'woocommerce_pensopay_mps_cancel_agreement_status_options', [
@@ -222,11 +222,10 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 	 */
 	public function on_subscription_authorized( WC_Subscription $subscription, WC_Order $parent_order, $transaction ): void {
         try {
-            if ( $subscription->get_payment_method() === self::instance_id && $subscription = wcs_get_subscription( $subscription->get_id() ) ) {
+            if ( $subscription->get_payment_method() === self::instance_id ) {
                 $instant_activation    = WC_PensoPay_Helper::option_is_enabled( $this->s( 'checkout_instant_activation' ) );
-                $subscription_inactive = ! $subscription->has_status( 'active' );
 
-                if ( $instant_activation && $subscription_inactive ) {
+                if ( $instant_activation && ! $subscription->has_status( 'active' ) ) {
                     $subscription->update_status( 'active', __( "'Activate subscriptions immediately.' enabled. Activating subscription due to authorized MobilePay agreement", 'woo-pensopay' ) );
                     $subscription->save();
                 }
@@ -272,11 +271,10 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 	 * @return array
 	 */
 	public function woocommerce_subscription_payment_meta( $payment_meta, $subscription ): array {
-        $order                     = new WC_PensoPay_Order( $subscription->get_id() );
         $payment_meta[ $this->id ] = [
             'post_meta' => [
-                '_pensopay_transaction_id' => [
-                    'value' => $order->get_transaction_id(),
+                '_quickpay_transaction_id' => [
+                    'value' => WC_PensoPay_Order_Utils::get_transaction_id( $subscription ),
                     'label' => __( 'Pensopay Transaction ID', 'woo-pensopay' ),
                 ],
             ],

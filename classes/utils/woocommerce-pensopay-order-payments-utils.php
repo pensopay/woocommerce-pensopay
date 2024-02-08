@@ -201,6 +201,8 @@ class WC_PensoPay_Order_Payments_Utils {
 			}
 		}
 
+//		$order_number = 'PEN-' . $order_number;
+
 		return apply_filters( 'woocommerce_pensopay_order_number_for_api', $order_number, $order, $recurring );
 	}
 
@@ -212,7 +214,7 @@ class WC_PensoPay_Order_Payments_Utils {
 	 * @return int
 	 */
 	public static function get_failed_payment_count( WC_Order $order ): int {
-		return (int) $order->get_meta( '_pensopay_failed_payment_count' );
+		return (int) $order->get_meta( '_quickpay_failed_payment_count' );
 	}
 
 
@@ -225,7 +227,7 @@ class WC_PensoPay_Order_Payments_Utils {
 	 */
 	public static function increase_failed_payment_count( WC_Order $order ): int {
 		$count = self::get_failed_payment_count( $order );
-		$order->update_meta_data( '_pensopay_failed_payment_count', ++ $count );
+		$order->update_meta_data( '_quickpay_failed_payment_count', ++ $count );
 		$order->save_meta_data();
 
 		return $count;
@@ -237,12 +239,12 @@ class WC_PensoPay_Order_Payments_Utils {
 	 * @param WC_Order $order
 	 */
 	public static function reset_failed_payment_count( WC_Order $order ): void {
-		$order->delete_meta_data( '_pensopay_failed_payment_count' );
+		$order->delete_meta_data( '_quickpay_failed_payment_count' );
 		$order->save_meta_data();
 	}
 
 	public static function get_payment_method_change_count( WC_Order $order ): int {
-		return (int ) $order->get_meta( '_pensopay_payment_method_change_count' );
+		return (int ) $order->get_meta( '_quickpay_payment_method_change_count' );
 	}
 
 	/**
@@ -255,7 +257,7 @@ class WC_PensoPay_Order_Payments_Utils {
 	public static function increase_payment_method_change_count( WC_Order $order ): int {
 		$count = self::get_payment_method_change_count( $order );
 
-		$order->update_meta_data( '_pensopay_payment_method_change_count', ++ $count );
+		$order->update_meta_data( '_quickpay_payment_method_change_count', ++ $count );
 		$order->save_meta_data();
 
 		return $count;

@@ -129,7 +129,7 @@ class WC_PensoPay_Callbacks {
 		try {
 			if ( ! empty( $transaction->id ) ) {
 				$order->set_transaction_id( $transaction->id );
-                $order->update_meta_data( '_pensopay_transaction_id', $transaction->id );
+                $order->update_meta_data( '_quickpay_transaction_id', $transaction->id );
                 $order->save_meta_data();
 				$order->save();
 			}
