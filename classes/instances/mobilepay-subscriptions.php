@@ -273,7 +273,7 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 	public function woocommerce_subscription_payment_meta( $payment_meta, $subscription ): array {
         $payment_meta[ $this->id ] = [
             'post_meta' => [
-                '_quickpay_transaction_id' => [
+                '_pensopay_transaction_id' => [
                     'value' => WC_PensoPay_Order_Utils::get_transaction_id( $subscription ),
                     'label' => __( 'Pensopay Transaction ID', 'woo-pensopay' ),
                 ],

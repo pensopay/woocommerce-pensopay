@@ -94,7 +94,7 @@ class WC_PensoPay_Order_Utils {
 	public static function get_transaction_id( WC_Order $order ) {
 		// Search for custom transaction meta added in 4.8 to avoid transaction ID
 		// sometimes being empty on subscriptions in WC 3.0.
-		$transaction_id = $order->get_meta( '_quickpay_transaction_id' );
+		$transaction_id = $order->get_meta( '_pensopay_transaction_id' );
 		if ( empty( $transaction_id ) ) {
 
 			$transaction_id = $order->get_transaction_id();

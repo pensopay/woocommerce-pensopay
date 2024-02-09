@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 7.0.5
+ * Version: 7.0.6
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '7.0.5' );
+define( 'WCPP_VERSION', '7.0.6' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -840,8 +840,8 @@ function init_pensopay_gateway() {
 		 */
 		public function remove_renewal_meta_data( array $meta ): array {
 			$avoid_keys = [
-				'_quickpay_failed_payment_count',
-				'_quickpay_transaction_id',
+				'_pensopay_failed_payment_count',
+				'_pensopay_transaction_id',
 				'_transaction_id',
 				'TRANSACTION_ID', // Prevents the legacy transaction ID from being copied to renewal orders
 			];
@@ -857,7 +857,7 @@ function init_pensopay_gateway() {
 
 		public function remove_failed_pensopay_attempts_meta_query( $order_meta_query ) {
 			$order_meta_query .= " AND `meta_key` NOT IN ('" . WC_PensoPay_Order::META_FAILED_PAYMENT_COUNT . "')";
-			$order_meta_query .= " AND `meta_key` NOT IN ('_quickpay_transaction_id')";
+			$order_meta_query .= " AND `meta_key` NOT IN ('_pensopay_transaction_id')";
             $order_meta_query .= " AND `meta_key` NOT IN ('_transaction_id')";
 
 			return $order_meta_query;
@@ -888,7 +888,7 @@ function init_pensopay_gateway() {
 		public function woocommerce_subscription_payment_meta( $payment_meta, $subscription ): array {
 			$payment_meta['pensopay'] = [
 				'post_meta' => [
-					'_quickpay_transaction_id' => [
+					'_pensopay_transaction_id' => [
 						'value' => WC_PensoPay_Order_Utils::get_transaction_id( $subscription ),
 						'label' => __( 'PensoPay Transaction ID', 'woo-pensopay' ),
 					],
@@ -909,8 +909,8 @@ function init_pensopay_gateway() {
 		 * @throws PensoPay_API_Exception
 		 */
 		public function woocommerce_subscription_validate_payment_meta( $payment_meta, $subscription ) {
-			if ( isset( $payment_meta['post_meta']['_quickpay_transaction_id']['value'] ) ) {
-				$transaction_id = $payment_meta['post_meta']['_quickpay_transaction_id']['value'];
+			if ( isset( $payment_meta['post_meta']['_pensopay_transaction_id']['value'] ) ) {
+				$transaction_id = $payment_meta['post_meta']['_pensopay_transaction_id']['value'];
 				// Validate only if the transaction ID has changed
 				$sub_transaction_id = WC_PensoPay_Order_Utils::get_transaction_id( $subscription );
 				if ( $transaction_id !== $sub_transaction_id ) {

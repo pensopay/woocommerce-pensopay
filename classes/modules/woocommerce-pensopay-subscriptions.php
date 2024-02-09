@@ -27,7 +27,7 @@ class WC_PensoPay_Subscriptions extends WC_PensoPay_Module {
 						continue;
 					}
 
-					$sub->get_meta( '_quickpay_transaction_id' );
+					$sub->get_meta( '_pensopay_transaction_id' );
 				}
 			}
 		}

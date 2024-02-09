@@ -26,6 +26,9 @@ General:
 2. WooCommerce >= 3.0
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
+= 7.0.6 =
+* Fix subscription bug related to wrong meta key being fetched
+
 = 7.0.5 =
 * Bug fix with subscription renewals in updating payment method after failed payment
 * Deprecated functions fix
