@@ -26,6 +26,9 @@ General:
 2. WooCommerce >= 3.0
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
+= 7.1.0 =
+* Remove MobilePay Checkout after deprecation
+
 = 7.0.6 =
 * Fix subscription bug related to wrong meta key being fetched
 

@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 7.0.6
+ * Version: 7.1.0
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '7.0.6' );
+define( 'WCPP_VERSION', '7.1.0' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -212,7 +212,6 @@ function init_pensopay_gateway() {
 				'klarna'             => 'WC_PensoPay_Klarna',
 				'klarna-payments'    => 'WC_PensoPay_Klarna_Payments',
 				'mobilepay'          => 'WC_PensoPay_MobilePay',
-				'mobilepay-checkout' => 'WC_PensoPay_MobilePay_Checkout',
 				'mobilepay-subscriptions' => 'WC_PensoPay_MobilePay_Subscriptions',
 				'paypal'             => 'WC_PensoPay_PayPal',
 				'pensopay-extra'     => 'WC_PensoPay_Extra',
