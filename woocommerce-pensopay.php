@@ -929,7 +929,7 @@ function init_pensopay_gateway() {
 		 * @param $subscription
 		 * @param $old_payment_method
 		 */
-		public function on_subscription_payment_method_updated_to_quickpay( $subscription, $old_payment_method ): void {
+		public function on_subscription_payment_method_updated_to_pensopay( $subscription, $old_payment_method ): void {
 			WC_PensoPay_Order_Payments_Utils::increase_payment_method_change_count( $subscription );
 		}
 

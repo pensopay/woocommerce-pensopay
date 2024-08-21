@@ -11,43 +11,6 @@ class WC_PensoPay_Admin_Orders extends WC_PensoPay_Module {
 		// Custom order actions
 		add_filter( 'woocommerce_order_actions', [ $this, 'admin_order_actions' ], 10, 1 );
 		add_action( 'woocommerce_order_action_pensopay_create_payment_link', [ $this, 'order_action_pensopay_create_payment_link' ], 50, 2 );
-		add_filter( 'bulk_actions-edit-shop_order', [ $this, 'list_bulk_actions' ], 10, 1 );
-		add_filter( 'bulk_actions-edit-shop_subscription', [ $this, 'list_bulk_actions' ], 10, 1 );
-		add_filter( 'handle_bulk_actions-edit-shop_order', [ $this, 'handle_bulk_actions_orders' ], 10, 3 );
-		add_filter( 'handle_bulk_actions-edit-shop_subscription', [ $this, 'handle_bulk_actions_subscriptions' ], 10, 3 );
-	}
-
-	/**
-	 * Handle bulk actions for orders
-	 *
-	 * @param $redirect_to
-	 * @param $action
-	 * @param $ids
-	 *
-	 * @return string
-	 */
-	public function handle_bulk_actions_orders( $redirect_to, $action, $ids ) {
-		$ids     = apply_filters( 'woocommerce_bulk_action_ids', array_reverse( array_map( 'absint', $ids ) ), $action, 'order' );
-		$changed = 0;
-
-		if ( 'pensopay_create_payment_link' === $action ) {
-
-			foreach ( $ids as $id ) {
-				$order = wc_get_order( $id );
-
-				if ( $order ) {
-					if ( $this->order_action_pensopay_create_payment_link( $order ) ) {
-						$changed ++;
-					}
-				}
-			}
-		}
-
-		if ( $changed ) {
-			woocommerce_pensopay_add_admin_notice( sprintf( __( 'Payment links created for %d orders.', 'woo-pensopay' ), $changed ) );
-		}
-
-		return esc_url_raw( $redirect_to );
 	}
 
 	/**
@@ -179,50 +142,6 @@ class WC_PensoPay_Admin_Orders extends WC_PensoPay_Module {
 		}
 
 		return $api_order_number;
-	}
-
-	/**
-	 * Handle bulk actions for orders
-	 *
-	 * @param $redirect_to
-	 * @param $action
-	 * @param $ids
-	 *
-	 * @return string
-	 */
-	public function handle_bulk_actions_subscriptions( $redirect_to, $action, $ids ) {
-		$ids     = apply_filters( 'woocommerce_bulk_action_ids', array_reverse( array_map( 'absint', $ids ) ), $action, 'order' );
-		$changed = 0;
-
-		if ( 'pensopay_create_payment_link' === $action ) {
-
-			foreach ( $ids as $id ) {
-				$subscription = wcs_get_subscription( $id );
-
-				if ( $subscription ) {
-					if ( $this->order_action_pensopay_create_payment_link( $subscription ) ) {
-						$changed ++;
-					}
-				}
-			}
-		}
-
-		if ( $changed ) {
-			woocommerce_pensopay_add_admin_notice( sprintf( __( 'Payment links created for %d subscriptions.', 'woo-pensopay' ), $changed ) );
-		}
-
-		return esc_url_raw( $redirect_to );
-	}
-
-	/**
-	 * @param $actions
-	 *
-	 * @return mixed
-	 */
-	public function list_bulk_actions( $actions ) {
-		$actions['pensopay_create_payment_link'] = __( 'Create payment link', 'woo-pensopay' );
-
-		return $actions;
 	}
 
 	/**

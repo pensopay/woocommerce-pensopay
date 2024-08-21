@@ -341,6 +341,16 @@ class WC_PensoPay_Settings {
 				'default'     => 'no',
 				'desc_tip'    => true,
 			];
+
+			// Creates a subscription transaction on renewal orders and automatically captures payment for it afterwards on callback
+			$fields['subscription_update_card_on_manual_renewal_payment'] = [
+				'title'       => __( 'Update card on manual renewal payment', 'woo-pensopay' ),
+				'type'        => 'checkbox',
+				'label'       => __( 'Enable', 'woo-pensopay' ),
+				'description' => __( 'When paying failed renewals, the payment link will authorize a new subscription transaction which will be saved on the customer\'s subscription. On callback, a payment transaction related to the actual renewal order will be created.', 'woo-pensopay' ),
+				'default'     => 'no',
+				'desc_tip'    => true,
+			];
 		}
 
 		return $fields;
