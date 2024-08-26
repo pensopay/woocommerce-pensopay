@@ -21,6 +21,7 @@ class WC_PensoPay_Payment_Link_Email extends WC_Email {
 			'{payment_link}' => '',
 		];
 
+        $this->template_base = WCPP_PATH . 'templates/woocommerce/';
 		$this->wcpp_template_path = WCPP_PATH . 'templates/woocommerce/';
 		// Triggers for this email.
 
