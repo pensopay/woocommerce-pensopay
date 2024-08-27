@@ -4,6 +4,23 @@
 	PensoPay.prototype.init = function() {
 		// Add event handlers
 		this.actionBox.on( 'click', '[data-action]', $.proxy( this.callAction, this ) );
+
+		var previousSelectValue = this.orderStatusSelect.val();
+		this.orderStatusSelect.
+		hover(function() {
+			if (this.value) {
+				previousSelectValue = this.value;
+			}
+		}).
+		change(function() {
+			let newValue = this.value;
+			if (newValue === 'wc-refunded') {
+				let answer = window.confirm(pensopayBackend.refund_warning);
+				if (!answer) {
+					this.value = previousSelectValue;
+				}
+			}
+		})
 	};
 
 	PensoPay.prototype.callAction = function( e ) {
@@ -163,6 +180,7 @@
 		this.actionBox 	= $( '#pensopay-payment-actions' );
 		this.postID		= $( '#post_ID' );
 		this.loaderBox 	= $( '<div class="loader"></div>');
+		this.orderStatusSelect = $( '#order_status' );
 	}
 
     function PensoPayCheckAPIStatus() {

@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '7.1.0' );
+define( 'WCPP_VERSION', '7.1.1' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -67,6 +67,7 @@ function init_pensopay_gateway() {
 	require_once WCPP_PATH . 'classes/utils/woocommerce-pensopay-order-transaction-data-utils.php';
 	require_once WCPP_PATH . 'classes/utils/woocommerce-pensopay-requests-utils.php';
 	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-module.php';
+    require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-blocks-checkout.php';
 	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-emails.php';
 	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-admin-ajax.php';
 	require_once WCPP_PATH . 'classes/modules/woocommerce-pensopay-admin-orders.php';
@@ -238,7 +239,8 @@ function init_pensopay_gateway() {
 			WC_PensoPay_Admin_Orders::get_instance();
 			WC_PensoPay_Admin_Orders_Lists_Table::get_instance();
 			WC_PensoPay_Admin_Orders_Meta::get_instance();
-			WC_PensoPay_Emails::get_instance();
+			WC_PensoPay_Blocks_Checkout::get_instance();
+            WC_PensoPay_Emails::get_instance();
 			WC_PensoPay_Orders::get_instance();
 			WC_PensoPay_Subscriptions::get_instance();
 			WC_PensoPay_Subscriptions_Change_Payment_Method::get_instance();
@@ -1683,6 +1685,15 @@ function init_pensopay_gateway() {
 		public function plugin_url( $path ) {
 			return plugins_url( $path, __FILE__ );
 		}
+
+        /**
+         * @param string $path
+         *
+         * @return string
+         */
+        public function plugin_path( string $path ): string {
+            return __DIR__ . $path;
+        }
 	}
 
 	/**

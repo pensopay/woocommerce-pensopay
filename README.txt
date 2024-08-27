@@ -26,6 +26,10 @@ General:
 2. WooCommerce >= 3.0
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
+= 7.1.1 =
+* Feature: Show warning when attempting to refund an entire order instead of individual items
+* Feature: Add support for Checkout Blocks
+
 = 7.1.0 =
 * Remove MobilePay Checkout after deprecation
 

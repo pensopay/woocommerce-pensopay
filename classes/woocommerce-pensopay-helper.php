@@ -172,6 +172,27 @@ class WC_PensoPay_Helper {
 		return ! in_array( strtoupper( $currency ), $non_decimal_currencies, true );
 	}
 
+    /**
+     * @param WC_Payment_Gateway $class
+     *
+     * @return bool
+     */
+    public static function is_plugin_gateway(WC_Payment_Gateway $class)
+    {
+        return $class instanceof WC_PensoPay;
+    }
+
+    /**
+     * @return array
+     */
+    public static function get_plugin_gateways(): array
+    {
+        return array_filter(wc()->payment_gateways()->payment_gateways(), static function ($gateway) {
+            return static::is_plugin_gateway($gateway);
+        });
+    }
+
+
 	/**
 	 * enqueue_javascript_backend function.
 	 *
@@ -182,7 +203,8 @@ class WC_PensoPay_Helper {
 		if ( self::maybe_enqueue_admin_statics() ) {
 			wp_enqueue_script( 'pensopay-backend', plugins_url( '/assets/javascript/backend.js', __DIR__ ), [ 'jquery' ], self::static_version() );
 			wp_localize_script( 'pensopay-backend', 'pensopayBackend', [
-				'ajax_url' => WC_PensoPay_Admin_Ajax::get_instance()->get_base_url()
+				'ajax_url' => WC_PensoPay_Admin_Ajax::get_instance()->get_base_url(),
+                'refund_warning' => __( 'Note! Refunding the order like this will refund the entire order. If you want to refund partially or specific items, use the refund button on the bottom of the items list. Do you want to refund the entire order?', 'woo-pensopay' )
 			] );
 		}
 

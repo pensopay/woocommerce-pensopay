@@ -1,0 +1,15 @@
+.blocks-woocommerce-pensopay-inner,
+.blocks-woocommerce-pensopay-inner__icons {
+    display: flex;
+    align-items: center;
+}
+
+.blocks-woocommerce-pensopay-inner {
+    align-items: center;
+    justify-content: space-between;
+    width: 95%;
+}
+
+.blocks-woocommerce-pensopay-inner__icons {
+    gap: .20em;
+}
