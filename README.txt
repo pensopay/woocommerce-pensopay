@@ -30,6 +30,13 @@ General:
 = 7.1.1 =
 * Feature: Show warning when attempting to refund an entire order instead of individual items
 * Feature: Add support for Checkout Blocks
+* Fix for subscription failed payments and submit new card at the same time
+* Fix to allow for email template editing from the admin
+* Add support for Checkout Blocks
+* Show warning when attempting to refund an entire order instead of individual items
+* Add translation
+* Tested version bump
+* Fix README.txt format
 
 = 7.1.0 =
 * Remove MobilePay Checkout after deprecation
