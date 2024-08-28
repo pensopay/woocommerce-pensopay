@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
 == Changelog ==
+= 7.1.2 =
+* Bump
+
 = 7.1.1 =
 * Feature: Show warning when attempting to refund an entire order instead of individual items
 * Feature: Add support for Checkout Blocks
