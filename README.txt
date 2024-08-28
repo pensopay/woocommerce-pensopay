@@ -26,6 +26,7 @@ General:
 2. WooCommerce >= 3.0
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 2.0
 
+== Changelog ==
 = 7.1.1 =
 * Feature: Show warning when attempting to refund an entire order instead of individual items
 * Feature: Add support for Checkout Blocks
@@ -104,7 +105,6 @@ General:
 * Fix: Capture now supports location header to avoid wrong response messages when capturing Klarna and Anyday payments.
 * Fix: WC_Pensopay_API_Transaction::get_brand now falls back to variables.payment_methods sent from the shop if brand is empty on metadata.
 
-== Changelog ==
 = 6.3.3 =
 * Compatibility test with WC 8.1
 
@@ -409,7 +409,6 @@ Remove recurs
 * Add: Trustly icon
 * Add: Paysafecard icon
 
-== Changelog ==
 = 4.10.1 =
 * Fix bug causing white screen of death
 * Add option to automatically detect language
