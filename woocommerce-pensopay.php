@@ -3,21 +3,21 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 7.1.2
+ * Version: 7.1.3
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
  * Author URI: https://pensopay.com/
  * Wiki: https://pensopay.zendesk.com/hc/da
- * WC requires at least: 7.1.0
- * WC tested up to: 8.5.1
+ * WC requires at least: 8.2.0
+ * WC tested up to: 9.5.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '7.1.2' );
+define( 'WCPP_VERSION', '7.1.3' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -226,6 +226,17 @@ function init_pensopay_gateway() {
 		}
 
 
+        public function register_rest_api() {
+            if ( version_compare( WC_VERSION, '9.0', '>=' ) ) {
+                //New
+                register_rest_route('pensopay/v1', '/callback', [
+                    'methods' => 'POST',
+                    'callback' => [$this, 'callback_handler'],
+                    'permission_callback' => '__return_true'
+                ]);
+            }
+        }
+
 		/**
 		 * hooks_and_filters function.
 		 *
@@ -246,7 +257,11 @@ function init_pensopay_gateway() {
 			WC_PensoPay_Subscriptions_Change_Payment_Method::get_instance();
 			WC_PensoPay_Subscriptions_Early_Renewals::get_instance();
 
-			add_action( 'woocommerce_api_wc_' . $this->id, [ $this, 'callback_handler' ] );
+//            add_filter('woocommerce_pensopay_callback_url', function($home, $args, $post_id) {
+//                return str_replace('pensopaywordpress.local', 'x.ngrok-free.app', $home) ;
+//            }, 10, 3);
+
+            add_action( 'woocommerce_api_wc_' . $this->id, [ $this, 'callback_handler' ] );
 			add_action( 'woocommerce_order_status_completed', [ $this, 'woocommerce_order_status_completed' ] );
 			add_action( 'in_plugin_update_message-woocommerce-pensopay/woocommerce-pensopay.php', [ __CLASS__, 'in_plugin_update_message' ] );
 
@@ -1727,10 +1742,6 @@ function init_pensopay_gateway() {
 		return WC_PensoPay::get_instance();
 	}
 
-	// Instantiate
-	WC_PP();
-	WC_PP()->hooks_and_filters();
-
 	// Add the gateway to WooCommerce
 	function add_pensopay_gateway( $methods ) {
 		$methods[] = 'WC_PensoPay';
@@ -1743,6 +1754,9 @@ function init_pensopay_gateway() {
 	add_filter( 'woocommerce_payment_gateways', 'add_pensopay_gateway' );
 	add_filter( 'woocommerce_pensopay_load_instances', 'WC_PensoPay::filter_load_instances' );
 	add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'WC_PensoPay::add_action_links' );
+    add_action( 'init', function() {
+        add_action( 'rest_api_init', [ WC_PP(), 'register_rest_api' ] );
+    });
 }
 
 if (!class_exists( 'WC_PensoPay_VirtualTerminal_Payment' )) {

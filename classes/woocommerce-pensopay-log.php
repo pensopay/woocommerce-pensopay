@@ -109,13 +109,28 @@ class WC_PensoPay_Log {
 	 * Returns a link to the log files in the WP backend.
 	 */
 	public function get_admin_link() {
-		$log_path       = wc_get_log_file_path( $this->_domain );
-		$log_path_parts = explode( '/', $log_path );
+        if ( defined('WC_VERSION') ) {
+            if (version_compare(WC_VERSION, '8.6', '>=')) {
+                $args = [
+                    'page'     => 'wc-status',
+                    'tab'      => 'logs',
+                    'source' => $this->_domain
+                ];
 
-		return add_query_arg( [
-			'page'     => 'wc-status',
-			'tab'      => 'logs',
-			'log_file' => end( $log_path_parts )
-		], admin_url( 'admin.php' ) );
+            } else {
+                // Fallback
+                $log_path       = wc_get_log_file_path( $this->_domain );
+                $log_path_parts = explode( '/', $log_path );
+
+                $args = [
+                    'page'     => 'wc-status',
+                    'tab'      => 'logs',
+                    'log_file' => end( $log_path_parts )
+                ];
+            }
+
+
+            return add_query_arg( $args, admin_url( 'admin.php' ) );
+        }
 	}
 }

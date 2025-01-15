@@ -257,6 +257,7 @@ class WC_PensoPay_Helper {
 	 * @return void
 	 */
 	public static function load_i18n() {
+        //Support earlier WP versions
 		load_plugin_textdomain( 'woo-pensopay', false, dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/' );
 	}
 
@@ -322,15 +323,21 @@ class WC_PensoPay_Helper {
 	 * @return string
 	 */
 	public static function get_callback_url( $post_id = null ) {
-		$args = [ 'wc-api' => 'WC_PensoPay' ];
+        if ( version_compare( WC_VERSION, '9.0', '>=' ) ) {
+            $args = [];
+            $url = get_rest_url(null, 'pensopay/v1/callback' );
+        } else {
+            $args = [ 'wc-api' => 'WC_PensoPay' ];
 
-		if ( $post_id !== null ) {
-			$args['order_post_id'] = $post_id;
-		}
+            if ( $post_id !== null ) {
+                $args['order_post_id'] = $post_id;
+            }
 
-		$args = apply_filters( 'woocommerce_pensopay_callback_args', $args, $post_id );
+            $args = apply_filters( 'woocommerce_pensopay_callback_args', $args, $post_id );
+            $url = home_url( '/' );
+        }
 
-		return apply_filters( 'woocommerce_pensopay_callback_url', add_query_arg( $args, home_url( '/' ) ), $args, $post_id );
+        return apply_filters( 'woocommerce_pensopay_callback_url', add_query_arg( $args, $url ), $args, $post_id );
 	}
 
 
