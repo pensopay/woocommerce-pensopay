@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce PensoPay
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 7.1.3
+ * Version: 7.1.4
  * Author: PensoPay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '7.1.3' );
+define( 'WCPP_VERSION', '7.1.4' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -258,7 +258,7 @@ function init_pensopay_gateway() {
 			WC_PensoPay_Subscriptions_Early_Renewals::get_instance();
 
 //            add_filter('woocommerce_pensopay_callback_url', function($home, $args, $post_id) {
-//                return str_replace('pensopaywordpress.local', 'x.ngrok-free.app', $home) ;
+//                return str_replace('pensopaywordpress.local', 'x.ngrok-free.app', $home);
 //            }, 10, 3);
 
             add_action( 'woocommerce_api_wc_' . $this->id, [ $this, 'callback_handler' ] );
@@ -1087,7 +1087,7 @@ function init_pensopay_gateway() {
 								break;
 
 							case 'refund' :
-								$order->note( sprintf( __( 'Refunded %s %s', 'woo-pensopay' ), WC_PensoPay_Helper::price_normalize( $transaction->amount, $json->currency ), $json->currency ) );
+                                $order->note( sprintf( __( 'Refunded %s', 'woo-pensopay' ), WC_PensoPay_Helper::price_normalize( $transaction->amount, $json->currency ) ) );
                                 break;
 
                             case 'recurring':
@@ -1756,6 +1756,7 @@ function init_pensopay_gateway() {
 	add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'WC_PensoPay::add_action_links' );
     add_action( 'init', function() {
         add_action( 'rest_api_init', [ WC_PP(), 'register_rest_api' ] );
+        WC_PP()->hooks_and_filters();
     });
 }
 

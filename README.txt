@@ -3,7 +3,7 @@ Contributors: PensoPay
 Tags: gateway, woocommerce, pensopay, payment, psp
 Requires at least: 6.3
 Tested up to: 6.7.1
-Stable tag: trunk
+Stable tag: 7.1.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 5.0
 
 == Changelog ==
+= 7.1.4 =
+* Fix: Regression issue with setting save on 7.1.3
+
 = 7.1.3 =
 * Fix: Warning with PHP 8.3
 * Fix: Added support for REST API callbacks after WC 9 so Legacy is not needed
