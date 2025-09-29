@@ -1,8 +1,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce PensoPay\n"
-"POT-Creation-Date: 2024-08-28 09:56+0200\n"
+"Project-Id-Version: pensopay Payments\n"
+"POT-Creation-Date: 2025-09-29 18:41+0200\n"
 "PO-Revision-Date: 2019-07-05 13:13+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,14 +10,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.7\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: woocommerce-pensopay.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
@@ -550,22 +549,22 @@ msgid "You are not allowed to perform this action"
 msgstr ""
 
 #: classes/modules/ajax/woocommerce-pensopay-admin-ajax-private-key.php:12
-#: woocommerce-pensopay.php:526
+#: woocommerce-pensopay.php:537
 msgid "Please type in the API key before requesting a private key"
 msgstr ""
 
 #: classes/modules/ajax/woocommerce-pensopay-admin-ajax-private-key.php:16
-#: woocommerce-pensopay.php:530
+#: woocommerce-pensopay.php:541
 msgid "You are not authorized to perform this action."
 msgstr ""
 
 #: classes/modules/woocommerce-pensopay-admin-orders-lists-table.php:42
-#: woocommerce-pensopay.php:1401
+#: woocommerce-pensopay.php:1412
 msgid "Payment"
 msgstr ""
 
 #: classes/modules/woocommerce-pensopay-admin-orders-lists-table.php:82
-#: woocommerce-pensopay.php:1441
+#: woocommerce-pensopay.php:1452
 msgid "Failed renewal"
 msgstr ""
 
@@ -589,17 +588,17 @@ msgid "Payment links created for %d subscriptions."
 msgstr ""
 
 #: classes/modules/woocommerce-pensopay-admin-orders-meta.php:30
-#: woocommerce-pensopay.php:1016 woocommerce-pensopay.php:1206
+#: woocommerce-pensopay.php:1027 woocommerce-pensopay.php:1217
 msgid "PensoPay Payment"
 msgstr ""
 
 #: classes/modules/woocommerce-pensopay-admin-orders-meta.php:31
-#: woocommerce-pensopay.php:1210
+#: woocommerce-pensopay.php:1221
 msgid "PensoPay Subscription"
 msgstr ""
 
 #: classes/modules/woocommerce-pensopay-admin-orders-meta.php:127
-#: woocommerce-pensopay.php:1342
+#: woocommerce-pensopay.php:1353
 msgid "subscription"
 msgstr ""
 
@@ -917,7 +916,6 @@ msgid ""
 "supported by Clearhaus currently)."
 msgstr ""
 
-#. Author of the plugin/theme
 #: classes/woocommerce-pensopay-settings.php:234
 msgid "PensoPay"
 msgstr ""
@@ -1082,7 +1080,7 @@ msgstr ""
 
 #. Plugin Name of the plugin/theme
 #: classes/woocommerce-pensopay-settings.php:473
-msgid "WooCommerce PensoPay"
+msgid "pensopay Payments"
 msgstr ""
 
 #: classes/woocommerce-pensopay-settings.php:474
@@ -1115,7 +1113,7 @@ msgstr ""
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:159
 #: templates/admin/meta-box-order.php:58
 #: templates/admin/virtualterminal/payment.php:145
-#: woocommerce-pensopay.php:1276
+#: woocommerce-pensopay.php:1287
 msgid "Cancel"
 msgstr ""
 
@@ -1145,7 +1143,7 @@ msgid "State"
 msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:208
-#: templates/admin/meta-box-order.php:95 woocommerce-pensopay.php:1310
+#: templates/admin/meta-box-order.php:95 woocommerce-pensopay.php:1321
 msgid "Payment Link"
 msgstr ""
 
@@ -1233,34 +1231,34 @@ msgid "Order does not need payment"
 msgstr ""
 
 #: templates/admin/meta-box-order.php:14
-#: templates/admin/meta-box-subscription.php:11 woocommerce-pensopay.php:1257
-#: woocommerce-pensopay.php:1350
+#: templates/admin/meta-box-subscription.php:11 woocommerce-pensopay.php:1268
+#: woocommerce-pensopay.php:1361
 msgid "Current payment state"
 msgstr ""
 
-#: templates/admin/meta-box-order.php:18 woocommerce-pensopay.php:1260
+#: templates/admin/meta-box-order.php:18 woocommerce-pensopay.php:1271
 msgid "Actions"
 msgstr ""
 
 #: templates/admin/meta-box-order.php:22 templates/admin/meta-box-order.php:49
-#: woocommerce-pensopay.php:1264 woocommerce-pensopay.php:1271
+#: woocommerce-pensopay.php:1275 woocommerce-pensopay.php:1282
 msgid "You are about to capture this payment"
 msgstr ""
 
-#: templates/admin/meta-box-order.php:23 woocommerce-pensopay.php:1264
+#: templates/admin/meta-box-order.php:23 woocommerce-pensopay.php:1275
 #, php-format
 msgid "Capture Full Amount (%s)"
 msgstr ""
 
-#: templates/admin/meta-box-order.php:29 woocommerce-pensopay.php:1267
+#: templates/admin/meta-box-order.php:29 woocommerce-pensopay.php:1278
 msgid "Remaining balance"
 msgstr ""
 
-#: templates/admin/meta-box-order.php:40 woocommerce-pensopay.php:1270
+#: templates/admin/meta-box-order.php:40 woocommerce-pensopay.php:1281
 msgid "Capture amount"
 msgstr ""
 
-#: templates/admin/meta-box-order.php:50 woocommerce-pensopay.php:1271
+#: templates/admin/meta-box-order.php:50 woocommerce-pensopay.php:1282
 msgid "Capture Specified Amount"
 msgstr ""
 
@@ -1269,18 +1267,18 @@ msgid "You are about to cancel this payment"
 msgstr ""
 
 #: templates/admin/meta-box-order.php:66
-#: templates/admin/meta-box-subscription.php:19 woocommerce-pensopay.php:1282
-#: woocommerce-pensopay.php:1352
+#: templates/admin/meta-box-subscription.php:19 woocommerce-pensopay.php:1293
+#: woocommerce-pensopay.php:1363
 msgid "Transaction ID"
 msgstr ""
 
 #: templates/admin/meta-box-order.php:79
-#: templates/admin/meta-box-subscription.php:31 woocommerce-pensopay.php:1286
-#: woocommerce-pensopay.php:1356
+#: templates/admin/meta-box-subscription.php:31 woocommerce-pensopay.php:1297
+#: woocommerce-pensopay.php:1367
 msgid "Transaction Order ID"
 msgstr ""
 
-#: templates/admin/meta-box-order.php:87 woocommerce-pensopay.php:1305
+#: templates/admin/meta-box-order.php:87 woocommerce-pensopay.php:1316
 msgid "Payment ID"
 msgstr ""
 
@@ -1395,7 +1393,7 @@ msgid "Capture payment and activate subscription"
 msgstr ""
 
 #: views/html-notice-update.php:12 views/html-notice-upgrading.php:12
-msgid "WooCommerce PensoPay - Data Update"
+msgid "pensopay Payments - Data Update"
 msgstr ""
 
 #: views/html-notice-update.php:13
@@ -1447,87 +1445,87 @@ msgid "Cached"
 msgstr ""
 
 #: woocommerce-pensopay.php:31
-msgid "WooCommerce Pensopay requires WooCommerce to be active."
+msgid "pensopay Payments requires WooCommerce to be active."
 msgstr ""
 
 #: woocommerce-pensopay.php:32
 msgid "Go to the plugins page to activate WooCommerce"
 msgstr ""
 
-#: woocommerce-pensopay.php:416
+#: woocommerce-pensopay.php:427
 msgid "Settings"
 msgstr ""
 
-#: woocommerce-pensopay.php:760
+#: woocommerce-pensopay.php:771
 #, php-format
 msgid "No transaction ID for order: %s"
 msgstr ""
 
-#: woocommerce-pensopay.php:770
+#: woocommerce-pensopay.php:781
 msgid "A non-captured payment cannot be refunded."
 msgstr ""
 
-#: woocommerce-pensopay.php:772
+#: woocommerce-pensopay.php:783
 msgid "Transaction state does not allow refunds."
 msgstr ""
 
-#: woocommerce-pensopay.php:922
+#: woocommerce-pensopay.php:933
 msgid "PensoPay Transaction ID"
 msgstr ""
 
-#: woocommerce-pensopay.php:950
+#: woocommerce-pensopay.php:961
 #, php-format
 msgid "PensoPay Transaction ID updated from #%d to #%d"
 msgstr ""
 
-#: woocommerce-pensopay.php:1009
+#: woocommerce-pensopay.php:1020
 msgid ""
 "<p><strong>Payment failure</strong> A problem with your payment on order "
 "<strong>#%i</strong> occured. Please try again to complete your order.</p>"
 msgstr ""
 
-#: woocommerce-pensopay.php:1016
+#: woocommerce-pensopay.php:1027
 msgid "Cancelled during process"
 msgstr ""
 
-#: woocommerce-pensopay.php:1018
+#: woocommerce-pensopay.php:1029
 msgid "Payment cancelled"
 msgstr ""
 
-#: woocommerce-pensopay.php:1018
+#: woocommerce-pensopay.php:1029
 msgid ""
 "Due to cancellation of your payment, the order process was not completed. "
 "Please fulfill the payment to complete your order."
 msgstr ""
 
-#: woocommerce-pensopay.php:1018
+#: woocommerce-pensopay.php:1029
 #, php-format
 msgid "<p><strong>%s</strong>: %s</p>"
 msgstr ""
 
-#: woocommerce-pensopay.php:1073
+#: woocommerce-pensopay.php:1084
 msgid "Payment cancelled."
 msgstr ""
 
-#: woocommerce-pensopay.php:1081
+#: woocommerce-pensopay.php:1092
 #, php-format
-msgid "Refunded %s %s"
+msgid "Refunded %s"
 msgstr ""
 
-#: woocommerce-pensopay.php:1128
+#: woocommerce-pensopay.php:1139
 #, php-format
 msgid "Invalid callback body for order #%s."
 msgstr ""
 
-#: woocommerce-pensopay.php:1168
+#: woocommerce-pensopay.php:1179
 msgid "Allows you to receive payments via Pensopay."
 msgstr ""
 
-#: woocommerce-pensopay.php:1276
+#: woocommerce-pensopay.php:1287
 msgid "You are about to CANCEL this payment"
 msgstr ""
 
-#: woocommerce-pensopay.php:1760 woocommerce-pensopay.php:1761
+#: woocommerce-pensopay.php:1774 woocommerce-pensopay.php:1775
 msgid "New Payment"
 msgstr ""
 
@@ -1537,7 +1535,11 @@ msgstr ""
 
 #. Description of the plugin/theme
 msgid ""
-"Integrates your PensoPay payment gateway into your WooCommerce installation."
+"Integrates your pensopay payment gateway into your WooCommerce installation."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "pensopay"
 msgstr ""
 
 #. Author URI of the plugin/theme

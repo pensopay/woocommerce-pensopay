@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <div id="woocommerce-upgrade-notice" class="updated woocommerce-message wc-connect">
-    <h3><strong><?php _e( 'WooCommerce PensoPay - Data Update', 'woo-pensopay' ); ?></strong></h3>
+    <h3><strong><?php _e( 'pensopay Payments - Data Update', 'woo-pensopay' ); ?></strong></h3>
     <p><?php _e( 'To ensure you get the best experience at all times, we need to update your store\'s database to the latest version.', 'woo-pensopay' ); ?></p>
     <p class="submit"><a href="#" class="woocommerce-pensopay-update-now button-primary"><?php _e( 'Run the updater', 'woo-pensopay' ); ?></a></p>
 </div>

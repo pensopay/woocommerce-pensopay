@@ -1,23 +1,23 @@
 <?php
 /**
- * Plugin Name: WooCommerce PensoPay
+ * Plugin Name: pensopay Payments
  * Plugin URI: http://wordpress.org/plugins/pensopay/
- * Description: Integrates your PensoPay payment gateway into your WooCommerce installation.
- * Version: 7.1.6
- * Author: PensoPay
+ * Description: Integrates your pensopay payment gateway into your WooCommerce installation.
+ * Version: 7.1.7
+ * Author: pensopay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
  * Author URI: https://pensopay.com/
  * Wiki: https://pensopay.zendesk.com/hc/da
  * WC requires at least: 8.2.0
- * WC tested up to: 9.5.2
+ * WC tested up to: 10.2.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '7.1.6' );
+define( 'WCPP_VERSION', '7.1.7' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -28,7 +28,7 @@ add_action( 'plugins_loaded', 'init_pensopay_gateway', 0 );
  */
 function wc_pensopay_woocommerce_inactive_notice() {
 	$class    = 'notice notice-error';
-	$headline = __( 'WooCommerce Pensopay requires WooCommerce to be active.', 'woo-pensopay' );
+	$headline = __( 'pensopay Payments requires WooCommerce to be active.', 'woo-pensopay' );
 	$message  = __( 'Go to the plugins page to activate WooCommerce', 'woo-pensopay' );
 	printf( '<div class="%1$s"><h2>%2$s</h2><p>%3$s</p></div>', $class, $headline, $message );
 }

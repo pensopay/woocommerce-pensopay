@@ -1,21 +1,21 @@
-=== WooCommerce PensoPay ===
-Contributors: PensoPay
+=== pensopay Payments ===
+Contributors: pensopay
 Tags: gateway, woocommerce, pensopay, payment, psp
 Requires at least: 6.3
-Tested up to: 6.7.1
-Stable tag: 7.1.6
+Tested up to: 6.8.2
+Stable tag: 7.1.7
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Integrates your PensoPay payment gateway into your WooCommerce installation.
+Integrates the pensopay payment gateway into your WooCommerce installation.
 
 == Description ==
-With WooCommerce PensoPay, you are able to integrate your PensoPay gateway to your WooCommerce install. With a wide list of API features including secure capturing, refunding and cancelling payments directly from your WooCommerce order overview. This is only a part of the many features found in this plugin.
+With pensopay Payments, you are able to integrate your pensopay gateway to your WooCommerce installation. With a wide list of API features including secure capturing, refunding and cancelling payments directly from your WooCommerce order overview. This is only a part of the many features found in this plugin.
 
 == Installation ==
 1. Upload the 'woocommerce-pensopay' folder to /wp-content/plugins/ on your server.
-2. Log in to Wordpress administration, click on the 'Plugins' tab.
-3. Find WooCommerce PensoPay in the plugin overview and activate it.
+2. Log in to WordPress administration, click on the 'Plugins' tab.
+3. Find pensopay Payments in the plugin overview and activate it.
 4. Go to WooCommerce -> Settings -> Payment Gateways -> PensoPay.
 5. Fill in all the fields in the "PensoPay account" section and save the settings.
 6. You are good to go.
@@ -27,6 +27,10 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 5.0
 
 == Changelog ==
+= 7.1.7 =
+* Change plugin name to pensopay Payments and update translations, texts to comply with trademark requirements.
+* Bump tested up to versions.
+
 = 7.1.6 =
 * Fix: Register in time for newer woocommerce checkout blocks
 

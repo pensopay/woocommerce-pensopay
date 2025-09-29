@@ -470,7 +470,7 @@ class WC_PensoPay_Settings {
 		}
 
 		if ( ! empty( $error_fields ) ) {
-			$message = sprintf( '<h2>%s</h2>', __( "WooCommerce PensoPay", 'woo-pensopay' ) );
+			$message = sprintf( '<h2>%s</h2>', __( 'pensopay Payments', 'woo-pensopay' ) );
 			$message .= sprintf( '<p>%s</p>', sprintf( __( 'You have missing or incorrect settings. Go to the <a href="%s">settings page</a>.', 'woo-pensopay' ), self::get_settings_page_url() ) );
 			$message .= '<ul>';
 			foreach ( $error_fields as $error_field ) {

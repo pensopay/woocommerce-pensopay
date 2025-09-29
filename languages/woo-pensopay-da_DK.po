@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce PensoPay\n"
-"POT-Creation-Date: 2024-08-28 09:57+0200\n"
-"PO-Revision-Date: 2024-08-28 10:13+0200\n"
+"Project-Id-Version: pensopay Payments\n"
+"POT-Creation-Date: 2025-09-29 12:43+0200\n"
+"PO-Revision-Date: 2025-09-29 18:40+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: da_DK\n"
@@ -10,14 +10,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.7\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: woocommerce-pensopay.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
@@ -109,8 +108,6 @@ msgid "Enable"
 msgstr "Aktiver"
 
 #: classes/instances/anyday.php:38
-#, fuzzy
-#| msgid "Enable Klarna payment"
 msgid "Enable Anyday payments"
 msgstr "Aktiver betalinger med Klarna"
 
@@ -188,16 +185,13 @@ msgstr ""
 "kunder under checkout-processen."
 
 #: classes/instances/anyday.php:55
-#, fuzzy
-#| msgid "Pay with Klarna"
 msgid "Pay with Anyday"
-msgstr "Betal med Klarna"
+msgstr "Betal med Anyday"
 
 #: classes/instances/apple-pay.php:39 classes/instances/google-pay.php:54
-#, fuzzy, php-format
-#| msgid "Enable Swipp payment"
+#, php-format
 msgid "Enable %s payment"
-msgstr "Aktiver betalinger med Swipp"
+msgstr "Aktiver %s betalinger"
 
 #: classes/instances/apple-pay.php:41 classes/instances/google-pay.php:55
 #, php-format
@@ -209,16 +203,13 @@ msgid "Apple Pay"
 msgstr ""
 
 #: classes/instances/apple-pay.php:57 classes/instances/google-pay.php:72
-#, fuzzy, php-format
-#| msgid "Pay with ViaBill"
+#, php-format
 msgid "Pay with %s"
-msgstr "Betal med ViaBill"
+msgstr "Betal med %s"
 
 #: classes/instances/fbg1886.php:37
-#, fuzzy
-#| msgid "Enable Sofort payment"
 msgid "Enable Forbrugsforeningen payment"
-msgstr "Aktiver betalinger med Sofort"
+msgstr "Aktiver betalinger med Forbrugsforeningen"
 
 #: classes/instances/fbg1886.php:48
 msgid "Forbrugsforeningen af 1886"
@@ -229,38 +220,29 @@ msgid "Pay with Forbrugsforeningen af 1886"
 msgstr ""
 
 #: classes/instances/google-pay.php:66
-#, fuzzy
-#| msgid "Google Analytics"
 msgid "Google Pay"
-msgstr "Google Analytics"
+msgstr "Google Pay"
 
 #: classes/instances/ideal.php:37
-#, fuzzy
-#| msgid "Enable Swipp payment"
 msgid "Enable iDEAL payment"
-msgstr "Aktiver betalinger med Swipp"
+msgstr "Aktiver betalinger med iDEAL"
 
 #: classes/instances/ideal.php:48
 msgid "iDEAL"
 msgstr ""
 
 #: classes/instances/ideal.php:54
-#, fuzzy
-#| msgid "Pay with ViaBill"
 msgid "Pay with iDEAL"
-msgstr "Betal med ViaBill"
+msgstr "Betal med iDEAL"
 
 #: classes/instances/instance.php:54
-#, fuzzy, php-format
-#| msgid "Allows you to receive payments via PensoPay %s."
+#, php-format
 msgid "Allows you to receive payments via Pensopay %s."
-msgstr "Modtag betalinger via PensoPay %s."
+msgstr ""
 
 #: classes/instances/instance.php:55
-#, fuzzy
-#| msgid "This module has it's main configuration inside the 'PensoPay' tab."
 msgid "This module has it's main configuration inside the 'Pensopay' tab."
-msgstr "Dette moduls primære konfiguration ligger under fanen 'PensoPay'."
+msgstr ""
 
 #: classes/instances/instance.php:56
 #, php-format
@@ -268,22 +250,17 @@ msgid "Click <a href=\"%s\">here</a> to access the main configuration."
 msgstr "Klik <a href=\"%s\">her</a> for at tilgå den primære konfiguration."
 
 #: classes/instances/klarna-payments.php:37
-#, fuzzy
-#| msgid "Enable Klarna payment"
 msgid "Enable Klarna Payments payment"
 msgstr "Aktiver betalinger med Klarna"
 
 #: classes/instances/klarna-payments.php:48
-#, fuzzy
-#| msgid "Enable Klarna payment"
 msgid "Klarna Payments"
-msgstr "Aktiver betalinger med Klarna"
+msgstr ""
 
 #: classes/instances/klarna-payments.php:54
-#, fuzzy
 #| msgid "Pay with Klarna"
 msgid "Pay with Klarna Payments"
-msgstr "Betal med Klarna"
+msgstr ""
 
 #: classes/instances/klarna.php:38
 msgid "Enable Klarna payment"
@@ -302,22 +279,18 @@ msgid "Payment transaction has been cancelled by merchant or customer"
 msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:78
-#, fuzzy
-#| msgid "Enable MobilePay payment"
 msgid "Enable MobilePay Subscription payment"
-msgstr "Aktiver betalinger med MobilePay"
+msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:89
-#, fuzzy
 #| msgid "PensoPay Subscription"
 msgid "MobilePay Subscriptions"
-msgstr "PensoPay Abonnement"
+msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:95
-#, fuzzy
 #| msgid "Pay with your mobile phone"
 msgid "Subscribe with your mobile phone"
-msgstr "Betal med din mobil"
+msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:98
 msgid "Activate subscriptions immediately."
@@ -344,10 +317,9 @@ msgid ""
 msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:116
-#, fuzzy
 #| msgid "subscription"
 msgid "Keep subscription active"
-msgstr "abonnement"
+msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:120
 msgid ""
@@ -357,10 +329,9 @@ msgid ""
 msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:124
-#, fuzzy
 #| msgid "Agreement id"
 msgid "Agreements"
-msgstr "Agreement ID"
+msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:127
 msgid "Cancelled agreements status"
@@ -373,20 +344,17 @@ msgid ""
 msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:135
-#, fuzzy
-#| msgid "Select icons"
 msgid "Select status"
-msgstr "Vælg ikoner"
+msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:143
 msgid "Do nothing"
 msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:210
-#, fuzzy, php-format
-#| msgid "Payment methods"
+#, php-format
 msgid "Payment of #%s"
-msgstr "Betalingsmetoder"
+msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:229
 msgid ""
@@ -395,10 +363,9 @@ msgid ""
 msgstr ""
 
 #: classes/instances/mobilepay-subscriptions.php:278
-#, fuzzy
 #| msgid "PensoPay Transaction ID"
 msgid "Pensopay Transaction ID"
-msgstr "PensoPay Transaktions-ID"
+msgstr ""
 
 #: classes/instances/mobilepay.php:37
 msgid "Enable MobilePay payment"
@@ -413,32 +380,28 @@ msgid "Pay with your mobile phone"
 msgstr "Betal med din mobil"
 
 #: classes/instances/paypal.php:39
-#, fuzzy
 #| msgid "Enable Klarna payment"
 msgid "Enable PayPal payment"
-msgstr "Aktiver betalinger med Klarna"
+msgstr ""
 
 #: classes/instances/paypal.php:50
 msgid "PayPal"
 msgstr ""
 
 #: classes/instances/paypal.php:56
-#, fuzzy
 #| msgid "Pay with Klarna"
 msgid "Pay with PayPal"
-msgstr "Betal med Klarna"
+msgstr ""
 
 #: classes/instances/pensopay-extra.php:43
-#, fuzzy
 #| msgid "Enable PensoPay Payment"
 msgid "Enable Extra Pensopay gateway"
-msgstr "Aktiver PensoPay Payment"
+msgstr ""
 
 #: classes/instances/pensopay-extra.php:54
-#, fuzzy
 #| msgid "PensoPay"
 msgid "Pensopay"
-msgstr "PensoPay"
+msgstr ""
 
 #: classes/instances/pensopay-extra.php:60
 msgid "Pay"
@@ -466,7 +429,6 @@ msgid "Credit card icons"
 msgstr "Kreditkort-ikoner"
 
 #: classes/instances/pensopay-extra.php:71
-#, fuzzy
 #| msgid ""
 #| "Choose the card icons you wish to show next to the PensoPay payment "
 #| "option in your shop."
@@ -474,7 +436,6 @@ msgid ""
 "Choose the card icons you wish to show next to the Pensopay payment option "
 "in your shop."
 msgstr ""
-"Markér de kortikoner du vil vise ud for PensoPay betalingsmetoden i din shop."
 
 #: classes/instances/pensopay-extra.php:76
 #: classes/woocommerce-pensopay-settings.php:266
@@ -482,20 +443,18 @@ msgid "Select icons"
 msgstr "Vælg ikoner"
 
 #: classes/instances/resurs.php:37
-#, fuzzy
 #| msgid "Enable Klarna payment"
 msgid "Enable Resurs payment"
-msgstr "Aktiver betalinger med Klarna"
+msgstr ""
 
 #: classes/instances/resurs.php:48
 msgid "Resurs"
 msgstr ""
 
 #: classes/instances/resurs.php:54
-#, fuzzy
 #| msgid "Pay with Klarna"
 msgid "Pay with Resurs"
-msgstr "Betal med Klarna"
+msgstr ""
 
 #: classes/instances/sofort.php:38
 msgid "Enable Sofort payment"
@@ -506,36 +465,32 @@ msgid "Sofort"
 msgstr "Sofort"
 
 #: classes/instances/swish.php:48
-#, fuzzy
 #| msgid "Enable Swipp payment"
 msgid "Enable Swish payment"
-msgstr "Aktiver betalinger med Swipp"
+msgstr ""
 
 #: classes/instances/swish.php:59
 msgid "Swish"
 msgstr ""
 
 #: classes/instances/swish.php:65
-#, fuzzy
 #| msgid "Pay with ViaBill"
 msgid "Pay with Swish"
-msgstr "Betal med ViaBill"
+msgstr ""
 
 #: classes/instances/trustly.php:37
-#, fuzzy
 #| msgid "Enable Klarna payment"
 msgid "Enable Trustly payment"
-msgstr "Aktiver betalinger med Klarna"
+msgstr ""
 
 #: classes/instances/trustly.php:48
 msgid "Trustly"
 msgstr ""
 
 #: classes/instances/trustly.php:54
-#, fuzzy
 #| msgid "Pay with Klarna"
 msgid "Pay with Trustly"
-msgstr "Betal med Klarna"
+msgstr ""
 
 #: classes/instances/viabill.php:183
 msgid "Enable ViaBill payment"
@@ -550,10 +505,9 @@ msgid "Pay with ViaBill"
 msgstr "Betal med ViaBill"
 
 #: classes/instances/viabill.php:204
-#, fuzzy
 #| msgid "Currency settings"
 msgid "Pricetag settings"
-msgstr "Valuta-indstillinger"
+msgstr ""
 
 #: classes/instances/viabill.php:207
 msgid "Viabill ID"
@@ -564,20 +518,18 @@ msgid "Show pricetag on frontpage"
 msgstr ""
 
 #: classes/instances/viabill.php:213
-#, fuzzy
 #| msgid "Enable ViaBill payment"
 msgid "Enable ViaBill pricetag on frontpage"
-msgstr "Aktiver betalinger med ViaBill"
+msgstr ""
 
 #: classes/instances/viabill.php:217
 msgid "Show pricetag on product page"
 msgstr ""
 
 #: classes/instances/viabill.php:219
-#, fuzzy
 #| msgid "Enable ViaBill payment"
 msgid "Enable ViaBill pricetag on product page"
-msgstr "Aktiver betalinger med ViaBill"
+msgstr ""
 
 #: classes/instances/viabill.php:223
 msgid "Show pricetag on related products"
@@ -592,85 +544,77 @@ msgid "Show pricetag on category page"
 msgstr ""
 
 #: classes/instances/viabill.php:231
-#, fuzzy
 #| msgid "Enable ViaBill payment"
 msgid "Enable ViaBill pricetag on category page"
-msgstr "Aktiver betalinger med ViaBill"
+msgstr ""
 
 #: classes/instances/viabill.php:235
 msgid "Show pricetag in cart"
 msgstr ""
 
 #: classes/instances/viabill.php:237
-#, fuzzy
 #| msgid "Enable ViaBill payment"
 msgid "Enable ViaBill pricetag in cart"
-msgstr "Aktiver betalinger med ViaBill"
+msgstr ""
 
 #: classes/instances/viabill.php:241
 msgid "Show pricetag in checkout"
 msgstr ""
 
 #: classes/instances/viabill.php:243
-#, fuzzy
 #| msgid "Enable ViaBill payment"
 msgid "Enable ViaBill pricetag in checkout"
-msgstr "Aktiver betalinger med ViaBill"
+msgstr ""
 
 #: classes/instances/vipps.php:47
-#, fuzzy
 #| msgid "Enable Swipp payment"
 msgid "Enable Vipps payment"
-msgstr "Aktiver betalinger med Swipp"
+msgstr ""
 
 #: classes/instances/vipps.php:58
 msgid "Vipps"
 msgstr ""
 
 #: classes/instances/vipps.php:64
-#, fuzzy
 #| msgid "Pay with ViaBill"
 msgid "Pay with Vipps"
-msgstr "Betal med ViaBill"
+msgstr ""
 
 #: classes/modules/ajax/woocommerce-pensopay-admin-ajax-action.php:37
-#, fuzzy
 #| msgid "You are not authorized to perform this action"
 msgid "You are not allowed to perform this action"
-msgstr "Du har ikke rettigeder til at udføre denne handling"
+msgstr ""
 
 #: classes/modules/ajax/woocommerce-pensopay-admin-ajax-private-key.php:12
-#: woocommerce-pensopay.php:526
+#: woocommerce-pensopay.php:537
 msgid "Please type in the API key before requesting a private key"
 msgstr "Du skal indtaste en API-nøgle for at kunne hente din private nøgle"
 
 #: classes/modules/ajax/woocommerce-pensopay-admin-ajax-private-key.php:16
-#: woocommerce-pensopay.php:530
+#: woocommerce-pensopay.php:541
 msgid "You are not authorized to perform this action."
 msgstr "Du har ikke rettigeder til at udføre denne handling."
 
 #: classes/modules/woocommerce-pensopay-admin-orders-lists-table.php:42
-#: woocommerce-pensopay.php:1401
+#: woocommerce-pensopay.php:1412
 msgid "Payment"
 msgstr "Betaling"
 
 #: classes/modules/woocommerce-pensopay-admin-orders-lists-table.php:82
-#: woocommerce-pensopay.php:1441
+#: woocommerce-pensopay.php:1452
 msgid "Failed renewal"
 msgstr "Fornyelse fejlede"
 
 #: classes/modules/woocommerce-pensopay-admin-orders-lists-table.php:100
-#, fuzzy
 #| msgid "Capture payment and activate subscription"
 msgid "PensoPay: Capture payment and activate subscription"
-msgstr "Træk betaling og aktiver abonnement"
+msgstr ""
 
 #: classes/modules/woocommerce-pensopay-admin-orders-lists-table.php:101
 #: classes/modules/woocommerce-pensopay-admin-orders-lists-table.php:114
-#, fuzzy
 #| msgid "Create payment link"
 msgid "PensoPay: Create payment link"
-msgstr "Opret betalingslink"
+msgstr ""
 
 #: classes/modules/woocommerce-pensopay-admin-orders-lists-table.php:151
 #, php-format
@@ -683,17 +627,17 @@ msgid "Payment links created for %d subscriptions."
 msgstr "Betalingslinks blev oprettet for %d abonnementer."
 
 #: classes/modules/woocommerce-pensopay-admin-orders-meta.php:30
-#: woocommerce-pensopay.php:1016 woocommerce-pensopay.php:1206
+#: woocommerce-pensopay.php:1027 woocommerce-pensopay.php:1217
 msgid "PensoPay Payment"
 msgstr "PensoPay betaling"
 
 #: classes/modules/woocommerce-pensopay-admin-orders-meta.php:31
-#: woocommerce-pensopay.php:1210
+#: woocommerce-pensopay.php:1221
 msgid "PensoPay Subscription"
 msgstr "PensoPay Abonnement"
 
 #: classes/modules/woocommerce-pensopay-admin-orders-meta.php:127
-#: woocommerce-pensopay.php:1342
+#: woocommerce-pensopay.php:1353
 msgid "subscription"
 msgstr "abonnement"
 
@@ -730,9 +674,6 @@ msgid "PensoPay: Payment cancelled due to order cancellation"
 msgstr ""
 
 #: classes/modules/woocommerce-pensopay-orders.php:58
-#, fuzzy
-#| msgid ""
-#| "Automatically completing order status due to succesful recurring payment"
 msgid ""
 "Automatically completing order status due to successful recurring payment"
 msgstr ""
@@ -786,10 +727,7 @@ msgid "Subscription authorized. Transaction ID: %s"
 msgstr "Abonnement autoriseret. Transaktions-ID: %s"
 
 #: classes/woocommerce-pensopay-exceptions.php:72
-#, fuzzy, php-format
-#| msgid ""
-#| "An error occured. For more information check out the <strong>%s</strong> "
-#| "logs inside <strong>WooCommerce -> System Status -> Logs</strong>."
+#, php-format
 msgid ""
 "An error occurred. For more information check out the <strong>%s</strong> "
 "logs inside <strong>WooCommerce -> System Status -> Logs</strong>."
@@ -805,7 +743,7 @@ msgid ""
 msgstr ""
 "VIGTIGT! Ved opdatering af ordrestatus vil man refundere hele beløbet. "
 "Ønsker du at delrefundere eller kun refundering af specifikke varer, brug da "
-"refunderingsknappen længere nede. Ønsker du at fortsætte? "
+"refunderingsknappen længere nede. Ønsker du at fortsætte?"
 
 #: classes/woocommerce-pensopay-install.php:149
 msgid "You are not authorized to perform this action"
@@ -899,16 +837,14 @@ msgstr ""
 "overskriver \"Fast valuta\"-indstillingen."
 
 #: classes/woocommerce-pensopay-settings.php:96
-#, fuzzy
 #| msgid "Transaction ID"
 msgid "Transaction Cache"
-msgstr "Transaktions-ID"
+msgstr ""
 
 #: classes/woocommerce-pensopay-settings.php:99
-#, fuzzy
 #| msgid "Enable"
 msgid "Enable Caching"
-msgstr "Aktiver"
+msgstr ""
 
 #: classes/woocommerce-pensopay-settings.php:101
 msgid ""
@@ -1036,7 +972,6 @@ msgid "Text on statement"
 msgstr "Text on statement"
 
 #: classes/woocommerce-pensopay-settings.php:217
-#, fuzzy
 #| msgid ""
 #| "Text that will be placed on cardholder’s bank statement (currently only "
 #| "supported by Clearhaus)."
@@ -1045,10 +980,7 @@ msgid ""
 "placed on cardholder’s bank statement (MAX 22 ASCII characters and only "
 "supported by Clearhaus currently)."
 msgstr ""
-"Tekst der vises på kortholders bankudskrift. (I øjeblikket kun supporteret "
-"af Clearhaus)."
 
-#. Author of the plugin/theme
 #: classes/woocommerce-pensopay-settings.php:234
 msgid "PensoPay"
 msgstr "PensoPay"
@@ -1119,10 +1051,9 @@ msgid "Show transaction information in the order overview."
 msgstr "Vis transaktions-information i ordre-oversigten."
 
 #: classes/woocommerce-pensopay-settings.php:303
-#, fuzzy
 #| msgid "Transaction Order ID"
 msgid "Cancel Transaction on Order Cancellation"
-msgstr "Transaktions Ordre ID"
+msgstr ""
 
 #: classes/woocommerce-pensopay-settings.php:306
 msgid ""
@@ -1216,15 +1147,15 @@ msgid "Empty debug logs"
 msgstr "Tøm fejl-loggen"
 
 #: classes/woocommerce-pensopay-settings.php:437
-#, fuzzy
 #| msgid "Test transaction"
 msgid "Empty transaction cache"
-msgstr "Test-transaktion"
+msgstr ""
 
 #. Plugin Name of the plugin/theme
 #: classes/woocommerce-pensopay-settings.php:473
-msgid "WooCommerce PensoPay"
-msgstr "WooCommerce PensoPay"
+#| msgid "PensoPay Payment"
+msgid "pensopay Payments"
+msgstr ""
 
 #: classes/woocommerce-pensopay-settings.php:474
 #, php-format
@@ -1252,23 +1183,22 @@ msgstr "Træk betaling"
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:158
 #: templates/admin/virtualterminal/payment.php:151
-#, fuzzy
 #| msgid "Refunded %s %s"
 msgid "Refund"
-msgstr "Refunderet %s %s"
+msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:159
 #: templates/admin/meta-box-order.php:58
 #: templates/admin/virtualterminal/payment.php:145
-#: woocommerce-pensopay.php:1276
+#: woocommerce-pensopay.php:1287
 msgid "Cancel"
 msgstr "Annuller"
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:179
-#, fuzzy, php-format
+#, php-format
 #| msgid "Go to payment"
 msgid "Cannot %s this payment."
-msgstr "Gå til betaling"
+msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:203
 #: templates/admin/virtualterminal/payment.php:25
@@ -1278,16 +1208,14 @@ msgstr "Ordre ID"
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:204
 #: templates/admin/virtualterminal/payment.php:41
-#, fuzzy
 #| msgid "Country"
 msgid "Amount"
-msgstr "Land"
+msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:205
-#, fuzzy
 #| msgid "Customer Message"
 msgid "Customer Name"
-msgstr "Besked til kunde"
+msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:207
 #: templates/admin/virtualterminal/payment.php:33
@@ -1295,7 +1223,7 @@ msgid "State"
 msgstr "Stat"
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:208
-#: templates/admin/meta-box-order.php:95 woocommerce-pensopay.php:1310
+#: templates/admin/meta-box-order.php:95 woocommerce-pensopay.php:1321
 msgid "Payment Link"
 msgstr "Betalingslink"
 
@@ -1324,22 +1252,19 @@ msgid "Create new Virtual Payment"
 msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:321
-#, fuzzy
 #| msgid "Enable ViaBill payment"
 msgid "Edit Virtual Payment"
-msgstr "Aktiver betalinger med ViaBill"
+msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:322
-#, fuzzy
 #| msgid "Enable ViaBill payment"
 msgid "View Virtual Payment"
-msgstr "Aktiver betalinger med ViaBill"
+msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:323
-#, fuzzy
 #| msgid "Enable ViaBill payment"
 msgid "View Virtual Payments"
-msgstr "Aktiver betalinger med ViaBill"
+msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:324
 msgid "Search Virtual Payments"
@@ -1354,10 +1279,10 @@ msgid "No virtual payments found."
 msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:361
-#, fuzzy, php-format
+#, php-format
 #| msgid "Payment Link"
 msgid "Your Payment Link from %s"
-msgstr "Betalingslink"
+msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:370
 #: templates/woocommerce/emails/customer-pensopay-payment-link.php:29
@@ -1370,22 +1295,19 @@ msgid "You can follow this link to complete your payment of"
 msgstr "Du kan følge dette link for at fuldføre din betaling af"
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:386
-#, fuzzy
 #| msgid "Capture"
 msgid "Captured"
-msgstr "Træk betaling"
+msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:388
-#, fuzzy
 #| msgid "Cancel"
 msgid "Cancelled"
-msgstr "Annuller"
+msgstr ""
 
 #: classes/woocommerce-pensopay-virtualterminal-payment.php:390
-#, fuzzy
 #| msgid "Refunded %s %s"
 msgid "Refunded"
-msgstr "Refunderet %s %s"
+msgstr ""
 
 #: helpers/notices.php:112
 msgid "PensoPay - Payment related problems registered"
@@ -1396,58 +1318,56 @@ msgid "Order does not need payment"
 msgstr ""
 
 #: templates/admin/meta-box-order.php:14
-#: templates/admin/meta-box-subscription.php:11 woocommerce-pensopay.php:1257
-#: woocommerce-pensopay.php:1350
+#: templates/admin/meta-box-subscription.php:11 woocommerce-pensopay.php:1268
+#: woocommerce-pensopay.php:1361
 msgid "Current payment state"
 msgstr "Nuværende transaktionsstatus"
 
-#: templates/admin/meta-box-order.php:18 woocommerce-pensopay.php:1260
+#: templates/admin/meta-box-order.php:18 woocommerce-pensopay.php:1271
 msgid "Actions"
 msgstr "Handlinger"
 
 #: templates/admin/meta-box-order.php:22 templates/admin/meta-box-order.php:49
-#: woocommerce-pensopay.php:1264 woocommerce-pensopay.php:1271
-#, fuzzy
+#: woocommerce-pensopay.php:1275 woocommerce-pensopay.php:1282
 #| msgid "You are about to CANCEL this payment"
 msgid "You are about to capture this payment"
-msgstr "Du er ved at ANNULLERE denne betaling"
+msgstr ""
 
-#: templates/admin/meta-box-order.php:23 woocommerce-pensopay.php:1264
+#: templates/admin/meta-box-order.php:23 woocommerce-pensopay.php:1275
 #, php-format
 msgid "Capture Full Amount (%s)"
 msgstr "Træk hele beløbet (%s)"
 
-#: templates/admin/meta-box-order.php:29 woocommerce-pensopay.php:1267
+#: templates/admin/meta-box-order.php:29 woocommerce-pensopay.php:1278
 msgid "Remaining balance"
 msgstr "Resterende balance"
 
-#: templates/admin/meta-box-order.php:40 woocommerce-pensopay.php:1270
+#: templates/admin/meta-box-order.php:40 woocommerce-pensopay.php:1281
 msgid "Capture amount"
 msgstr "Træk beløb"
 
-#: templates/admin/meta-box-order.php:50 woocommerce-pensopay.php:1271
+#: templates/admin/meta-box-order.php:50 woocommerce-pensopay.php:1282
 msgid "Capture Specified Amount"
 msgstr "Træk specificeret beløb"
 
 #: templates/admin/meta-box-order.php:57
-#, fuzzy
 #| msgid "You are about to CANCEL this payment"
 msgid "You are about to cancel this payment"
-msgstr "Du er ved at ANNULLERE denne betaling"
+msgstr ""
 
 #: templates/admin/meta-box-order.php:66
-#: templates/admin/meta-box-subscription.php:19 woocommerce-pensopay.php:1282
-#: woocommerce-pensopay.php:1352
+#: templates/admin/meta-box-subscription.php:19 woocommerce-pensopay.php:1293
+#: woocommerce-pensopay.php:1363
 msgid "Transaction ID"
 msgstr "Transaktions-ID"
 
 #: templates/admin/meta-box-order.php:79
-#: templates/admin/meta-box-subscription.php:31 woocommerce-pensopay.php:1286
-#: woocommerce-pensopay.php:1356
+#: templates/admin/meta-box-subscription.php:31 woocommerce-pensopay.php:1297
+#: woocommerce-pensopay.php:1367
 msgid "Transaction Order ID"
 msgstr "Transaktions Ordre ID"
 
-#: templates/admin/meta-box-order.php:87 woocommerce-pensopay.php:1305
+#: templates/admin/meta-box-order.php:87 woocommerce-pensopay.php:1316
 msgid "Payment ID"
 msgstr "Betalings-ID"
 
@@ -1466,22 +1386,19 @@ msgid "PensoPay Virtual Terminal"
 msgstr ""
 
 #: templates/admin/virtualterminal/grid.php:4
-#, fuzzy
 #| msgid "Create payment link"
 msgid "Create Payment"
-msgstr "Opret betalingslink"
+msgstr ""
 
 #: templates/admin/virtualterminal/payment.php:17
-#, fuzzy, php-format
+#, php-format
 #| msgid "This is your payment link"
 msgid "Your payment link is: %s"
-msgstr "Dette er dit betalingslink"
+msgstr ""
 
 #: templates/admin/virtualterminal/payment.php:79
-#, fuzzy
-#| msgid "Amount to capture"
 msgid "Autocapture"
-msgstr "Træk beløb"
+msgstr "Autocapture"
 
 #: templates/admin/virtualterminal/payment.php:83
 #: templates/admin/virtualterminal/payment.php:95
@@ -1502,10 +1419,9 @@ msgid "Name"
 msgstr "Navn"
 
 #: templates/admin/virtualterminal/payment.php:111
-#, fuzzy
 #| msgid "Email type"
 msgid "Email"
-msgstr "Email-type"
+msgstr ""
 
 #: templates/admin/virtualterminal/payment.php:118
 msgid "Street"
@@ -1526,16 +1442,14 @@ msgstr ""
 
 #: templates/admin/virtualterminal/payment.php:141
 #: templates/admin/virtualterminal/payment.php:155
-#, fuzzy
 #| msgid "Payment Link"
 msgid "Send Payment Link"
-msgstr "Betalingslink"
+msgstr ""
 
 #: templates/admin/virtualterminal/payment.php:143
-#, fuzzy
 #| msgid "Current payment state"
 msgid "Get Payment Status"
-msgstr "Nuværende transaktionsstatus"
+msgstr ""
 
 #: templates/admin/virtualterminal/payment.php:170
 msgid "Type"
@@ -1573,8 +1487,8 @@ msgid "Capture payment and activate subscription"
 msgstr "Træk betaling og aktiver abonnement"
 
 #: views/html-notice-update.php:12 views/html-notice-upgrading.php:12
-msgid "WooCommerce PensoPay - Data Update"
-msgstr "WooCommerce PensoPay - Data opdatering"
+msgid "pensopay Payments - Data Update"
+msgstr "pensopay Payments  - Data opdatering"
 
 #: views/html-notice-update.php:13
 msgid ""
@@ -1633,42 +1547,40 @@ msgid "Cached"
 msgstr "Cachet"
 
 #: woocommerce-pensopay.php:31
-#, fuzzy
-#| msgid "WooCommerce PensoPay requires WooCommerce to be active."
-msgid "WooCommerce Pensopay requires WooCommerce to be active."
-msgstr "WooCommerce PensoPay kræver at WooCommerce er aktiv."
+msgid "pensopay Payments requires WooCommerce to be active."
+msgstr "pensopay Payments kræver at WooCommerce er aktiv."
 
 #: woocommerce-pensopay.php:32
 msgid "Go to the plugins page to activate WooCommerce"
 msgstr "Gå til plugin-siden for at aktivere WooCommerce"
 
-#: woocommerce-pensopay.php:416
+#: woocommerce-pensopay.php:427
 msgid "Settings"
 msgstr "Indstillinger"
 
-#: woocommerce-pensopay.php:760
+#: woocommerce-pensopay.php:771
 #, php-format
 msgid "No transaction ID for order: %s"
 msgstr "Intet transaktions-id for ordre nr: %s"
 
-#: woocommerce-pensopay.php:770
+#: woocommerce-pensopay.php:781
 msgid "A non-captured payment cannot be refunded."
 msgstr "En betaling der ikke er trukket, kan ikke refunderes."
 
-#: woocommerce-pensopay.php:772
+#: woocommerce-pensopay.php:783
 msgid "Transaction state does not allow refunds."
 msgstr "Ordrens transaktionsstatus tillader ikke refunderinger."
 
-#: woocommerce-pensopay.php:922
+#: woocommerce-pensopay.php:933
 msgid "PensoPay Transaction ID"
 msgstr "PensoPay Transaktions-ID"
 
-#: woocommerce-pensopay.php:950
+#: woocommerce-pensopay.php:961
 #, php-format
 msgid "PensoPay Transaction ID updated from #%d to #%d"
 msgstr "PensoPay Transaktions-ID blev opdateret fra #%d til #%d"
 
-#: woocommerce-pensopay.php:1009
+#: woocommerce-pensopay.php:1020
 msgid ""
 "<p><strong>Payment failure</strong> A problem with your payment on order "
 "<strong>#%i</strong> occured. Please try again to complete your order.</p>"
@@ -1677,15 +1589,15 @@ msgstr ""
 "<strong>#%i</strong>. Prøv venligst igen for at færddiggøre din bestilling.</"
 "p>"
 
-#: woocommerce-pensopay.php:1016
+#: woocommerce-pensopay.php:1027
 msgid "Cancelled during process"
 msgstr "Annulleret under betalingsprocessen"
 
-#: woocommerce-pensopay.php:1018
+#: woocommerce-pensopay.php:1029
 msgid "Payment cancelled"
 msgstr "Betaling annulleret"
 
-#: woocommerce-pensopay.php:1018
+#: woocommerce-pensopay.php:1029
 msgid ""
 "Due to cancellation of your payment, the order process was not completed. "
 "Please fulfill the payment to complete your order."
@@ -1693,51 +1605,49 @@ msgstr ""
 "Da du har annulleret betalingen, er din ordre ikke gennemført. Fortsæt "
 "betalingsprocessen for at gennemføre din bestilling."
 
-#: woocommerce-pensopay.php:1018
+#: woocommerce-pensopay.php:1029
 #, php-format
 msgid "<p><strong>%s</strong>: %s</p>"
 msgstr "<p><strong>%s</strong>: %s</p>"
 
-#: woocommerce-pensopay.php:1073
+#: woocommerce-pensopay.php:1084
 msgid "Payment cancelled."
 msgstr "Betaling annulleret."
 
-#: woocommerce-pensopay.php:1081
+#: woocommerce-pensopay.php:1092
 #, php-format
-msgid "Refunded %s %s"
-msgstr "Refunderet %s %s"
+msgid "Refunded %s"
+msgstr "Refunderet %s"
 
-#: woocommerce-pensopay.php:1128
+#: woocommerce-pensopay.php:1139
 #, php-format
 msgid "Invalid callback body for order #%s."
 msgstr "Ugyldig callback body vedr. ordre #%s."
 
-#: woocommerce-pensopay.php:1168
-#, fuzzy
-#| msgid "Allows you to receive payments via PensoPay."
+#: woocommerce-pensopay.php:1179
 msgid "Allows you to receive payments via Pensopay."
-msgstr "Modtag betalinger via PensoPay."
+msgstr ""
 
-#: woocommerce-pensopay.php:1276
+#: woocommerce-pensopay.php:1287
 msgid "You are about to CANCEL this payment"
 msgstr "Du er ved at ANNULLERE denne betaling"
 
-#: woocommerce-pensopay.php:1760 woocommerce-pensopay.php:1761
-#, fuzzy
-#| msgid "Payment"
+#: woocommerce-pensopay.php:1774 woocommerce-pensopay.php:1775
 msgid "New Payment"
 msgstr "Betaling"
 
 #. Plugin URI of the plugin/theme
-#, fuzzy
-#| msgid "http://wordpress.org/plugins/woocommerce-pensopay/"
 msgid "http://wordpress.org/plugins/pensopay/"
 msgstr "http://wordpress.org/plugins/woocommerce-pensopay/"
 
 #. Description of the plugin/theme
 msgid ""
-"Integrates your PensoPay payment gateway into your WooCommerce installation."
-msgstr "Integrerer din PensoPay betalingsgateway med WooCommerce."
+"Integrates your pensopay payment gateway into your WooCommerce installation."
+msgstr "Integrerer din pensopay betalingsgateway med WooCommerce."
+
+#. Author of the plugin/theme
+msgid "pensopay"
+msgstr "pensopay"
 
 #. Author URI of the plugin/theme
 msgid "https://pensopay.com/"
@@ -1876,8 +1786,8 @@ msgstr ""
 #, fuzzy
 #~| msgid ""
 #~| "Default: creditcard. Type in the cards you wish to accept (comma "
-#~| "separated). See the valid payment types here: <b>http://tech.pensopay."
-#~| "net/appendixes/payment-methods/</b>"
+#~| "separated). See the valid payment types here: <b>http://"
+#~| "tech.pensopay.net/appendixes/payment-methods/</b>"
 #~ msgid ""
 #~ "Default: creditcard. Type in the cards you wish to accept (comma "
 #~ "separated). See the valid payment types here: <b>http://pensopay.dk/"
@@ -1946,11 +1856,6 @@ msgstr ""
 
 #~ msgid "Payment failure"
 #~ msgstr "Betaling fejlede"
-
-#, fuzzy
-#~| msgid "PensoPay Payment"
-#~ msgid "Pensopay Payment"
-#~ msgstr "PensoPay betaling"
 
 #~ msgid "Standard actions"
 #~ msgstr "Standardhandlinger"
