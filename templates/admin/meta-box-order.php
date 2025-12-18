@@ -46,7 +46,7 @@
 				</li>
 
 				<li class="pp-full-width">
-					<a class="button" data-action="captureAmount" data-confirm="<?php esc_attr__( 'You are about to capture this payment', 'woo-pensopay' ) ?>">
+					<a class="button" data-action="captureAmount" data-confirm="<?php esc_attr_e( 'You are about to capture this payment', 'woo-pensopay' ) ?>">
 						<?php _e( 'Capture Specified Amount', 'woo-pensopay' ) ?>
 					</a>
 				</li>
@@ -54,7 +54,7 @@
 
 			<?php if ( $transaction->is_action_allowed( 'cancel' ) ) : ?>
 				<li class="pp-full-width">
-					<a class="button" data-action="cancel" data-confirm="<?php esc_attr__( 'You are about to cancel this payment', 'woo-pensopay' ) ?>">
+					<a class="button" data-action="cancel" data-confirm="<?php esc_attr_e( 'You are about to cancel this payment', 'woo-pensopay' ) ?>">
 						<?php _e( 'Cancel', 'woo-pensopay' ) ?>
 					</a>
 				</li>
