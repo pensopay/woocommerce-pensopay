@@ -186,9 +186,9 @@ class WC_PensoPay_Settings {
 					'desc_tip'    => true,
 				],
 				'pensopay_complete_on_capture'          => [
-					'title'       => __( 'Complete order on capture callbacks', 'woo-quickpay' ),
+					'title'       => __( 'Complete order on capture callbacks', 'woo-pensopay' ),
 					'type'        => 'checkbox',
-					'label'       => __( 'Enable', 'woo-quickpay' ),
+					'label'       => __( 'Enable', 'woo-pensopay' ),
 					'description' => __( 'When enabled, an order will be automatically completed when capture callbacks are sent to WooCommerce. Callbacks are sent by Pensopay when the payment is captured from either the shop or the Pensopay manager. Keep disabled to manually complete orders. ', 'woo-pensopay' ),
 					'default'     => 'no',
 				],

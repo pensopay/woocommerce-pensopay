@@ -56,6 +56,37 @@ class WC_PensoPay_Order_Utils {
 		return false;
 	}
 
+	/**
+	 * Checks if the order switches a subscription from free to paid.
+	 * In this case we would often require authorization of a subscription transaction in order to
+	 * be able to authorize payments automatically in the future.
+	 *
+	 * @param $order
+	 *
+	 * @return bool
+	 */
+	public static function switches_from_free_to_paid( $order ): bool {
+		if ( ! self::contains_switch_order( $order ) ) {
+			return false;
+		}
+
+		if ( ! ( $subscription_id = $order->get_meta( '_subscription_switch' ) ) || ! ( $subscription = woocommerce_pensopay_get_subscription( $subscription_id ) ) ) {
+			return false;
+		}
+
+		// Make sure to cast the return value as WC returns the total as a string regardless of context.
+		$old_total = (float) $subscription->get_total();
+		$new_total = (float) $order->get_total();
+
+		return $old_total === 0.0 && $new_total > 0;
+	}
+
+    /**
+     * @param WC_Order $order
+     * @param string|null $message
+     *
+     * @return void
+     */
 	public static function add_note( WC_Order $order, ?string $message ): void {
 		if ( $message ) {
 			$order->add_order_note( 'PensoPay: ' . $message );

@@ -3,7 +3,7 @@ Contributors: pensopay
 Tags: gateway, woocommerce, pensopay, payment, psp
 Requires at least: 6.3
 Tested up to: 6.8.2
-Stable tag: 7.1.7
+Stable tag: 7.1.8
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,16 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 5.0
 
 == Changelog ==
+= 7.1.8 =
+* Fix: WC_PensoPay_Admin_Orders_Lists_Table::handle_bulk_actions_orders relied on WC_PensoPay_Subscription::get_subscription_id for fetching a subscription entity.
+* Feat: Add Requires Plugins header to define WooCommerce dependency which was introduced in WordPress 6.5
+* Fix: MobilePay Subscriptions now calls WC_Subscription::cancel_order to leverage support of pending-cancel/cancelled logic when setting "Cancelled agreement status" to 'Cancelled'.
+* Fix: woocommerce_pensopay_get_order now makes a specific check on WC_Order instance to avoid possible direct property access on a WC_Order object.
+* Fix: add check in callback handler to avoid payment failed transitioning on orders and subscriptions that does not actually require a payment.
+* Fix: add extra check on qp_status_code in callback handler to avoid possible incorrect logging when refunds or captures fail.
+* Fix: Subscription switching was not always creating a subscription payment when upgrading from a free subscription to a paid variant where no previous payments have been made.
+* Fix: textdomain loading too early can cause display issues on stores with debug mode on.
+
 = 7.1.7 =
 * Change plugin name to pensopay Payments and update translations, texts to comply with trademark requirements.
 * Bump tested up to versions.

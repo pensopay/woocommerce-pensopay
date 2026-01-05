@@ -92,7 +92,7 @@ class WC_PensoPay_API {
 		$this->remote_instance();
 
 		// Set the request params
-		$this->set_url( $path );
+		$this->set_url( $path ?? '' );
 
 		// Start the request and return the response
 		return $this->execute( 'GET', [], $return_array );
@@ -114,7 +114,7 @@ class WC_PensoPay_API {
 		$this->remote_instance( $this->get_post_id_from_form_object( $form ) );
 
 		// Set the request params
-		$this->set_url( $path );
+		$this->set_url( $path ?? '' );
 
 		// Start the request and return the response
 		return $this->execute( 'POST', $form, $return_array );
@@ -136,7 +136,7 @@ class WC_PensoPay_API {
 		$this->remote_instance( $this->get_post_id_from_form_object( $form ) );
 
 		// Set the request params
-		$this->set_url( $path );
+		$this->set_url( $path ?? '' );
 
 		// Start the request and return the response
 		return $this->execute( 'PUT', $form, $return_array );
@@ -157,7 +157,7 @@ class WC_PensoPay_API {
 		$this->remote_instance( $this->get_post_id_from_form_object( $form ) );
 
 		// Set the request params
-		$this->set_url( $path );
+		$this->set_url( $path ?? '' );
 
 		// Start the request and return the response
 		return $this->execute( 'PATCH', $form, $return_array );

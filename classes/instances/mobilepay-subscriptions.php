@@ -46,18 +46,31 @@ class WC_PensoPay_MobilePay_Subscriptions extends WC_PensoPay_Instance {
 	}
 
 	/**
-	 * Handle subscription cancellation
+	 * Handle subscription cancellation event.
 	 *
 	 * @param WC_PensoPay_Order $subscription
 	 * @param WC_PensoPay_Order $parent_order
-	 * @param stdClass $operation
-	 * @param stdClass $json
+	 * @param $operation
+	 * @param $json
 	 */
 	public function on_subscription_cancelled( $subscription, WC_Order $order, $operation, $json ): void {
 		if ( $subscription->get_payment_method() === $this->id && ( $transition_to = $this->s( 'mps_transaction_cancellation_status' ) ) ) {
+			// Allow third party plugins to determine which statuses a subscription can transition from. Defaults to only target active subscriptions
 			$allowed_transition_from = apply_filters( 'woocommerce_pensopay_mps_cancelled_from_status', [ 'active' ], $subscription, $order, $json );
-			if ( $subscription->has_status( $allowed_transition_from ) && ! $subscription->has_status( $transition_to ) && WC_PensoPay_Helper::is_subscription_status( $transition_to ) ) {
-				$subscription->update_status( $transition_to, ! empty( $operation->aq_status_msg ) ? $operation->aq_status_msg : __( 'Payment transaction has been cancelled by merchant or customer', 'woo-pensopay' ) );
+			// Check if the subscription has the allowed status
+			if ( $subscription->has_status( $allowed_transition_from ) ) {
+				$note = ! empty( $operation->aq_status_msg ) ? $operation->aq_status_msg : __( 'Subscription transaction has been cancelled by merchant or customer', 'woo-pensopay' );
+				// If the setting has been set to cancelled, we will run the cancel_order method on the subscription to
+				// take advantage of the built-in pending-cancel/cancelled functionality.
+				if ( $transition_to === 'cancelled' ) {
+					$subscription->cancel_order( $note );
+				}
+				// Otherwise, check that:
+				// 1. the subscription does not already have the status, we want to transition to
+				// 2. The 'transition to' status is a valid subscription status.
+				else if ( ! $subscription->has_status( $transition_to ) && WC_PensoPay_Helper::is_subscription_status( $transition_to ) ) {
+					$subscription->update_status( $transition_to, $note );
+				}
 			}
 		}
 	}

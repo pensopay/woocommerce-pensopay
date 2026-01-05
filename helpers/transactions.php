@@ -15,9 +15,19 @@ function woocommerce_pensopay_get_transaction_instance_by_order( $order ) {
 	$api_transaction = new WC_PensoPay_API_Payment();
 
 	// If the order is a subscription or an attempt of updating the payment method
-	if ( ! WC_PensoPay_Subscription::cart_contains_switches() && ( WC_PensoPay_Order_Utils::contains_subscription( $order ) || WC_PensoPay_Requests_Utils::is_request_to_change_payment() ) ) {
-		// Instantiate a subscription transaction instead of a payment transaction
-		$api_transaction = new WC_PensoPay_API_Subscription();
+	if ( WC_PensoPay_Order_Utils::contains_subscription( $order ) || WC_PensoPay_Requests_Utils::is_request_to_change_payment() ) {
+		if ( WC_PensoPay_Subscription::cart_contains_switches() ) {
+			$subscription   = WC_PensoPay_Subscription::get_last_subscription_for_order( $order );
+			$transaction_id = $subscription ? WC_PensoPay_Order_Utils::get_transaction_id( $subscription ) : null;
+
+			if ( ! $transaction_id && $order->needs_payment() ) {
+				// Instantiate a subscription transaction instead of a payment transaction
+				$api_transaction = new WC_PensoPay_API_Subscription();
+			}
+		} else {
+			// Instantiate a subscription transaction instead of a payment transaction
+			$api_transaction = new WC_PensoPay_API_Subscription();
+		}
 	}
 
 	return $api_transaction;
@@ -94,6 +104,10 @@ function woocommerce_pensopay_create_payment_link( $order, bool $force_update = 
 function woocommerce_pensopay_get_order( $order ): ?WC_Order {
 	if ( ! is_object( $order ) ) {
 		return wc_get_order( $order ) ?: null;
+	}
+
+	if ( $order instanceof WC_Order ) {
+		return $order;
 	}
 
 	if ( $order instanceof WP_Post ) {

@@ -153,8 +153,11 @@ class WC_PensoPay_Order_Payments_Utils {
 		// When changing payment method on subscriptions
 		if ( WC_PensoPay_Subscription::is_subscription( $order_id ) ) {
 			$order_number = $order_id;
-		} // On initial subscription authorizations
-		else if ( ! $recurring && ! WC_PensoPay_Order_Utils::contains_switch_order( $order ) && WC_PensoPay_Order_Utils::contains_subscription( $order ) ) {
+		}
+		// On initial subscription authorizations
+		// 1. Either on parent orders
+		// 2. Or if the customer tries to upgrade a free subscription to a not-free variation.
+		else if ( ( ! $recurring || WC_PensoPay_Order_Utils::switches_from_free_to_paid( $order ) ) && WC_PensoPay_Order_Utils::contains_subscription( $order ) ) {
 			// Find all subscriptions
 			$subscriptions = WC_PensoPay_Subscription::get_subscriptions_for_order( $order_id );
 			// Get the last one and base the transaction on it.

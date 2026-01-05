@@ -142,7 +142,7 @@ class WC_PensoPay_Admin_Orders_Lists_Table extends WC_PensoPay_Module {
 			foreach ( $order_ids as $id ) {
 				if ( ( $order = wc_get_order( $id ) ) && WC_PensoPay_Admin_Orders::get_instance()->order_action_pensopay_create_payment_link( $order ) ) {
 					$changed ++;
-				} else if ( ( $subscription = WC_PensoPay_Subscription::get_subscription_id( $id ) ) && WC_PensoPay_Admin_Orders::get_instance()->order_action_pensopay_create_payment_link( $subscription ) ) {
+				} else if ( ( $subscription = WC_PensoPay_Subscription::get_subscription( $id ) ) && WC_PensoPay_Admin_Orders::get_instance()->order_action_pensopay_create_payment_link( $subscription ) ) {
 					$changed ++;
 				}
 			}
