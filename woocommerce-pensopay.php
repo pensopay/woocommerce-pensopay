@@ -3,7 +3,7 @@
  * Plugin Name: pensopay Payments
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your pensopay payment gateway into your WooCommerce installation.
- * Version: 7.1.8
+ * Version: 7.1.9
  * Author: pensopay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '7.1.8' );
+define( 'WCPP_VERSION', '7.1.9' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -164,8 +164,19 @@ function init_pensopay_gateway() {
 
 			$this->log = new WC_PensoPay_Log();
 
+			// Load the form fields and settings
+			$this->init_form_fields();
+			$this->init_settings();
+
+			// Get gateway variables
+			$this->title             = $this->s( 'title' );
+			$this->description       = $this->s( 'description' );
+			$this->instructions      = $this->s( 'instructions' );
+			$this->order_button_text = $this->s( 'checkout_button_text' );
+
 			do_action( 'woocommerce_pensopay_loaded' );
 		}
+
 
 		/**
 		 * filter_load_instances function.
@@ -298,8 +309,6 @@ function init_pensopay_gateway() {
 				add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 			}
 
-
-			add_action( 'init', [ $this, 'init_form_fields' ] );
 			add_action( 'init', 'WC_PensoPay_Helper::load_i18n' );
 			add_filter( 'woocommerce_gateway_icon', [ $this, 'apply_gateway_icons' ], 2, 3 );
 
@@ -1151,24 +1160,10 @@ function init_pensopay_gateway() {
 		 * Initiates the plugin settings form fields
 		 *
 		 * @access public
+		 * @return array
 		 */
 		public function init_form_fields() {
 			$this->form_fields = WC_PensoPay_Settings::get_fields();
-
-			$this->init_settings();
-
-			// Get gateway variables
-			$this->title             = $this->s( 'title' );
-			$this->description       = $this->s( 'description' );
-			$this->instructions      = $this->s( 'instructions' );
-			$this->order_button_text = $this->s( 'checkout_button_text' );
-		}
-
-		public function get_form_fields() {
-			if (empty( $this->form_fields )) {
-				$this->init_form_fields();
-			}
-			return parent::get_form_fields();
 		}
 
 

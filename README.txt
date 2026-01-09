@@ -3,7 +3,7 @@ Contributors: pensopay
 Tags: gateway, woocommerce, pensopay, payment, psp
 Requires at least: 6.3
 Tested up to: 6.8.2
-Stable tag: 7.1.8
+Stable tag: 7.1.9
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 5.0
 
 == Changelog ==
+= 7.1.9 =
+* Revert fix for textdomain loading too early as it seems to be causing some issues with settings loading timing in some checkouts
+
 = 7.1.8 =
 * Fix: WC_PensoPay_Admin_Orders_Lists_Table::handle_bulk_actions_orders relied on WC_PensoPay_Subscription::get_subscription_id for fetching a subscription entity.
 * Feat: Add Requires Plugins header to define WooCommerce dependency which was introduced in WordPress 6.5
