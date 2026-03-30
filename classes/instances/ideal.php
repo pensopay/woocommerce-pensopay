@@ -10,7 +10,7 @@ class WC_PensoPay_iDEAL extends WC_PensoPay_Instance {
         // Get gateway variables
         $this->id = 'ideal';
 
-        $this->method_title = 'Pensopay - iDEAL';
+        $this->method_title = 'Pensopay - iDEAL | Wero';
 
 		$this->setup();
 
@@ -34,7 +34,7 @@ class WC_PensoPay_iDEAL extends WC_PensoPay_Instance {
             'enabled' => [
                 'title' => __( 'Enable', 'woo-pensopay' ),
                 'type' => 'checkbox',
-                'label' => __( 'Enable iDEAL payment', 'woo-pensopay' ),
+                'label' => __( 'Enable iDEAL | Wero payment', 'woo-pensopay' ),
                 'default' => 'no'
             ],
             '_Shop_setup' => [
@@ -45,13 +45,13 @@ class WC_PensoPay_iDEAL extends WC_PensoPay_Instance {
                 'title' => __( 'Title', 'woo-pensopay' ),
                 'type' => 'text',
                 'description' => __( 'This controls the title which the user sees during checkout.', 'woo-pensopay' ),
-                'default' => __('iDEAL', 'woo-pensopay')
+                'default' => __('iDEAL | Wero', 'woo-pensopay')
             ],
             'description' => [
                 'title' => __( 'Customer Message', 'woo-pensopay' ),
                 'type' => 'textarea',
                 'description' => __( 'This controls the description which the user sees during checkout.', 'woo-pensopay' ),
-                'default' => __('Pay with iDEAL', 'woo-pensopay')
+                'default' => __('Pay with iDEAL | Wero', 'woo-pensopay')
             ],
         ];
     }

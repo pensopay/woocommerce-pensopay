@@ -218,15 +218,15 @@ msgid "Google Pay"
 msgstr ""
 
 #: classes/instances/ideal.php:37
-msgid "Enable iDEAL payment"
+msgid "Enable iDEAL | Wero payment"
 msgstr ""
 
 #: classes/instances/ideal.php:48
-msgid "iDEAL"
+msgid "iDEAL | Wero"
 msgstr ""
 
 #: classes/instances/ideal.php:54
-msgid "Pay with iDEAL"
+msgid "Pay with iDEAL | Wero"
 msgstr ""
 
 #: classes/instances/instance.php:54

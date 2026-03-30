@@ -224,16 +224,16 @@ msgid "Google Pay"
 msgstr "Google Pay"
 
 #: classes/instances/ideal.php:37
-msgid "Enable iDEAL payment"
-msgstr "Aktiver betalinger med iDEAL"
+msgid "Enable iDEAL | Wero payment"
+msgstr "Aktiver betalinger med iDEAL | Wero"
 
 #: classes/instances/ideal.php:48
-msgid "iDEAL"
+msgid "iDEAL | Wero"
 msgstr ""
 
 #: classes/instances/ideal.php:54
-msgid "Pay with iDEAL"
-msgstr "Betal med iDEAL"
+msgid "Pay with iDEAL | Wero"
+msgstr "Betal med iDEAL | Wero"
 
 #: classes/instances/instance.php:54
 #, php-format

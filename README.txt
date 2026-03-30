@@ -3,7 +3,7 @@ Contributors: pensopay
 Tags: gateway, woocommerce, pensopay, payment, psp
 Requires at least: 6.3
 Tested up to: 6.8.2
-Stable tag: 7.1.9
+Stable tag: 7.2.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,12 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 5.0
 
 == Changelog ==
+= 7.2.1 =
+* Rebrand iDEAL to iDEAL | Wero
+
+= 7.2.0 =
+* Fix: KnowledgeBase URL
+
 = 7.1.9 =
 * Revert fix for textdomain loading too early as it seems to be causing some issues with settings loading timing in some checkouts
 

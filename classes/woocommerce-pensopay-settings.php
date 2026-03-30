@@ -381,7 +381,7 @@ class WC_PensoPay_Settings {
 			'nordea'                => 'Nordea',
 			'mobilepay'             => 'MobilePay',
 			'forbrugsforeningen'    => 'Forbrugsforeningen',
-			'ideal'                 => 'iDEAL',
+			'ideal'                 => 'iDEAL | Wero',
 			'unionpay'              => 'UnionPay',
 			'sofort'                => 'Sofort',
 			'cirrus'                => 'Cirrus',
@@ -487,7 +487,7 @@ class WC_PensoPay_Settings {
 	 * @return string
 	 */
 	public static function get_wiki_link() {
-		return 'https://help.pensopay.com';
+		return 'https://knowledgebase.pensopay.com';
 	}
 
 	/**
