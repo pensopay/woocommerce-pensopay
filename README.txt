@@ -3,7 +3,7 @@ Contributors: pensopay
 Tags: gateway, woocommerce, pensopay, payment, psp
 Requires at least: 6.3
 Tested up to: 6.8.2
-Stable tag: 7.2.1
+Stable tag: 7.2.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,9 @@ General:
 3. If WooCommerce Subscriptions is used, the required minimum version is >= 5.0
 
 == Changelog ==
+= 7.2.2 =
+* Fix: Offline refunds were triggering an online refund also.
+
 = 7.2.1 =
 * Rebrand iDEAL to iDEAL | Wero
 

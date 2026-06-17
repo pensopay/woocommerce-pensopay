@@ -3,7 +3,7 @@
  * Plugin Name: pensopay Payments
  * Plugin URI: http://wordpress.org/plugins/pensopay/
  * Description: Integrates your pensopay payment gateway into your WooCommerce installation.
- * Version: 7.2.1
+ * Version: 7.2.2
  * Author: pensopay
  * Text Domain: woo-pensopay
  * Domain Path: /languages/
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCPP_VERSION', '7.2.1' );
+define( 'WCPP_VERSION', '7.2.2' );
 define( 'WCPP_URL', plugins_url( __FILE__ ) );
 define( 'WCPP_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -327,28 +327,7 @@ function init_pensopay_gateway() {
             add_filter( 'determine_locale', 'WC_PensoPay_Helper::determine_locale', 10, 1 );
 
             add_action('wp_head', 'WC_PensoPay_Helper::viabill_header'); //Header JS
-
-            add_action( 'woocommerce_order_status_refunded', [$this, 'pensopay_refund_order'], 10, 1 );
 		}
-
-
-        /**
-         * Update used coupon amount for each coupon within an order.
-         *
-         * @since 3.0.0
-         * @param int $order_id Order ID.
-         */
-        public function pensopay_refund_order( $order_id ) {
-            $order = wc_get_order( $order_id );
-
-            if ( ! $order ) {
-                return;
-            }
-
-            if (WC_PensoPay_Order_Payments_Utils::is_order_using_pensopay( $order )) {
-                $this->process_refund($order_id);
-            }
-        }
 
 
 		/**
