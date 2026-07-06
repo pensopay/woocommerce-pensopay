@@ -86,8 +86,21 @@ class WC_PensoPay_API_Payment extends WC_PensoPay_API_Transaction {
             $api     = new WC_PensoPay_API( WC_PP()->s( 'pensopay_apikey' ) );
             $_action = $api->get( $request[5]['location'][0] );
 
+            // Asynchronous acquirers (e.g. MobilePay, Klarna) accept the operation and
+            // finalise it later via callback. QuickPay responds with a Location header
+            // while the operation is still pending, so resolving it here can legitimately
+            // come back empty. This is NOT a failure - the capture/refund callback will
+            // confirm the final result - so we treat it as pending instead of throwing.
             if ( empty( $_action ) ) {
-                throw new PensoPay_Exception( sprintf( '%s inconclusive. Response from location header is empty.', ucfirst( $action ) ) );
+                if ( is_callable( [ $order, 'add_order_note' ] ) ) {
+                    $order->add_order_note( sprintf(
+                        /* translators: %s: operation type (capture/refund). */
+                        __( '%s is being processed asynchronously by the payment method. Awaiting final confirmation from pensopay.', 'woo-pensopay' ),
+                        ucfirst( $action )
+                    ) );
+                }
+
+                return;
             }
         }
 
